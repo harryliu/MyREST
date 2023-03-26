@@ -80,6 +80,8 @@ content-type: application/json
 ## Auth API 设计
 参考 [](https://jasonwatmore.com/post/2021/06/15/net-5-api-jwt-authentication-with-refresh-tokens)
 [](https://www.cnblogs.com/ittranslator/p/refresh-jwt-with-refresh-tokens-in-asp-net-core-5-rest-api-step-by-step.html)
+[](https://jasontaylor.dev/api-key-authentication-with-aspnetcore/)
+[](https://andrewlock.net/5-new-mvc-features-in-dotnet-7/)
 ### public 认证接口
 ``` json
 POST /myrest/auth  HTTP/1.1

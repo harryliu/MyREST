@@ -1,0 +1,18 @@
+GET https://localhost:7240/query HTTP/1.1
+content-type: application/json
+
+{
+
+}
+
+GET http://localhost:3000/query HTTP/1.1
+content-type: application/json
+
+{
+
+}
+
+
+
+[{"actorId":1,"firstName":"PENELOPE","lastName":"GUINESS","lastUpdate":"2006-02-15T04:34:33+08:00"},{"actorId":2,"firstName":"NICK","lastName":"WAHLBERG","lastUpdate":"2006-02-15T04:34:33+08:00"},{"actorId":3,"firstName":"ED","lastName":"CHASE","lastUpdate":"2006-02-15T04:34:33+08:00"}
+]

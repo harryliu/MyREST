@@ -1,12 +1,12 @@
 [system]
-debug = true  #启用debug模式, 将不需要进行 authentication 
-port = 3000
+debug = true  #debug模式下将开启swagger ui
+port = 3000 
 host = "localhost"
 baseRoute ="/myrest"
 enableClientSql =true  #allow client to submit SQL statement. It only works in debug mode. 
-clientAccessPolicy=["whiteList","blackList"]
-clientIpWhiteList=["localhost","192.168.0.1"]
-clientIpBlackList=["192.168.0.155"]
+clientAccessPolicy="whiteList,blackList"
+clientIpWhiteList="localhost,192.168.0.1"
+clientIpBlackList="192.168.0.155,192.168.0.156"
 
 [auth]
 enabled = true  #是否启用 authentication
@@ -24,14 +24,14 @@ jwtAlgo="HS256"
    [database.db1]
     isMainDb=true  #MainDb or StdDb, auth userTable will only stored in mainDb
     dbType="mysql" # sqlite,mysql,mssql,postgresql,oracle
-	connectionString=""
+    connectionString="Server=localhost;Port=3306;Database=sakila;Uid=root;Pwd=TOOR;"
     route="/db1"
-	sqlFileHome=""   #sql file home
+    sqlFileHome=""   #sql file home
 
    [database.db2]
     isMainDb=false  #MainDb or StdDb, auth userTable will only stored in mainDb
     dbType="mysql" # sqlite,mysql,mssql,postgresql,oracle
-	connectionString=""
+    connectionString="Server=localhost;Port=3306;Database=sakila;Uid=root;Pwd=TOOR;"
     route="/db2"
-	sqlFileHome=""   #sql file home
+    sqlFileHome=""   #sql file home
 
