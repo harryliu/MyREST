@@ -1,10 +1,8 @@
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Configuration;
 
-//using Alexinea.Extensions.Configuration.Toml;
-
-//using Tomlyn.Extensions.Configuration;
-using Tommy.Extensions.Configuration;
+//using Tommy.Extensions.Configuration;
+using Alexinea.Extensions.Configuration.Toml;
 
 namespace MyREST
 {
@@ -54,10 +52,16 @@ namespace MyREST
             IConfiguration configuration = builder.Build();
             services.AddSingleton<IConfiguration>(configuration);
 
-            ///services.AddOptions();
+            //注入 system configuration
             SystemConfig systemConfig = new SystemConfig();
-            configuration.Bind("system", systemConfig);
+            configuration.Bind(SystemConfig.Section, systemConfig);
             services.AddSingleton(systemConfig);
+
+            List<DbConfig> dbConfigList = new List<DbConfig>();
+
+            services.Configure<List<DbConfig>>(configuration.GetSection("[[databases]]"));
+
+            //configuration.Bind("", dbConfigList);
 
             //services.Configure<SystemConfig>(configuration.GetSection("system"));
         }

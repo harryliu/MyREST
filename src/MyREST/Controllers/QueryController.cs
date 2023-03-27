@@ -27,6 +27,7 @@ namespace MyREST.Controllers
         private readonly string _connectionString;
 
         private SystemConfig _systemConfig;
+        private List<DbConfig> _dbConfigs;
 
         private static readonly string[] Summaries = new[]
         {
@@ -35,12 +36,14 @@ namespace MyREST.Controllers
 
         private readonly ILogger<QueryController> _logger;
 
-        public QueryController(ILogger<QueryController> logger, IConfiguration configuration, SystemConfig systemConfig)
+        public QueryController(ILogger<QueryController> logger, IConfiguration configuration,
+            SystemConfig systemConfig, IOptions<List<DbConfig>> dbConfigs)
         {
             _logger = logger;
             _configuration = configuration;
             _connectionString = _configuration.GetConnectionString("mydb1");
             _systemConfig = systemConfig;
+            _dbConfigs = dbConfigs.Value;
         }
 
         //[HttpGet(Name = "GetWeatherForecast")]
