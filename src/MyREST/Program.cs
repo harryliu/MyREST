@@ -1,8 +1,10 @@
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Configuration;
 
-//using Tommy.Extensions.Configuration;
-using Alexinea.Extensions.Configuration.Toml;
+using Tommy.Extensions.Configuration;
+using Tommy;
+
+//using Alexinea.Extensions.Configuration.Toml;
 
 namespace MyREST
 {
@@ -59,7 +61,12 @@ namespace MyREST
 
             List<DbConfig> dbConfigList = new List<DbConfig>();
 
-            services.Configure<List<DbConfig>>(configuration.GetSection("[[databases]]"));
+            TomlArray tomlArray = new TomlArray();
+            tomlArray.IsTableArray = true;
+            TOML.p
+            configuration.Get()
+            var section = configuration.GetSection("[system]");
+            services.Configure<List<DbConfig>>(section);
 
             //configuration.Bind("", dbConfigList);
 
