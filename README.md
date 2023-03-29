@@ -134,3 +134,4 @@ content-type: application/json
 - Quick started : <https://github.com/harryliu/MyREST/blob/main/docs/quickStarted.md>
 - Configurations : <https://github.com/harryliu/MyREST/blob/main/docs/configurations.md>
 - Security : <https://github.com/harryliu/MyREST/blob/main/docs/security.md>
+- Request sample : <https://github.com/harryliu/MyREST/blob/main/docs/samples.md>

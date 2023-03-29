@@ -24,7 +24,7 @@ password="password123"
 ```
 [jwtAuth]
 enableJwtAuth=true # enable JWT Auth
-audience="MyREST client"
+audience="myrest client"
 validateAudience=true
 issuer="some auth server"
 validateIssuer=true
