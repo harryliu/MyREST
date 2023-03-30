@@ -8,17 +8,6 @@ clientAccessPolicy=["whiteList","blackList"]
 clientIpWhiteList=["localhost","192.168.0.1"]
 clientIpBlackList=["192.168.0.155","192.168.0.156"]
 
-[auth]
-enabled = true  #是否启用 authentication
-route = "/auth"
-userTable="myrest_users"
-type = "body"
-encrypt = "MD5"
-accessTokenExpires=10	#unit:minute
-refreshTokenExpire=60  #unit:minute
-jwtKey="secret"
-jwtAlgo="HS256"
-
 
 [[databases]]
 route="/db1"
@@ -34,3 +23,14 @@ dbType="mysql" # sqlite,mysql,mssql,postgresql,oracle
 connectionString="Server=localhost;Port=3306;Database=sakila;Uid=root;Pwd=TOOR;"    
 sqlFileHome=""   #sql file home
 
+
+[auth]
+enabled = true  #是否启用 authentication
+route = "/auth"
+userTable="myrest_users"
+type = "body"
+encrypt = "MD5"
+accessTokenExpires=10	#unit:minute
+refreshTokenExpire=60  #unit:minute
+jwtKey="secret"
+jwtAlgo="HS256"

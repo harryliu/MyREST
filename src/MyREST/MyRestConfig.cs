@@ -1,5 +1,13 @@
-﻿namespace MyREST
+﻿using Nett;
+
+namespace MyREST
 {
+    public class GlobalConfig
+    {
+        public SystemConfig system { get; set; }
+        //public AuthConfig auth { get; set; }
+    }
+
     public class SystemConfig
     {
         public const string Section = "system";

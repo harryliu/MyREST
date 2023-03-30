@@ -26,7 +26,7 @@ namespace MyREST.Controllers
         private readonly IConfiguration _configuration;
         private readonly string _connectionString;
 
-        private SystemConfig _systemConfig;
+        private GlobalConfig _globalConfig;
         private List<DbConfig> _dbConfigs;
 
         private static readonly string[] Summaries = new[]
@@ -35,15 +35,20 @@ namespace MyREST.Controllers
     };
 
         private readonly ILogger<QueryController> _logger;
+        /*
+                  services.AddSingleton<List<DbConfig>>(dbConfigList);
+
+            GlobalConfig globalConfig = Toml.ReadFile<GlobalConfig>("myrest.toml");
+            services.AddSingleton<GlobalConfig>(globalConfig);*/
 
         public QueryController(ILogger<QueryController> logger, IConfiguration configuration,
-            SystemConfig systemConfig, IOptions<List<DbConfig>> dbConfigs)
+            GlobalConfig globalConfig, List<DbConfig> dbConfigs)
         {
             _logger = logger;
             _configuration = configuration;
             _connectionString = _configuration.GetConnectionString("mydb1");
-            _systemConfig = systemConfig;
-            _dbConfigs = dbConfigs.Value;
+            _globalConfig = globalConfig;
+            _dbConfigs = dbConfigs;
         }
 
         //[HttpGet(Name = "GetWeatherForecast")]

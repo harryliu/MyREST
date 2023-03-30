@@ -1,8 +1,8 @@
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Configuration;
-
-using Tommy.Extensions.Configuration;
-using Tommy;
+using Nett;
+using System;
+using Microsoft.Extensions.DependencyInjection;
 
 //using Alexinea.Extensions.Configuration.Toml;
 
@@ -46,31 +46,23 @@ namespace MyREST
         {
             IConfigurationBuilder builder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
-                //.AddJsonFile("appsettings.json")
+                .AddJsonFile("appsettings.json")
                 //.AddTomlFile("myrest.toml")
-                .AddTomlFile("myrest.toml", optional: false, reloadOnChange: false)
+                //  .AddTomlFile("myrest.toml", optional: false, reloadOnChange: false)
                 ;
 
             IConfiguration configuration = builder.Build();
             services.AddSingleton<IConfiguration>(configuration);
 
-            //注入 system configuration
-            SystemConfig systemConfig = new SystemConfig();
-            configuration.Bind(SystemConfig.Section, systemConfig);
-            services.AddSingleton(systemConfig);
+            TomlTableArray databaseTable = Toml.ReadFile("myrest.toml").Get<TomlTableArray>("databases");
+            List<DbConfig> dbConfigList = databaseTable.Items
+                                            .Select(item => item.Get<DbConfig>())
+                                            .ToList();
 
-            List<DbConfig> dbConfigList = new List<DbConfig>();
+            services.AddSingleton<List<DbConfig>>(dbConfigList);
 
-            TomlArray tomlArray = new TomlArray();
-            tomlArray.IsTableArray = true;
-            TOML.p
-            configuration.Get()
-            var section = configuration.GetSection("[system]");
-            services.Configure<List<DbConfig>>(section);
-
-            //configuration.Bind("", dbConfigList);
-
-            //services.Configure<SystemConfig>(configuration.GetSection("system"));
+            GlobalConfig globalConfig = Toml.ReadFile<GlobalConfig>("myrest.toml");
+            services.AddSingleton<GlobalConfig>(globalConfig);
         }
     }
 }
