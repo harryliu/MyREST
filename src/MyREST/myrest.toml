@@ -3,6 +3,7 @@ debug = true  #debug模式下将开启swagger ui
 port = 3000 
 host = "localhost"
 baseRoute ="/myrest"
+UseResponseCompression = false 
 enableClientSql =true  #allow client to submit SQL statement. It only works in debug mode. 
 clientAccessPolicy=["whiteList","blackList"]
 clientIpWhiteList=["localhost","192.168.0.1"]

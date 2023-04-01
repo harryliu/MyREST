@@ -8,17 +8,6 @@ using System.Text.RegularExpressions;
 
 namespace MyREST.Controllers
 {
-    public static class StringExtensions
-    {
-        public static string ToSnakeCase(this string input)
-        {
-            if (string.IsNullOrEmpty(input)) { return input; }
-
-            var startUnderscores = Regex.Match(input, @"^_+");
-            return startUnderscores + Regex.Replace(input, @"([a-z0-9])([A-Z])", "$1_$2").ToLower();
-        }
-    }
-
     [ApiController]
     [Route("[controller]")]
     public class QueryController : ControllerBase
@@ -35,11 +24,6 @@ namespace MyREST.Controllers
     };
 
         private readonly ILogger<QueryController> _logger;
-        /*
-                  services.AddSingleton<List<DbConfig>>(dbConfigList);
-
-            GlobalConfig globalConfig = Toml.ReadFile<GlobalConfig>("myrest.toml");
-            services.AddSingleton<GlobalConfig>(globalConfig);*/
 
         public QueryController(ILogger<QueryController> logger, IConfiguration configuration,
             GlobalConfig globalConfig, List<DbConfig> dbConfigs)
@@ -72,13 +56,38 @@ namespace MyREST.Controllers
                 """;
             ;
 
-            DynamicParameters parameter = new DynamicParameters();
             using (IDbConnection conn = new MySqlConnection(_connectionString))
             {
                 //conn.ExecuteReader(sql).GetSchemaTable()
                 Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
                 return conn.Query(selectSql);
             }
+        }
+
+        [HttpPost("/run")]
+        public SqlResultWrapper Get22([FromBody] SqlRequestWrapper sqlRequestWrapper)
+        {
+            string selectSql = """
+                select actor_id , first_name FirstName, last_name LastName, last_update LastUpdate
+                from actor
+                """;
+            ;
+
+            SqlResultWrapper result = new SqlResultWrapper();
+            SqlResponse sqlResponse = new SqlResponse();
+            result.request = sqlRequestWrapper.request;
+            using (IDbConnection conn = new MySqlConnection(_connectionString))
+            {
+                Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
+                IEnumerable<dynamic> rows = conn.Query(selectSql);
+                sqlResponse.rowCount = 100;
+                sqlResponse.affectedCount = 200;
+                sqlResponse.returnCode = 0;
+                sqlResponse.errorMessage = "aaaaaaaaaa";
+                sqlResponse.rows = rows;
+            }
+            result.response = sqlResponse;
+            return result;
         }
     }
 }

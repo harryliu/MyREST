@@ -16,6 +16,8 @@ a universal database RESTful service
 - 支持客户端SQL和服务端SQL(SQL语句存放在服务端)两种形式, 推荐使用服务端SQL形式
 - 支持白名单
 - 支持 OpenAPI
+- 支持 miniProfiler 
+- 支持优雅停机
 
 ## 安全方面的设计
 - 后台数据库中, 需要增加一个表 myrest_users, 该table将作为前端应用的登录账号表, 对于具体应用可以再为这个表配一个从表, 用于扩展用户信息. 
@@ -53,27 +55,39 @@ a universal database RESTful service
 ## SQL API 设计
 post 请求
 ```
-POST /myrest/service  HTTP/1.1
+POST /myrest/db1  HTTP/1.1
 content-type: application/json
 
-   msg
-      request
-	         command: execute/query
-			 sql:""
-			 sqlFile:""
-			 xmlPath:""
-			 parameters:[
-				 {name:"",value:"",type:"",format:""}
-			 ]
-			 traceId: 
-	response:
-	        meta: [{field1:type1}]
-			errorMessage:""			
-			rowCount:
-			affectedCount:
-			rows:[
-				{field1:value1, field2:value2}
+{	
+	"request": {
+		"sqlFile": "",
+		"sqlId": "",
+		"parameters": [
+			{"name": "","value": "","format": ""},
+			{"name": "","value": "","format": ""}
+		],
+		"traceId": "11",
+		"requireTransaction": true
+	},
+	"response": {
+		"errorMessage": "",
+		"returnCode": 0,
+		"rowCount": 1,
+		"affectedCount": 1,
+		"rows": [
+			{
+				"field1": "value11",
+				"field2": "value12"
+			},
+			{
+				"field1": "value21",
+				"field2": "value22"
+			}
 				]
+	}	
+}
+
+
 ```
 
 
@@ -82,9 +96,12 @@ content-type: application/json
 [](https://www.cnblogs.com/ittranslator/p/refresh-jwt-with-refresh-tokens-in-asp-net-core-5-rest-api-step-by-step.html)
 [](https://jasontaylor.dev/api-key-authentication-with-aspnetcore/)
 [](https://andrewlock.net/5-new-mvc-features-in-dotnet-7/)
+[](https://learn.microsoft.com/en-us/aspnet/core/mvc/controllers/routing?view=aspnetcore-7.0)
+[](https://www.cnblogs.com/lwqlun/p/10222505.html)
+[](https://github.com/ZeeLyn/Dapper.Extensions)
 ### public 认证接口
 ``` json
-POST /myrest/auth  HTTP/1.1
+POST /myrest/auth/access-token  HTTP/1.1
 content-type: application/json
 
 {
@@ -104,7 +121,7 @@ content-type: application/json
  
 ### public 的refresh-token接口
 ``` json
-POST /myrest/refresh-token  HTTP/1.1
+POST /myrest/auth/refresh-token  HTTP/1.1
 content-type: application/json
 
 {
@@ -123,7 +140,7 @@ content-type: application/json
 
 ### secure 的 revoke-token接口
 ``` json
-POST /myrest/refresh-token  HTTP/1.1
+POST /myrest/auth/refresh-token  HTTP/1.1
 content-type: application/json
 
 {

@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root>
+	<sql id="" command="">
+		<![CDATA[
+		select * from blog where id = @id
+		]]>
+		<parameters>
+			<parameter name="@id" dbType="Int32"  direction="Input" format="" ></parameter>
+		</parameters>
+	</sql>
+
+	<sql id="">
+		<![CDATA[
+		insert into blog (`id`, `name`, `title`, `content`)
+		values (#{id}, #{name}, #{title}, #{content})
+		]]>
+	</sql>
+
+	<sql id="">
+		<![CDATA[
+		update blog
+		set `name` = #{name}, `title` = #{title}, `content` = #{title}
+		where id = #{id}
+		]]>
+	</sql>
+
+	<sql id="">
+		<![CDATA[
+		delete from blog where id = #{id}
+		]]>
+	</sql>
+</root>

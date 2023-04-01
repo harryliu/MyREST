@@ -10,7 +10,6 @@ namespace MyREST
 
     public class SystemConfig
     {
-        public const string Section = "system";
         public bool debug { get; set; }
         public int port { get; set; }
         public string host { get; set; }
@@ -23,10 +22,10 @@ namespace MyREST
 
     public class DbConfig
     {
+        public string route { get; set; }
         public bool isMainDb { get; set; }
         public string dbType { get; set; }
         public string connectionString { get; set; }
-        public string route { get; set; }
         public string sqlFileHome { get; set; }
     }
 

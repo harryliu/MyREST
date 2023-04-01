@@ -4,8 +4,6 @@ using Nett;
 using System;
 using Microsoft.Extensions.DependencyInjection;
 
-//using Alexinea.Extensions.Configuration.Toml;
-
 namespace MyREST
 {
     public class Program
@@ -48,7 +46,7 @@ namespace MyREST
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json")
                 //.AddTomlFile("myrest.toml")
-                //  .AddTomlFile("myrest.toml", optional: false, reloadOnChange: false)
+                //.AddTomlFile("myrest.toml", optional: false, reloadOnChange: false)
                 ;
 
             IConfiguration configuration = builder.Build();
