@@ -10,11 +10,12 @@ namespace MyREST
 
     public class SystemConfig
     {
-        public bool debug { get; set; }
+        public bool debug { get; set; } = false;
         public int port { get; set; }
+
         public string host { get; set; }
         public string baseRoute { get; set; }
-        public bool enableClientSql { get; set; }
+        public bool enableClientSql { get; set; } = false;
         public string[] clientAccessPolicy { get; set; }
         public string[] clientIpWhiteList { get; set; }
         public string[] clientIpBlackList { get; set; }
@@ -22,8 +23,7 @@ namespace MyREST
 
     public class DbConfig
     {
-        public string route { get; set; }
-        public bool isMainDb { get; set; }
+        public string name { get; set; }
         public string dbType { get; set; }
         public string connectionString { get; set; }
         public string sqlFileHome { get; set; }

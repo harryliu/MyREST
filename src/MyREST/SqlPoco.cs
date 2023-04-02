@@ -4,14 +4,14 @@
     {
         public string name { get; set; }
         public int index { get; set; }
-        public string type { get; set; }
+        public string dataType { get; set; }
     }
 
     public class SqlParameter
     {
         public string name { get; set; }
         public string value { get; set; }
-        public string dbType { get; set; }
+        public string dataType { get; set; }
         public string direction { get; set; }
         public string format { get; set; }
 
@@ -29,14 +29,21 @@
         public SqlResponse response { get; set; }
     }
 
-    public class SqlRequest
+    public class SqlContext
     {
+        public string db { get; set; }
         public string command { get; set; } //execute/query
         public string sqlFile { get; set; }
         public string sqlId { get; set; }
+        public string sql { get; set; }
         public List<SqlParameter> parameters { get; set; }
-        public string traceId { get; set; }
         public bool requireTransaction { get; set; }
+    }
+
+    public class SqlRequest
+    {
+        public SqlContext sqlContext { get; set; }
+        public string traceId { get; set; }
     }
 
     public class SqlResponse

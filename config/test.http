@@ -16,3 +16,30 @@ content-type: application/json
 
 [{"actorId":1,"firstName":"PENELOPE","lastName":"GUINESS","lastUpdate":"2006-02-15T04:34:33+08:00"},{"actorId":2,"firstName":"NICK","lastName":"WAHLBERG","lastUpdate":"2006-02-15T04:34:33+08:00"},{"actorId":3,"firstName":"ED","lastName":"CHASE","lastUpdate":"2006-02-15T04:34:33+08:00"}
 ]
+
+
+https://localhost:7241/swagger/index.html
+https://localhost:3000/swagger/index.html
+
+{
+  "request": {
+    sqlContext:{
+        "db":"string",
+        "command": "string",
+        "sqlFile": "string",
+        "sqlId": "string",
+        "sql": "string",
+        "requireTransaction": true,
+        "parameters": [
+          {
+            "name": "string",
+            "value": "string",
+            "dataType": "string",
+            "direction": "string",
+            "format": "string"
+          }
+        ]
+    }     
+    "traceId": "string" 
+  }
+}
