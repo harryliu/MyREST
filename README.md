@@ -92,6 +92,7 @@ content-type: application/json
 
 
 ## Auth API 设计
+https://dapper-tutorial.net/parameter-dynamic
 参考 [](https://jasonwatmore.com/post/2021/06/15/net-5-api-jwt-authentication-with-refresh-tokens)
 [](https://www.cnblogs.com/ittranslator/p/refresh-jwt-with-refresh-tokens-in-asp-net-core-5-rest-api-step-by-step.html)
 [](https://jasontaylor.dev/api-key-authentication-with-aspnetcore/)

@@ -1,4 +1,6 @@
-﻿namespace MyREST
+﻿using System.Xml.Serialization;
+
+namespace MyREST
 {
     public class FieldMeta
     {
@@ -7,15 +9,31 @@
         public string dataType { get; set; }
     }
 
+    //public class SqlParameter
+    //{
+    //    public string name { get; set; }
+    //    public string value { get; set; }
+    //    public string dataType { get; set; }
+    //    public string direction { get; set; }
+    //    public string format { get; set; }
+
+    //    //direction: out/in/return
+    //}
+
+    [XmlRoot(ElementName = "parameter")]
     public class SqlParameter
     {
+        [XmlAttribute(AttributeName = "name")]
         public string name { get; set; }
-        public string value { get; set; }
-        public string dataType { get; set; }
-        public string direction { get; set; }
-        public string format { get; set; }
 
-        //direction: out/in/return
+        [XmlAttribute(AttributeName = "dataType")]
+        public string dataType { get; set; }
+
+        [XmlAttribute(AttributeName = "direction")]
+        public string direction { get; set; }
+
+        [XmlAttribute(AttributeName = "format")]
+        public object format { get; set; }
     }
 
     public class SqlRequestWrapper
@@ -56,5 +74,38 @@
         public int affectedCount { get; set; }
 
         public IEnumerable<dynamic> rows { get; set; }
+    }
+
+    [XmlRoot(ElementName = "parameters")]
+    public class XmlSqlParameters
+    {
+        [XmlElement(ElementName = "parameter")]
+        public List<SqlParameter> Parameter { get; set; }
+    }
+
+    [XmlRoot(ElementName = "sql")]
+    public class XmlSql
+    {
+        [XmlElement(ElementName = "parameters")]
+        public XmlSqlParameters Parameters { get; set; }
+
+        [XmlAttribute(AttributeName = "id")]
+        public string Id { get; set; }
+
+        [XmlText]
+        public string Text { get; set; }
+    }
+
+    [XmlRoot(ElementName = "root")]
+    public class XmlRoot
+    {
+        [XmlElement(ElementName = "sql")]
+        public XmlSql sql { get; set; }
+
+        [XmlAttribute(AttributeName = "version")]
+        public double Version { get; set; }
+
+        [XmlText]
+        public string Text { get; set; }
     }
 }
