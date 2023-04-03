@@ -11,6 +11,7 @@ namespace MyREST
     public class SystemConfig
     {
         public bool debug { get; set; } = false;
+
         public int port { get; set; }
 
         public string host { get; set; }
@@ -19,6 +20,8 @@ namespace MyREST
         public string[] clientAccessPolicy { get; set; }
         public string[] clientIpWhiteList { get; set; }
         public string[] clientIpBlackList { get; set; }
+        public bool useResponseCompression { get; set; } = false;
+        public bool hotReloadSqlFile { get; set; } = false;
     }
 
     public class DbConfig

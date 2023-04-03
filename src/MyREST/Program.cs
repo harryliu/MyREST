@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Nett;
 using System;
 using Microsoft.Extensions.DependencyInjection;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace MyREST
 {
@@ -61,6 +62,10 @@ namespace MyREST
 
             GlobalConfig globalConfig = Toml.ReadFile<GlobalConfig>("myrest.toml");
             services.AddSingleton<GlobalConfig>(globalConfig);
+
+            string sqlFile = System.IO.Path.Join(Directory.GetCurrentDirectory(), @"sql\sampleSql.xml");
+            XmlParser parser = new XmlParser(sqlFile);
+            var node = parser.parse();
         }
     }
 }

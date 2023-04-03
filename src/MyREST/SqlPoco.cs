@@ -26,6 +26,9 @@ namespace MyREST
         [XmlAttribute(AttributeName = "name")]
         public string name { get; set; }
 
+        [XmlAttribute(AttributeName = "value")]
+        public string value { get; set; }
+
         [XmlAttribute(AttributeName = "dataType")]
         public string dataType { get; set; }
 
@@ -33,7 +36,7 @@ namespace MyREST
         public string direction { get; set; }
 
         [XmlAttribute(AttributeName = "format")]
-        public object format { get; set; }
+        public string format { get; set; }
     }
 
     public class SqlRequestWrapper
@@ -55,7 +58,8 @@ namespace MyREST
         public string sqlId { get; set; }
         public string sql { get; set; }
         public List<SqlParameter> parameters { get; set; }
-        public bool requireTransaction { get; set; }
+        public bool requireTransaction { get; set; } = false;
+        public bool fromClientSql { get; set; } = false;
     }
 
     public class SqlRequest
@@ -80,32 +84,32 @@ namespace MyREST
     public class XmlSqlParameters
     {
         [XmlElement(ElementName = "parameter")]
-        public List<SqlParameter> Parameter { get; set; }
+        public List<SqlParameter> parameterList { get; set; }
     }
 
     [XmlRoot(ElementName = "sql")]
     public class XmlSql
     {
         [XmlElement(ElementName = "parameters")]
-        public XmlSqlParameters Parameters { get; set; }
+        public XmlSqlParameters parameters { get; set; }
 
         [XmlAttribute(AttributeName = "id")]
-        public string Id { get; set; }
+        public string id { get; set; }
 
         [XmlText]
-        public string Text { get; set; }
+        public string text { get; set; }
     }
 
     [XmlRoot(ElementName = "root")]
-    public class XmlRoot
+    public class XmlFileRoot
     {
         [XmlElement(ElementName = "sql")]
-        public XmlSql sql { get; set; }
+        public List<XmlSql> sqlList { get; set; }
 
         [XmlAttribute(AttributeName = "version")]
-        public double Version { get; set; }
+        public double version { get; set; }
 
         [XmlText]
-        public string Text { get; set; }
+        public string text { get; set; }
     }
 }
