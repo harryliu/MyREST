@@ -8,9 +8,13 @@ namespace MyREST
         private string _fullFileName;
         private XmlFileRoot? _xmlFileRoot;
 
-        public XmlFileParser(string fullFileName)
+        public XmlFileParser(string fullFileName, bool autoParse)
         {
             _fullFileName = fullFileName;
+            if (autoParse)
+            {
+                parse();
+            }
         }
 
         public XmlNode? getSqlXmlNode(string sqlId)
@@ -22,6 +26,9 @@ namespace MyREST
             return node;
         }
 
+        /// <summary>
+        /// parse the whole Sql file into XmlFileRoot object
+        /// </summary>
         public void parse()
         {
             _xmlFileRoot = null;
@@ -38,9 +45,9 @@ namespace MyREST
         }
 
         /// <summary>
-        /// rebuild SqlContext
-        /// 如果 sqlId 存在, 则 sql 语句优先使用服务器端
-        /// sql 参数优先使用客户端
+        /// rebuild SqlContext, 包括:
+        /// (1)如果消息报文中设定了sqlFile和sqlId, 则 sql 语句优先使用服务器端
+        /// (2)sql的Parameters, 优先使用客户端的设置
         /// </summary>
         /// <param name="sqlContext"></param>
         /// <param name="sqlId"></param>
@@ -66,7 +73,7 @@ namespace MyREST
             return sqlContext;
         }
 
-        private static void mergeServerParamToClient(SqlContext sqlContext, XmlSql xmlSql)
+        private void mergeServerParamToClient(SqlContext sqlContext, XmlSql xmlSql)
         {
             foreach (var clientParam in sqlContext.parameters)
             {
@@ -101,7 +108,7 @@ namespace MyREST
             }
         }
 
-        private static void mergeClientParamToServer(SqlContext sqlContext, XmlSql xmlSql)
+        private void mergeClientParamToServer(SqlContext sqlContext, XmlSql xmlSql)
         {
             foreach (var serverParam in xmlSql.parameters.parameterList)
             {

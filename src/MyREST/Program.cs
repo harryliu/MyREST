@@ -63,9 +63,9 @@ namespace MyREST
             GlobalConfig globalConfig = Toml.ReadFile<GlobalConfig>("myrest.toml");
             services.AddSingleton<GlobalConfig>(globalConfig);
 
-            string sqlFile = System.IO.Path.Join(Directory.GetCurrentDirectory(), @"sql\sampleSql.xml");
-            XmlParser parser = new XmlParser(sqlFile);
-            var node = parser.parse();
+            var hotReload = globalConfig.system.hotReloadSqlFile;
+            XmlFileContainer xmlFileContainer = new XmlFileContainer(hotReload);
+            services.AddSingleton<XmlFileContainer>(xmlFileContainer);
         }
     }
 }
