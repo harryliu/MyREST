@@ -19,22 +19,23 @@ namespace MyREST
 
         public bool writebackRequest { get; set; } = false;
 
-        public string[] clientAccessPolicies { get; set; }
+        public string[] firewallStrategies { get; set; }
         public string[] clientIpWhiteList { get; set; }
         public string[] clientIpBlackList { get; set; }
 
         public void validate()
         {
-            HashSet<string> builtinPolicies = new HashSet<string>() { "whiteList", "blackList" };
+            HashSet<string> builtinPolicies = new HashSet<string>() { "clientIpWhiteList", "clientIpBlackList" };
             HashSet<string> userPolicies = new HashSet<string>();
-            foreach (var item in clientAccessPolicies)
+            foreach (var item in firewallStrategies)
             {
                 userPolicies.Add(item);
             }
-            var minusResult = userPolicies.Except(builtinPolicies);
-            if (minusResult.Count() > 0)
+
+            var minusSet = userPolicies.Except(builtinPolicies);
+            if (minusSet.Count() > 0)
             {
-                throw new Exception("invalid clientAccessPolicies. It can only contains whiteList and blackList ");
+                throw new Exception("invalid clientAccessPolicies. It can only contains clientIpWhiteList and clientIpBlackList ");
             }
         }
     }
