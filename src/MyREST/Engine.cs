@@ -62,33 +62,6 @@ namespace MyREST
                 throw new ArgumentException($"database {dbName} not defined in configuration file");
             }
 
-            ////check sqlFile/sqlId/sql
-            //string sqlFile = sqlContext.sqlFile;
-            //string sqlId = sqlContext.sqlId;
-            //string sql = sqlContext.sql;
-            //bool useClientSql = (string.IsNullOrWhiteSpace(sql) == false);
-            //bool useServerSql = (string.IsNullOrWhiteSpace(dbConfig.trimedSqlFileHome()) == false);
-            //if (useServerSql)
-            //{
-            //    String fullFileName = Path.Join(dbConfig.trimedSqlFileHome(), sqlFile.Trim());
-            //    if (string.IsNullOrEmpty(sqlFile) || string.IsNullOrEmpty(sqlId))
-            //    {
-            //        useServerSql = false;
-            //    }
-            //    else if (Path.Exists(dbConfig.trimedSqlFileHome()))
-            //    {
-            //        useServerSql = false;
-            //    }
-            //    else if (File.Exists(fullFileName))
-            //    {
-            //        useServerSql = false;
-            //    }
-            //}
-            //if (useClientSql || useServerSql)
-            //{
-            //    throw new ArgumentException("request.sqlContext sql or sqlFile+sqlId should be provided");
-            //}
-
             //check parameter.dataType
 
             //check parameter.direction
@@ -96,16 +69,25 @@ namespace MyREST
             //check parameter.format
         }
 
-        public void process(SqlRequestWrapper sqlRequestWrapper, ref SqlResultWrapper result)
-        {
-        }
-
         public SqlResultWrapper process(SqlRequestWrapper sqlRequestWrapper)
         {
-            //prepare response objects
             SqlResultWrapper result = new SqlResultWrapper();
             SqlResponse sqlResponse = new SqlResponse();
+            result.response = sqlResponse;
+            try
+            {
+                internalProcess(sqlRequestWrapper, result);
+            }
+            catch (Exception ex)
+            {
+                result.response.returnCode = 1;
+                result.response.errorMessage = ex.Message;
+            }
+            return result;
+        }
 
+        private void internalProcess(SqlRequestWrapper sqlRequestWrapper, SqlResultWrapper result)
+        {
             validateRequest(sqlRequestWrapper);
 
             SqlRequest request = sqlRequestWrapper.request;
@@ -147,33 +129,22 @@ namespace MyREST
 
             using (IDbConnection conn = new MySqlConnection(connectionString))
             {
-                try
+                if (sqlContext.isSelect)
                 {
-                    if (sqlContext.isSelect)
-                    {
-                        IEnumerable<dynamic> rows = conn.Query(sqlContext.sql);
-                        sqlResponse.affectedCount = 0;
-                        sqlResponse.rows = rows;
-                        sqlResponse.rowCount = rows.Count();
-                    }
-                    else
-                    {
-                        sqlResponse.affectedCount = conn.Execute(sqlContext.sql);
-                        sqlResponse.rows = null;
-                        sqlResponse.rowCount = 0;
-                    }
-                    sqlResponse.returnCode = 0;
-                    sqlResponse.errorMessage = "";
+                    IEnumerable<dynamic> rows = conn.Query(sqlContext.sql);
+                    result.response.affectedCount = 0;
+                    result.response.rows = rows;
+                    result.response.rowCount = rows.Count();
                 }
-                catch (Exception ex)
+                else
                 {
-                    sqlResponse.returnCode = 1;
-                    sqlResponse.errorMessage = ex.Message;
+                    result.response.affectedCount = conn.Execute(sqlContext.sql);
+                    result.response.rows = null;
+                    result.response.rowCount = 0;
                 }
             }
-
-            result.response = sqlResponse;
-            return result;
+            result.response.returnCode = 0;
+            result.response.errorMessage = "";
         }
     }
 }
