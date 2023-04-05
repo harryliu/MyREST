@@ -6,7 +6,7 @@
            from actor
 		]]>
 		<parameters>
-			<parameter name="@id" dataType="Int32"  direction="Input" format="" ></parameter>
+			
 		</parameters>
 	</sql>
 

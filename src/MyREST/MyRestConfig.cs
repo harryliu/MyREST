@@ -43,13 +43,6 @@ namespace MyREST
 
     public class DbConfig
     {
-        /*
-        dbType="mysql" # sqlite,mysql,mssql,postgresql,oracle
-        connectionString="Server=localhost;Port=3306;Database=sakila;Uid=root;Pwd=TOOR;"
-        route="/db1"
-        sqlFileHome=""
-
-         */
         public string name { get; set; }
         public string dbType { get; set; }
         public string connectionString { get; set; }
@@ -81,9 +74,9 @@ namespace MyREST
                 throw new Exception($"sqlFileHome should be assigned for database {name}");
             }
 
-            if (Path.Exists(sqlFileHome.Trim()) == false)
+            if (Path.Exists(trimedSqlFileHome()) == false)
             {
-                throw new Exception($"sqlFileHome path does not exist for database {name}");
+                throw new Exception($"sqlFileHome path {trimedSqlFileHome()} does not exist for database {name}");
             }
 
             String supportedDbType = "sqlite,mysql,mssql,postgresql,oracle";

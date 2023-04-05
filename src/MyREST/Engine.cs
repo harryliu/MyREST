@@ -1,9 +1,7 @@
 ﻿using Dapper;
 using Microsoft.AspNetCore.Mvc;
-using MyREST.Controllers;
 using MySql.Data.MySqlClient;
 using System.Data;
-using static MyREST.SystemConfig;
 
 namespace MyREST
 {
@@ -16,9 +14,9 @@ namespace MyREST
         private List<DbConfig> _dbConfigs;
         private XmlFileContainer _xmlFileContainer;
 
-        private readonly ILogger<QueryController> _logger;
+        private readonly ILogger<Controller> _logger;
 
-        public Engine(ILogger<QueryController> logger, IConfiguration configuration,
+        public Engine(ILogger<Controller> logger, IConfiguration configuration,
             GlobalConfig globalConfig, SystemConfig systemConfig, List<DbConfig> dbConfigs, XmlFileContainer xmlFileContainer)
         {
             _logger = logger;
@@ -98,8 +96,16 @@ namespace MyREST
             //check parameter.format
         }
 
+        public void process(SqlRequestWrapper sqlRequestWrapper, ref SqlResultWrapper result)
+        {
+        }
+
         public SqlResultWrapper process(SqlRequestWrapper sqlRequestWrapper)
         {
+            //prepare response objects
+            SqlResultWrapper result = new SqlResultWrapper();
+            SqlResponse sqlResponse = new SqlResponse();
+
             validateRequest(sqlRequestWrapper);
 
             SqlRequest request = sqlRequestWrapper.request;
@@ -119,15 +125,16 @@ namespace MyREST
             {
                 _xmlFileContainer.addFile(fullFileName);
                 var xmlFileParser = _xmlFileContainer.getParser(fullFileName);
-                if ((xmlFileParser != null) && (string.IsNullOrEmpty(sqlId) != false))
+                if ((xmlFileParser != null) && (string.IsNullOrWhiteSpace(sqlId) == false))
                 {
                     xmlFileParser.rebuildSqlContext(sqlContext, sqlId);
                 }
             }
+            if (_systemConfig.enableClientSql == false && sqlContext.isUseClientSql())
+            {
+                throw new ArgumentException("system does not enable clientSql ");
+            }
 
-            //prepare response objects
-            SqlResultWrapper result = new SqlResultWrapper();
-            SqlResponse sqlResponse = new SqlResponse();
             if (_globalConfig.system.writebackRequest)
             {
                 result.request = request; //writeback both sqlContext and traceId
@@ -164,6 +171,7 @@ namespace MyREST
                     sqlResponse.errorMessage = ex.Message;
                 }
             }
+
             result.response = sqlResponse;
             return result;
         }

@@ -9,11 +9,11 @@ using System.Configuration;
 using System.Data;
 using System.Text.RegularExpressions;
 
-namespace MyREST.Controllers
+namespace MyREST
 {
     [ApiController]
     [Route("[controller]")]
-    public class QueryController : ControllerBase
+    public class Controller : ControllerBase
     {
         private readonly IConfiguration _configuration;
 
@@ -24,10 +24,10 @@ namespace MyREST.Controllers
 
         private XmlFileContainer _xmlFileContainer;
 
-        private readonly ILogger<QueryController> _logger;
+        private readonly ILogger<Controller> _logger;
         private Engine _engine;
 
-        public QueryController(ILogger<QueryController> logger, IConfiguration configuration,
+        public Controller(ILogger<Controller> logger, IConfiguration configuration,
             GlobalConfig globalConfig, SystemConfig systemConfig, List<DbConfig> dbConfigs, XmlFileContainer xmlFileContainer)
 
         {
@@ -57,19 +57,6 @@ namespace MyREST.Controllers
             }
         }
 
-        private DbConfig getDbConfig(string name)
-        {
-            var matchedDbConfigs = from db in _dbConfigs where db.name.Trim() == name.Trim() select db;
-            if (matchedDbConfigs.Count() != 1)
-            {
-                throw new ArgumentException($"Expected one database named as {name}, but {matchedDbConfigs.Count()} found.");
-            }
-            else
-            {
-                return matchedDbConfigs.First();
-            }
-        }
-
         [HttpPost("/invoke")]
         public SqlResultWrapper invoke([FromBody] SqlRequestWrapper sqlRequestWrapper)
         {
@@ -77,7 +64,7 @@ namespace MyREST.Controllers
             return result;
         }
 
-        private SqlResultWrapper Get223(  SqlRequestWrapper sqlRequestWrapper)
+        private SqlResultWrapper Get223(SqlRequestWrapper sqlRequestWrapper)
         {
             string selectSql = """
                 select actor_id , first_name FirstName, last_name LastName, last_update LastUpdate

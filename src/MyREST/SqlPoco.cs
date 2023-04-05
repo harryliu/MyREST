@@ -58,9 +58,8 @@ namespace MyREST
         public string sqlId { get; set; } = "";
         public string sql { get; set; } = "";
         public List<SqlParameter> parameters { get; set; }
-        public bool requireTransaction { get; set; } = false;
 
-        private bool useClientSql = false;
+        private bool useClientSql = true; //default true
 
         public bool isUseClientSql()
         {

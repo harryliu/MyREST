@@ -1,6 +1,6 @@
 [system]
 enableSwagger=true 
-enableClientSql=true  #allow client to submit SQL statement. It only works in debug mode. 
+enableClientSql=false  #allow client to submit SQL statement. It only works in debug mode. 
 useResponseCompression=false
 hotReloadSqlFile=true
 writebackRequest=true # 在response中是否要回写完整的request
@@ -15,7 +15,7 @@ clientIpBlackList=["192.168.0.155","192.168.0.156"]
 name="db1"
 dbType="mysql" # sqlite,mysql,mssql,postgresql,oracle
 connectionString="Server=localhost;Port=3306;Database=sakila;Uid=root;Pwd=TOOR;"    
-sqlFileHome="d:/"   #sql file home
+sqlFileHome="D://my_workspace//source//src1//github//MyREST//MyREST//src//MyREST//bin//Debug//net7.0"   #sql file home
 
 [[databases]]
 name="db2"
