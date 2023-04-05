@@ -1,7 +1,7 @@
 [system]
 enableSwagger=true 
 enableClientSql=true  #allow client to submit SQL statement. It only works in debug mode. 
-useResponseCompression=false
+useResponseCompression=true
 hotReloadSqlFile=true
 writebackRequest=true # 在response中是否要回写完整的request
 clientAccessPolicies=["whiteList","blackList"]

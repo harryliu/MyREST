@@ -1,7 +1,4 @@
-﻿using System.Xml;
-using System.Xml.Serialization;
-
-namespace MyREST
+﻿namespace MyREST
 {
     public class XmlFileContainer
     {

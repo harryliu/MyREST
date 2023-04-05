@@ -6,7 +6,6 @@
            from actor where actor_id=1
 		]]>
 		<parameters>
-			
 		</parameters>
 	</sql>
 

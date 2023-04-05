@@ -1,10 +1,6 @@
-using Microsoft.Extensions.Options;
-using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.ResponseCompression;
 using Nett;
-using System;
-using Microsoft.Extensions.DependencyInjection;
-using static System.Net.Mime.MediaTypeNames;
-using Microsoft.AspNetCore.Builder;
+using System.IO.Compression;
 
 namespace MyREST
 {
@@ -24,7 +20,17 @@ namespace MyREST
             GlobalConfig globalConfig;
             AddConfiguration(builder.Services, out globalConfig);
 
+            if (globalConfig.system.useResponseCompression)
+            {
+                AddCompressionProvider(builder.Services);
+            }
+
             var app = builder.Build();
+
+            if (globalConfig.system.useResponseCompression)
+            {
+                app.UseResponseCompression();
+            }
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment() || globalConfig.system.enableSwagger)
@@ -37,6 +43,23 @@ namespace MyREST
             app.UseAuthorization();
             app.MapControllers();
             app.Run();
+        }
+
+        private static void AddCompressionProvider(IServiceCollection services)
+        {
+            services.AddResponseCompression(options =>
+            {
+                options.Providers.Add<GzipCompressionProvider>();
+                options.Providers.Add<BrotliCompressionProvider>();
+            });
+            services.Configure<BrotliCompressionProviderOptions>(options =>
+            {
+                options.Level = CompressionLevel.Fastest;
+            });
+            services.Configure<GzipCompressionProviderOptions>(options =>
+            {
+                options.Level = CompressionLevel.Fastest;
+            });
         }
 
         private static void AddConfiguration(IServiceCollection services, out GlobalConfig globalConfig)

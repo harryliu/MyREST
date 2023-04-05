@@ -1,13 +1,7 @@
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using MySql.Data.MySqlClient;
-using System.Collections.Generic;
-using System.ComponentModel.Design;
-using System.Configuration;
 using System.Data;
-using System.Text.RegularExpressions;
 
 namespace MyREST
 {
