@@ -98,11 +98,12 @@ content-type: application/json
 
 
 
+
 ==============================
-Test client side SQL 
+compress response
 ==============================
 POST https://localhost:7241/invoke HTTP/1.1
-content-type: application/json
+Content-type: application/json
 Accept-Encoding: br, gzip
 
 {
