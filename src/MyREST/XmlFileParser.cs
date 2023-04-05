@@ -45,9 +45,9 @@ namespace MyREST
         }
 
         /// <summary>
-        /// rebuild SqlContext, 包括:
-        /// (1)如果消息报文中设定了sqlFile和sqlId, 则 sql 语句优先使用服务器端
-        /// (2)sql的Parameters, 优先使用客户端的设置
+        /// rebuild SqlContext, including:
+        /// (1)If request contains sqlFile and sqlId values, the server side sql statement  will be used in priority
+        /// (2)The client side parameters always be used
         /// </summary>
         /// <param name="sqlContext"></param>
         /// <param name="sqlId"></param>
@@ -57,7 +57,7 @@ namespace MyREST
             XmlSql? xmlSql = getSqlNodeById(sqlId);
             if (xmlSql != null)
             {
-                sqlContext.fromClientSql = false;
+                sqlContext.setFromClientSql(false);
                 sqlContext.sql = xmlSql.text;
 
                 //first, merge client side parameters into server side
@@ -68,7 +68,7 @@ namespace MyREST
             }
             else
             {
-                sqlContext.fromClientSql = true;
+                sqlContext.setFromClientSql(true);
             }
             return sqlContext;
         }

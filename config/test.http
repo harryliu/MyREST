@@ -21,25 +21,32 @@ content-type: application/json
 https://localhost:7241/swagger/index.html
 https://localhost:3000/swagger/index.html
 
+
+POST https://localhost:7241/invoke HTTP/1.1
+content-type: application/json
+
 {
   "request": {
-    sqlContext:{
-        "db":"string",
-        "command": "string",
-        "sqlFile": "string",
-        "sqlId": "string",
-        "sql": "string",
-        "requireTransaction": true,
-        "parameters": [
-          {
-            "name": "string",
-            "value": "string",
-            "dataType": "string",
-            "direction": "string",
-            "format": "string"
-          }
-        ]
-    }     
-    "traceId": "string" 
+    "sqlContext": {
+      "db": "string",
+      "command": "string",
+      "sqlFile": "string",
+      "sqlId": "string",
+      "sql": "string",
+      "parameters": [
+        {
+          "name": "string",
+          "value": "string",
+          "dataType": "string",
+          "direction": "string",
+          "format": "string"
+        }
+      ],
+      "requireTransaction": true
+    },
+    "traceId": "string"
   }
 }
+
+   
+ 

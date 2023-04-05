@@ -59,7 +59,17 @@ namespace MyREST
         public string sql { get; set; }
         public List<SqlParameter> parameters { get; set; }
         public bool requireTransaction { get; set; } = false;
-        public bool fromClientSql { get; set; } = false;
+        private bool fromClientSql = false;
+
+        public bool isFromClientSql()
+        {
+            return fromClientSql;
+        }
+
+        public void setFromClientSql(bool value)
+        {
+            fromClientSql = value;
+        }
     }
 
     public class SqlRequest
