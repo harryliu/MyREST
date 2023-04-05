@@ -15,13 +15,13 @@ clientIpBlackList=["192.168.0.155","192.168.0.156"]
 name="db1"
 dbType="mysql" # sqlite,mysql,mssql,postgresql,oracle
 connectionString="Server=localhost;Port=3306;Database=sakila;Uid=root;Pwd=TOOR;"    
-sqlFileHome=""   #sql file home
+sqlFileHome="d:/"   #sql file home
 
 [[databases]]
 name="db2"
 dbType="mysql" # sqlite,mysql,mssql,postgresql,oracle
 connectionString="Server=localhost;Port=3306;Database=sakila;Uid=root;Pwd=TOOR;"    
-sqlFileHome=""   #sql file home
+sqlFileHome="d:/"   #sql file home
 
 
 [authaaaa]

@@ -1,4 +1,5 @@
 ﻿using Nett;
+using Org.BouncyCastle.Asn1.Mozilla;
 using System.Data;
 
 namespace MyREST
@@ -54,6 +55,11 @@ namespace MyREST
         public string connectionString { get; set; }
         public string sqlFileHome { get; set; }
 
+        public string trimedSqlFileHome()
+        {
+            return sqlFileHome.Trim();
+        }
+
         /// <summary>
         /// validate one single database configuration
         /// </summary>
@@ -67,7 +73,17 @@ namespace MyREST
 
             if (string.IsNullOrWhiteSpace(connectionString))
             {
-                throw new Exception("connectionString should be assigned");
+                throw new Exception($"connectionString should be assigned for database {name}");
+            }
+
+            if (string.IsNullOrWhiteSpace(sqlFileHome))
+            {
+                throw new Exception($"sqlFileHome should be assigned for database {name}");
+            }
+
+            if (Path.Exists(sqlFileHome.Trim()) == false)
+            {
+                throw new Exception($"sqlFileHome path does not exist for database {name}");
             }
 
             String supportedDbType = "sqlite,mysql,mssql,postgresql,oracle";

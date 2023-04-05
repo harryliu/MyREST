@@ -12,17 +12,19 @@ namespace MyREST
         private readonly IConfiguration _configuration;
 
         private GlobalConfig _globalConfig;
+        private SystemConfig _systemConfig;
         private List<DbConfig> _dbConfigs;
         private XmlFileContainer _xmlFileContainer;
 
         private readonly ILogger<QueryController> _logger;
 
         public Engine(ILogger<QueryController> logger, IConfiguration configuration,
-            GlobalConfig globalConfig, List<DbConfig> dbConfigs, XmlFileContainer xmlFileContainer)
+            GlobalConfig globalConfig, SystemConfig systemConfig, List<DbConfig> dbConfigs, XmlFileContainer xmlFileContainer)
         {
             _logger = logger;
             _configuration = configuration;
             _globalConfig = globalConfig;
+            _systemConfig = systemConfig;
             _dbConfigs = dbConfigs;
             _xmlFileContainer = xmlFileContainer;
         }
@@ -42,6 +44,7 @@ namespace MyREST
 
         private void validateRequest(SqlRequestWrapper sqlRequestWrapper)
         {
+            //check traceId
             if (String.IsNullOrWhiteSpace(sqlRequestWrapper.request.traceId))
             {
                 throw new ArgumentException("request.traceId required");
@@ -49,6 +52,7 @@ namespace MyREST
 
             var sqlContext = sqlRequestWrapper.request.sqlContext;
 
+            //check db
             string dbName = sqlContext.db;
             if (String.IsNullOrWhiteSpace(dbName))
             {
@@ -60,28 +64,48 @@ namespace MyREST
                 throw new ArgumentException($"database {dbName} not defined in configuration file");
             }
 
+            //check command
             string command = sqlContext.command;
             if (String.IsNullOrWhiteSpace(command))
             {
-                throw new ArgumentException("request.sqlContext.command should be 'Execute' or 'Query' ");
+                throw new ArgumentException("request.sqlContext.command should be execute or query ");
             }
             List<String> commandCandidates = new List<string>();
-            commandCandidates.Add("Execute");
-            commandCandidates.Add("Query");
+            commandCandidates.Add("execute");
+            commandCandidates.Add("query");
             var matchedCommands = from item in commandCandidates
-                                  where item.ToUpper() == command.ToUpper()
+                                  where item.ToLower() == command.ToLower().Trim()
                                   select item;
             if (matchedCommands.Count() != 1)
             {
-                throw new ArgumentException("request.sqlContext.command should be 'Execute' or 'Query' ");
+                throw new ArgumentException("request.sqlContext.command should be execute or query ");
             }
 
+            //check sqlFile/sqlId/sql
             string sqlFile = sqlContext.sqlFile;
             string sqlId = sqlContext.sqlId;
             string sql = sqlContext.sql;
-            if (string.IsNullOrWhiteSpace(sql) && (string.IsNullOrEmpty(sqlFile) || string.IsNullOrEmpty(sqlId)))
+            bool useClientSql = (string.IsNullOrWhiteSpace(sql) == false);
+            bool useServerSql = (string.IsNullOrWhiteSpace(dbConfig.trimedSqlFileHome()) == false);
+            if (useServerSql)
             {
-                throw new ArgumentException("Neither request.sqlContext.sql nor sqlContext.sqlFile+sqlContext.sqlId supplied");
+                String fullFileName = Path.Join(dbConfig.trimedSqlFileHome(), sqlFile.Trim());
+                if (string.IsNullOrEmpty(sqlFile) || string.IsNullOrEmpty(sqlId))
+                {
+                    useServerSql = false;
+                }
+                else if (System.IO.Path.Exists(dbConfig.trimedSqlFileHome()))
+                {
+                    useServerSql = false;
+                }
+                else if (System.IO.File.Exists(fullFileName))
+                {
+                    useServerSql = false;
+                }
+            }
+            if (useClientSql || useServerSql)
+            {
+                throw new ArgumentException("request.sqlContext sql or sqlFile+sqlId should be provided");
             }
 
             //check parameter.dataType
@@ -99,43 +123,63 @@ namespace MyREST
             string traceId = request.traceId;
             SqlContext sqlContext = request.sqlContext;
             string dbName = sqlContext.db;
-            if (String.IsNullOrWhiteSpace(dbName))
-            {
-                throw new ArgumentException("request.sqlContext.db required");
-            }
             DbConfig dbConfig = getDbConfig(dbName);
             string connectionString = dbConfig.connectionString;
+            string dbType = dbConfig.dbType;
+            string sqlFileHome = dbConfig.trimedSqlFileHome();
             string sqlFile = sqlContext.sqlFile;
             string sqlId = sqlContext.sqlId;
-            if (string.IsNullOrWhiteSpace(sqlFile) == false && string.IsNullOrEmpty(sqlId) == false)
+
+            //rebuild SqlContext
+            String fullFileName = Path.Join(sqlFileHome, sqlFile.Trim());
+            if (File.Exists(fullFileName))
             {
-                string fullFileName = System.IO.Path.Join(dbConfig.sqlFileHome, sqlFile);
-                _xmlFileContainer.AddFile(fullFileName);
+                _xmlFileContainer.addFile(fullFileName);
                 var xmlFileParser = _xmlFileContainer.getParser(fullFileName);
-                xmlFileParser.rebuildSqlContext(sqlContext, sqlId);
+                if (xmlFileParser != null)
+                {
+                    xmlFileParser.rebuildSqlContext(sqlContext, sqlId);
+                }
             }
 
+            //prepare response objects
             SqlResultWrapper result = new SqlResultWrapper();
             SqlResponse sqlResponse = new SqlResponse();
-
             if (_globalConfig.system.writebackRequest)
             {
                 result.request = request; //writeback both sqlContext and traceId
             }
             else
             {
-                result.request.traceId = traceId; //just writeback the traceId
+                result.request.traceId = traceId; //just only writeback traceId
             }
 
             using (IDbConnection conn = new MySqlConnection(connectionString))
             {
-                Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
-                IEnumerable<dynamic> rows = conn.Query("");
-                sqlResponse.rowCount = 100;
-                sqlResponse.affectedCount = 200;
-                sqlResponse.returnCode = 0;
-                sqlResponse.errorMessage = "aaaaaaaaaa";
-                sqlResponse.rows = rows;
+                try
+                {
+                    if (sqlContext.command.ToLower().Trim() == "query")
+                    {
+                        IEnumerable<dynamic> rows = conn.Query(sqlContext.sql);
+                        sqlResponse.affectedCount = 0;
+                        sqlResponse.rows = rows;
+                        sqlResponse.rowCount = rows.Count();
+                        sqlResponse.errorMessage = "aaaaaaaaaa";
+                    }
+                    else
+                    {
+                        sqlResponse.affectedCount = conn.Execute(sqlContext.sql);
+                        sqlResponse.rows = null;
+                        sqlResponse.rowCount = 0;
+                    }
+                    sqlResponse.returnCode = 0;
+                    sqlResponse.errorMessage = "";
+                }
+                catch (Exception ex)
+                {
+                    sqlResponse.returnCode = 1;
+                    sqlResponse.errorMessage = ex.Message;
+                }
             }
             result.response = sqlResponse;
             return result;

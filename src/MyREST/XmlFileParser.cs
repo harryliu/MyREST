@@ -26,6 +26,23 @@ namespace MyREST
             return node;
         }
 
+        private XmlSql? getXmlSqlById(string sqlId)
+        {
+            if (_xmlFileRoot != null)
+            {
+                var xmlSqls = from sql in _xmlFileRoot.sqlList where sql.id.Trim() == sqlId.Trim() select sql;
+                if (xmlSqls.Count() != 1)
+                {
+                    throw new ArgumentException($"Expected one Sql node, but {xmlSqls.Count()} found.");
+                }
+                else
+                {
+                    return xmlSqls.First();
+                }
+            }
+            return null;
+        }
+
         /// <summary>
         /// parse the whole Sql file into XmlFileRoot object
         /// </summary>
@@ -46,7 +63,7 @@ namespace MyREST
 
         /// <summary>
         /// rebuild SqlContext, including:
-        /// (1)If request contains sqlFile and sqlId values, the server side sql statement  will be used in priority
+        /// (1)If request sqlFile and sqlId exists, the server side sql statement will be used in priority
         /// (2)The client side parameters always be used
         /// </summary>
         /// <param name="sqlContext"></param>
@@ -54,10 +71,10 @@ namespace MyREST
         /// <returns></returns>
         public SqlContext rebuildSqlContext(SqlContext sqlContext, string sqlId)
         {
-            XmlSql? xmlSql = getSqlNodeById(sqlId);
+            XmlSql? xmlSql = getXmlSqlById(sqlId);
             if (xmlSql != null)
             {
-                sqlContext.setFromClientSql(false);
+                sqlContext.setUseClientSql(false);
                 sqlContext.sql = xmlSql.text;
 
                 //first, merge client side parameters into server side
@@ -68,7 +85,7 @@ namespace MyREST
             }
             else
             {
-                sqlContext.setFromClientSql(true);
+                sqlContext.setUseClientSql(true);
             }
             return sqlContext;
         }
@@ -141,23 +158,6 @@ namespace MyREST
                     //nothing
                 }
             }
-        }
-
-        public XmlSql? getSqlNodeById(string sqlId)
-        {
-            if (_xmlFileRoot != null)
-            {
-                var xmlSqls = from sql in _xmlFileRoot.sqlList where sql.id.Trim() == sqlId.Trim() select sql;
-                if (xmlSqls.Count() != 1)
-                {
-                    throw new ArgumentException($"Expected one Sql node, but {xmlSqls.Count()} found.");
-                }
-                else
-                {
-                    return xmlSqls.First();
-                }
-            }
-            return null;
         }
     }
 }

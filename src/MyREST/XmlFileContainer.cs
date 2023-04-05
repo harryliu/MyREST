@@ -14,16 +14,12 @@ namespace MyREST
             xmlParserDictionary = new Dictionary<string, XmlFileParser>();
         }
 
-        public void AddFile(string fullFileName)
+        public void addFile(string fullFileName)
         {
             if (xmlParserDictionary.ContainsKey(fullFileName) == false)
             {
-                bool autoParse = true;
+                bool autoParse = (_hotReload == false);
                 var parser = new XmlFileParser(fullFileName, autoParse);
-                if (parser == null)
-                {
-                    throw new Exception("Cannot ");
-                }
                 xmlParserDictionary.Add(fullFileName, parser);
             }
         }

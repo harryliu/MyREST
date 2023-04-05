@@ -59,16 +59,16 @@ namespace MyREST
         public string sql { get; set; }
         public List<SqlParameter> parameters { get; set; }
         public bool requireTransaction { get; set; } = false;
-        private bool fromClientSql = false;
+        private bool useClientSql = false;
 
-        public bool isFromClientSql()
+        public bool isUseClientSql()
         {
-            return fromClientSql;
+            return useClientSql;
         }
 
-        public void setFromClientSql(bool value)
+        public void setUseClientSql(bool value)
         {
-            fromClientSql = value;
+            useClientSql = value;
         }
     }
 
