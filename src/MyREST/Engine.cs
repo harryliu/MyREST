@@ -64,49 +64,32 @@ namespace MyREST
                 throw new ArgumentException($"database {dbName} not defined in configuration file");
             }
 
-            //check command
-            string command = sqlContext.command;
-            if (String.IsNullOrWhiteSpace(command))
-            {
-                throw new ArgumentException("request.sqlContext.command should be execute or query ");
-            }
-            List<String> commandCandidates = new List<string>();
-            commandCandidates.Add("execute");
-            commandCandidates.Add("query");
-            var matchedCommands = from item in commandCandidates
-                                  where item.ToLower() == command.ToLower().Trim()
-                                  select item;
-            if (matchedCommands.Count() != 1)
-            {
-                throw new ArgumentException("request.sqlContext.command should be execute or query ");
-            }
-
-            //check sqlFile/sqlId/sql
-            string sqlFile = sqlContext.sqlFile;
-            string sqlId = sqlContext.sqlId;
-            string sql = sqlContext.sql;
-            bool useClientSql = (string.IsNullOrWhiteSpace(sql) == false);
-            bool useServerSql = (string.IsNullOrWhiteSpace(dbConfig.trimedSqlFileHome()) == false);
-            if (useServerSql)
-            {
-                String fullFileName = Path.Join(dbConfig.trimedSqlFileHome(), sqlFile.Trim());
-                if (string.IsNullOrEmpty(sqlFile) || string.IsNullOrEmpty(sqlId))
-                {
-                    useServerSql = false;
-                }
-                else if (System.IO.Path.Exists(dbConfig.trimedSqlFileHome()))
-                {
-                    useServerSql = false;
-                }
-                else if (System.IO.File.Exists(fullFileName))
-                {
-                    useServerSql = false;
-                }
-            }
-            if (useClientSql || useServerSql)
-            {
-                throw new ArgumentException("request.sqlContext sql or sqlFile+sqlId should be provided");
-            }
+            ////check sqlFile/sqlId/sql
+            //string sqlFile = sqlContext.sqlFile;
+            //string sqlId = sqlContext.sqlId;
+            //string sql = sqlContext.sql;
+            //bool useClientSql = (string.IsNullOrWhiteSpace(sql) == false);
+            //bool useServerSql = (string.IsNullOrWhiteSpace(dbConfig.trimedSqlFileHome()) == false);
+            //if (useServerSql)
+            //{
+            //    String fullFileName = Path.Join(dbConfig.trimedSqlFileHome(), sqlFile.Trim());
+            //    if (string.IsNullOrEmpty(sqlFile) || string.IsNullOrEmpty(sqlId))
+            //    {
+            //        useServerSql = false;
+            //    }
+            //    else if (Path.Exists(dbConfig.trimedSqlFileHome()))
+            //    {
+            //        useServerSql = false;
+            //    }
+            //    else if (File.Exists(fullFileName))
+            //    {
+            //        useServerSql = false;
+            //    }
+            //}
+            //if (useClientSql || useServerSql)
+            //{
+            //    throw new ArgumentException("request.sqlContext sql or sqlFile+sqlId should be provided");
+            //}
 
             //check parameter.dataType
 
@@ -136,7 +119,7 @@ namespace MyREST
             {
                 _xmlFileContainer.addFile(fullFileName);
                 var xmlFileParser = _xmlFileContainer.getParser(fullFileName);
-                if (xmlFileParser != null)
+                if ((xmlFileParser != null) && (string.IsNullOrEmpty(sqlId) != false))
                 {
                     xmlFileParser.rebuildSqlContext(sqlContext, sqlId);
                 }
@@ -151,6 +134,7 @@ namespace MyREST
             }
             else
             {
+                result.request = new SqlRequest();
                 result.request.traceId = traceId; //just only writeback traceId
             }
 
@@ -158,13 +142,12 @@ namespace MyREST
             {
                 try
                 {
-                    if (sqlContext.command.ToLower().Trim() == "query")
+                    if (sqlContext.isSelect)
                     {
                         IEnumerable<dynamic> rows = conn.Query(sqlContext.sql);
                         sqlResponse.affectedCount = 0;
                         sqlResponse.rows = rows;
                         sqlResponse.rowCount = rows.Count();
-                        sqlResponse.errorMessage = "aaaaaaaaaa";
                     }
                     else
                     {

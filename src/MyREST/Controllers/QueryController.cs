@@ -1,8 +1,11 @@
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MySql.Data.MySqlClient;
+using System.Collections.Generic;
 using System.ComponentModel.Design;
+using System.Configuration;
 using System.Data;
 using System.Text.RegularExpressions;
 
@@ -13,23 +16,28 @@ namespace MyREST.Controllers
     public class QueryController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        private readonly string _connectionString;
 
         private GlobalConfig _globalConfig;
+
+        private SystemConfig _systemConfig;
         private List<DbConfig> _dbConfigs;
+
         private XmlFileContainer _xmlFileContainer;
 
         private readonly ILogger<QueryController> _logger;
+        private Engine _engine;
 
         public QueryController(ILogger<QueryController> logger, IConfiguration configuration,
-            GlobalConfig globalConfig, List<DbConfig> dbConfigs, XmlFileContainer xmlFileContainer)
+            GlobalConfig globalConfig, SystemConfig systemConfig, List<DbConfig> dbConfigs, XmlFileContainer xmlFileContainer)
+
         {
             _logger = logger;
             _configuration = configuration;
-            _connectionString = _configuration.GetConnectionString("mydb1");
             _globalConfig = globalConfig;
+            _systemConfig = systemConfig;
             _dbConfigs = dbConfigs;
             _xmlFileContainer = xmlFileContainer;
+            _engine = new Engine(_logger, _configuration, _globalConfig, _systemConfig, _dbConfigs, _xmlFileContainer);
         }
 
         [HttpGet("/test")]
@@ -40,8 +48,8 @@ namespace MyREST.Controllers
                 from actor
                 """;
             ;
-
-            using (IDbConnection conn = new MySqlConnection(_connectionString))
+            string connectionString = "Server=localhost;Port=3306;Database=sakila;Uid=root;Pwd=TOOR;";
+            using (IDbConnection conn = new MySqlConnection(connectionString))
             {
                 //conn.ExecuteReader(sql).GetSchemaTable()
                 Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
@@ -63,7 +71,13 @@ namespace MyREST.Controllers
         }
 
         [HttpPost("/invoke")]
-        public SqlResultWrapper Get22([FromBody] SqlRequestWrapper sqlRequestWrapper)
+        public SqlResultWrapper invoke([FromBody] SqlRequestWrapper sqlRequestWrapper)
+        {
+            SqlResultWrapper result = _engine.process(sqlRequestWrapper);
+            return result;
+        }
+
+        private SqlResultWrapper Get223(  SqlRequestWrapper sqlRequestWrapper)
         {
             string selectSql = """
                 select actor_id , first_name FirstName, last_name LastName, last_update LastUpdate
@@ -86,7 +100,8 @@ namespace MyREST.Controllers
                 result.request.traceId = traceId; //just writeback the traceId
             }
 
-            using (IDbConnection conn = new MySqlConnection(_connectionString))
+            string connectionString = "Server=localhost;Port=3306;Database=sakila;Uid=root;Pwd=TOOR;";
+            using (IDbConnection conn = new MySqlConnection(connectionString))
             {
                 Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
                 IEnumerable<dynamic> rows = conn.Query(selectSql);

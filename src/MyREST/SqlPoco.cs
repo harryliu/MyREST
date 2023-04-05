@@ -52,13 +52,14 @@ namespace MyREST
 
     public class SqlContext
     {
-        public string db { get; set; }
-        public string command { get; set; } //execute/query
-        public string sqlFile { get; set; }
-        public string sqlId { get; set; }
-        public string sql { get; set; }
+        public string db { get; set; } = "";
+        public bool isSelect { get; set; } = true;
+        public string sqlFile { get; set; } = "";
+        public string sqlId { get; set; } = "";
+        public string sql { get; set; } = "";
         public List<SqlParameter> parameters { get; set; }
         public bool requireTransaction { get; set; } = false;
+
         private bool useClientSql = false;
 
         public bool isUseClientSql()

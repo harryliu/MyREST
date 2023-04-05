@@ -17,14 +17,14 @@ namespace MyREST
             }
         }
 
-        public XmlNode? getSqlXmlNode(string sqlId)
-        {
-            XmlDocument xmlDoc = new XmlDocument();
-            xmlDoc.Load(_fullFileName);
-            string xmlPath = $"/root/sql[@id='{sqlId}']";
-            XmlNode? node = xmlDoc.SelectSingleNode(xmlPath);
-            return node;
-        }
+        //public XmlNode? getSqlXmlNode(string sqlId)
+        //{
+        //    XmlDocument xmlDoc = new XmlDocument();
+        //    xmlDoc.Load(_fullFileName);
+        //    string xmlPath = $"/root/sql[@id='{sqlId}']";
+        //    XmlNode? node = xmlDoc.SelectSingleNode(xmlPath);
+        //    return node;
+        //}
 
         private XmlSql? getXmlSqlById(string sqlId)
         {
@@ -63,8 +63,8 @@ namespace MyREST
 
         /// <summary>
         /// rebuild SqlContext, including:
-        /// (1)If request sqlFile and sqlId exists, the server side sql statement will be used in priority
-        /// (2)The client side parameters always be used
+        /// (1)for Sql statement, the server side sql statement will be used in priority
+        /// (2)for Sql parameters, the client side parameters will be used in priority
         /// </summary>
         /// <param name="sqlContext"></param>
         /// <param name="sqlId"></param>
@@ -75,12 +75,14 @@ namespace MyREST
             if (xmlSql != null)
             {
                 sqlContext.setUseClientSql(false);
+
+                //use serverSql in priority
                 sqlContext.sql = xmlSql.text;
 
-                //first, merge client side parameters into server side
+                //firstly, merge client side parameters into server side
                 mergeClientParamToServer(sqlContext, xmlSql);
 
-                //merge, merge server side parameters into client side
+                //secondly, merge server side parameters into client side
                 mergeServerParamToClient(sqlContext, xmlSql);
             }
             else
