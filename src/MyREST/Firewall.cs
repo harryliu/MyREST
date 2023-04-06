@@ -9,7 +9,7 @@ namespace MyREST
     public class Firewall
     {
         private readonly IConfiguration _configuration;
-        private readonly ILogger<Controller> _logger;
+        private readonly ILogger<Firewall>? _logger;
         private GlobalConfig _globalConfig;
         private SystemConfig _systemConfig;
         private bool _hasIpWhiteList;
@@ -19,7 +19,7 @@ namespace MyREST
         private List<Glob> _clientIpBlackGlobList;
         private List<String> _clientIpBlackList;
 
-        public Firewall(ILogger<Controller> logger, IConfiguration configuration,
+        public Firewall(ILogger<Firewall>? logger, IConfiguration configuration,
             GlobalConfig globalConfig, SystemConfig systemConfig)
         {
             _logger = logger;

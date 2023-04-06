@@ -14,9 +14,9 @@ namespace MyREST
         private XmlFileContainer _xmlFileContainer;
         private Firewall _firewall;
 
-        private readonly ILogger<Controller> _logger;
+        private readonly ILogger<Engine>? _logger;
 
-        public Engine(ILogger<Controller> logger, IConfiguration configuration,
+        public Engine(ILogger<Engine>? logger, IConfiguration configuration,
             GlobalConfig globalConfig, SystemConfig systemConfig, List<DbConfig> dbConfigs, XmlFileContainer xmlFileContainer, Firewall firewall
             )
         {
@@ -81,13 +81,18 @@ namespace MyREST
                 string firewallMsg;
                 if (_firewall.pipelineCheck(clientIpAddress, out firewallMsg) == false)
                 {
-                    throw new Exception(firewallMsg);
+                    throw new FirewallException(firewallMsg);
                 }
                 internalProcess(sqlRequestWrapper, result);
             }
+            catch (FirewallException ex)
+            {
+                result.response.returnCode = ex.getErrorCode();
+                result.response.errorMessage = ex.Message;
+            }
             catch (Exception ex)
             {
-                result.response.returnCode = 2;
+                result.response.returnCode = 1;
                 result.response.errorMessage = ex.Message;
             }
             return result;
@@ -121,7 +126,7 @@ namespace MyREST
             }
             if (_systemConfig.enableClientSql == false && sqlContext.isUseClientSql())
             {
-                throw new ArgumentException("system does not enable clientSql ");
+                throw new ArgumentException("system does not allow clientSql ");
             }
 
             if (_globalConfig.system.writebackRequest)

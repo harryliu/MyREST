@@ -90,19 +90,25 @@ namespace MyREST
             }
             DbConfig.validate(dbConfigList);
 
-            //add Toml configuration objects to DI
+            //register Toml configuration objects into DI
             services.AddSingleton<SystemConfig>(systemConfig);
             services.AddSingleton<GlobalConfig>(globalConfig);
             services.AddSingleton<List<DbConfig>>(dbConfigList);
 
-            //add server side sql XmlFileContainer to DI
+            //register server side sql XmlFileContainer into DI
             var hotReload = systemConfig.hotReloadSqlFile;
             XmlFileContainer xmlFileContainer = new XmlFileContainer(hotReload);
             services.AddSingleton<XmlFileContainer>(xmlFileContainer);
 
-            Firewall firewall = new Firewall(null, configuration, globalConfig, systemConfig);
+            //register firewall object
+            var provider = services.BuildServiceProvider();
+            var firewallLogger = provider.GetService<ILogger<Firewall>>();
+            Firewall firewall = new Firewall(firewallLogger, configuration, globalConfig, systemConfig);
             services.AddSingleton<Firewall>(firewall);
-            Engine engine = new Engine(null, configuration, globalConfig, systemConfig, dbConfigList, xmlFileContainer, firewall);
+
+            //register engine object
+            var engineLLogger = provider.GetService<ILogger<Engine>>();
+            Engine engine = new Engine(engineLLogger, configuration, globalConfig, systemConfig, dbConfigList, xmlFileContainer, firewall);
             services.AddSingleton<Engine>(engine);
         }
     }

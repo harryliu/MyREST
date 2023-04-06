@@ -6,7 +6,7 @@ hotReloadSqlFile=true
 writebackRequest=true # 在response中是否要回写完整的request
 firewallStrategies=["clientIpWhiteList","clientIpBlackList"]
 clientIpWhiteList=["127.0.0.1","192.168.0.1"]
-clientIpBlackList=["192.168.0.155","192.168.0.156"]
+clientIpBlackList=["127.0.0.1","192.168.0.156"]
 
 
 
