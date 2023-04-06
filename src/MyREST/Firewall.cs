@@ -2,6 +2,7 @@
 using System.Net;
 using Microsoft.Extensions.Logging;
 using System.Configuration;
+using GlobExpressions;
 
 namespace MyREST
 {
@@ -14,6 +15,8 @@ namespace MyREST
         private bool _hasIpWhiteList;
         private bool _hasIpBlackList;
         private List<String> _clientIpWhiteList;
+        private List<Glob> _clientIpWhiteGlobList;
+        private List<Glob> _clientIpBlackGlobList;
         private List<String> _clientIpBlackList;
 
         public Firewall(ILogger<Controller> logger, IConfiguration configuration,
@@ -33,50 +36,99 @@ namespace MyREST
             _hasIpBlackList = strategyList.Contains("clientIpBlackList");
 
             _clientIpWhiteList = new List<string>();
+            _clientIpWhiteGlobList = new List<Glob>();
             foreach (var item in _systemConfig.clientIpWhiteList)
             {
-                _clientIpWhiteList.Add(item);
+                _clientIpWhiteList.Add(item.Trim());
+                _clientIpWhiteGlobList.Add(new Glob(item.Trim()));
             }
+
             _clientIpBlackList = new List<string>();
+            _clientIpBlackGlobList = new List<Glob>();
             foreach (var item in _systemConfig.clientIpBlackList)
             {
-                _clientIpBlackList.Add(item);
+                _clientIpBlackList.Add(item.Trim());
+                _clientIpBlackGlobList.Add(new Glob(item.Trim()));
             }
         }
 
-        public bool pipelineCheck(string clientIpAddress, out string checkMessage)
+        public bool pipelineCheck(string? clientIpAddress, out string checkMessage)
         {
+            //initial
+            bool result = true;
+            checkMessage = "Firewall check bypassed ";
+            if (string.IsNullOrEmpty(clientIpAddress))
+            {
+                return result;
+            }
+            if (result == false)
+            {
+                return result;
+            }
+
             //firstly, check whiteList
+            if (_hasIpWhiteList == false)
+            {
+                result = true;
+                checkMessage = "Firewall clientIpWhiteList check bypassed";
+            }
+            else
+            {
+                bool matched = false;
+                foreach (var glob in _clientIpWhiteGlobList)
+                {
+                    if (glob.IsMatch(clientIpAddress))
+                    {
+                        matched = true;
+                        break;
+                    }
+                }
+                if (matched)
+                {
+                    result = true;
+                    checkMessage = "Firewall clientIpWhiteList check passed";
+                }
+                else
+                {
+                    result = false;
+                    checkMessage = "Firewall clientIpWhiteList check failed";
+                }
+            }
+            if (result == false)
+            {
+                return result;
+            }
 
             //secondly, check blackList
-        }
-
-        // Check if IP Address is Allowed
-        private bool IsAllowedIPAddress(IPAddress ipAddress)
-        {
-            // Implement your own logic to check if the IP Address is allowed
-            return true; // For now, return true to allow all IP addresses
-        }
-
-        // Implement Firewall
-        private void ImplementFirewall(Socket clientSocket)
-        {
-            IPAddress ipAddress = ((IPEndPoint)clientSocket.RemoteEndPoint).Address;
-            if (!IsAllowedIPAddress(ipAddress))
+            if (_hasIpBlackList == false)
             {
-                clientSocket.Close();
+                result = true;
+                checkMessage = "Firewall clientIpBlackList check bypassed";
             }
-        }
-
-        // Accept Incoming Connections
-        private void AcceptIncomingConnection(Socket serverSocket)
-        {
-            while (true)
+            else
             {
-                Socket clientSocket = serverSocket.Accept();
-                ImplementFirewall(clientSocket);
-                // Process Incoming Request
+                bool matched = false;
+                foreach (var glob in _clientIpBlackGlobList)
+                {
+                    if (glob.IsMatch(clientIpAddress))
+                    {
+                        matched = true;
+                        break;
+                    }
+                }
+                if (matched)
+                {
+                    result = false;
+                    checkMessage = "Firewall clientIpBlackList check failed";
+                }
+                else
+                {
+                    result = true;
+                    checkMessage = "Firewall clientIpBlackList check passed";
+                }
             }
+
+            return result;
         }
     }
 }

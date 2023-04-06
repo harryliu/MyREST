@@ -12,11 +12,13 @@ namespace MyREST
         private SystemConfig _systemConfig;
         private List<DbConfig> _dbConfigs;
         private XmlFileContainer _xmlFileContainer;
+        private Firewall _firewall;
 
         private readonly ILogger<Controller> _logger;
 
         public Engine(ILogger<Controller> logger, IConfiguration configuration,
-            GlobalConfig globalConfig, SystemConfig systemConfig, List<DbConfig> dbConfigs, XmlFileContainer xmlFileContainer)
+            GlobalConfig globalConfig, SystemConfig systemConfig, List<DbConfig> dbConfigs, XmlFileContainer xmlFileContainer, Firewall firewall
+            )
         {
             _logger = logger;
             _configuration = configuration;
@@ -24,6 +26,7 @@ namespace MyREST
             _systemConfig = systemConfig;
             _dbConfigs = dbConfigs;
             _xmlFileContainer = xmlFileContainer;
+            _firewall = firewall;
         }
 
         private DbConfig getDbConfig(string dbName)
@@ -68,18 +71,23 @@ namespace MyREST
             //check parameter.format
         }
 
-        public SqlResultWrapper process(SqlRequestWrapper sqlRequestWrapper)
+        public SqlResultWrapper process(String? clientIpAddress, SqlRequestWrapper sqlRequestWrapper)
         {
             SqlResultWrapper result = new SqlResultWrapper();
             SqlResponse sqlResponse = new SqlResponse();
             result.response = sqlResponse;
             try
             {
+                string firewallMsg;
+                if (_firewall.pipelineCheck(clientIpAddress, out firewallMsg) == false)
+                {
+                    throw new Exception(firewallMsg);
+                }
                 internalProcess(sqlRequestWrapper, result);
             }
             catch (Exception ex)
             {
-                result.response.returnCode = 1;
+                result.response.returnCode = 2;
                 result.response.errorMessage = ex.Message;
             }
             return result;

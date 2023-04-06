@@ -75,8 +75,8 @@ namespace MyREST
 
             //read system configuration in toml file
             globalConfig = Toml.ReadFile<GlobalConfig>(tomlFile);
-            SystemConfig systomConfig = globalConfig.system;
-            systomConfig.validate();
+            SystemConfig systemConfig = globalConfig.system;
+            systemConfig.validate();
 
             //read db configurations in toml file
             TomlTableArray databaseTable = Toml.ReadFile(tomlFile).Get<TomlTableArray>("databases");
@@ -91,14 +91,19 @@ namespace MyREST
             DbConfig.validate(dbConfigList);
 
             //add Toml configuration objects to DI
-            services.AddSingleton<SystemConfig>(systomConfig);
+            services.AddSingleton<SystemConfig>(systemConfig);
             services.AddSingleton<GlobalConfig>(globalConfig);
             services.AddSingleton<List<DbConfig>>(dbConfigList);
 
             //add server side sql XmlFileContainer to DI
-            var hotReload = systomConfig.hotReloadSqlFile;
+            var hotReload = systemConfig.hotReloadSqlFile;
             XmlFileContainer xmlFileContainer = new XmlFileContainer(hotReload);
             services.AddSingleton<XmlFileContainer>(xmlFileContainer);
+
+            Firewall firewall = new Firewall(null, configuration, globalConfig, systemConfig);
+            services.AddSingleton<Firewall>(firewall);
+            Engine engine = new Engine(null, configuration, globalConfig, systemConfig, dbConfigList, xmlFileContainer, firewall);
+            services.AddSingleton<Engine>(engine);
         }
     }
 }

@@ -25,17 +25,17 @@ namespace MyREST
 
         public void validate()
         {
-            HashSet<string> builtinPolicies = new HashSet<string>() { "clientIpWhiteList", "clientIpBlackList" };
-            HashSet<string> userPolicies = new HashSet<string>();
+            HashSet<string> builtinStrategies = new HashSet<string>() { "clientIpWhiteList", "clientIpBlackList" };
+            HashSet<string> userStrategies = new HashSet<string>();
             foreach (var item in firewallStrategies)
             {
-                userPolicies.Add(item);
+                userStrategies.Add(item);
             }
 
-            var minusSet = userPolicies.Except(builtinPolicies);
+            var minusSet = userStrategies.Except(builtinStrategies);
             if (minusSet.Count() > 0)
             {
-                throw new Exception("invalid clientAccessPolicies. It can only contains clientIpWhiteList and clientIpBlackList ");
+                throw new Exception("invalid firewallStrategies. It can only contains clientIpWhiteList and clientIpBlackList ");
             }
         }
     }
