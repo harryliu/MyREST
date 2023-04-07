@@ -12,12 +12,12 @@ namespace MyREST
         private readonly ILogger<Firewall>? _logger;
         private GlobalConfig _globalConfig;
         private SystemConfig _systemConfig;
-        private bool _hasIpWhiteList;
-        private bool _hasIpBlackList;
-        private List<String> _clientIpWhiteList;
-        private List<Glob> _clientIpWhiteGlobList;
-        private List<Glob> _clientIpBlackGlobList;
-        private List<String> _clientIpBlackList;
+        private bool _needCheckIpWhiteList;
+        private bool _needCheckIpBlackList;
+        private List<String> _ipWhiteList;
+        private List<Glob> _IpWhiteGlobList;
+        private List<Glob> _ipBlackGlobList;
+        private List<String> _ipBlackList;
 
         public Firewall(ILogger<Firewall>? logger, IConfiguration configuration,
             GlobalConfig globalConfig, SystemConfig systemConfig)
@@ -27,29 +27,23 @@ namespace MyREST
             _globalConfig = globalConfig;
             _systemConfig = systemConfig;
 
-            List<string> strategyList = new List<string>();
-            foreach (var item in _systemConfig.firewallStrategies)
+            _ipWhiteList = new List<string>();
+            _IpWhiteGlobList = new List<Glob>();
+            foreach (var item in _systemConfig.ipWhiteList)
             {
-                strategyList.Add(item);
+                _ipWhiteList.Add(item.Trim());
+                _IpWhiteGlobList.Add(new Glob(item.Trim()));
             }
-            _hasIpWhiteList = strategyList.Contains("clientIpWhiteList");
-            _hasIpBlackList = strategyList.Contains("clientIpBlackList");
+            _needCheckIpWhiteList = (systemConfig.enableIpWhiteList && _ipWhiteList.Count() > 0);
 
-            _clientIpWhiteList = new List<string>();
-            _clientIpWhiteGlobList = new List<Glob>();
-            foreach (var item in _systemConfig.clientIpWhiteList)
+            _ipBlackList = new List<string>();
+            _ipBlackGlobList = new List<Glob>();
+            foreach (var item in _systemConfig.ipBlackList)
             {
-                _clientIpWhiteList.Add(item.Trim());
-                _clientIpWhiteGlobList.Add(new Glob(item.Trim()));
+                _ipBlackList.Add(item.Trim());
+                _ipBlackGlobList.Add(new Glob(item.Trim()));
             }
-
-            _clientIpBlackList = new List<string>();
-            _clientIpBlackGlobList = new List<Glob>();
-            foreach (var item in _systemConfig.clientIpBlackList)
-            {
-                _clientIpBlackList.Add(item.Trim());
-                _clientIpBlackGlobList.Add(new Glob(item.Trim()));
-            }
+            _needCheckIpBlackList = (systemConfig.enableIpBlackList && _ipBlackList.Count() > 0);
         }
 
         public bool pipelineCheck(string? clientIpAddress, out string checkMessage)
@@ -67,15 +61,15 @@ namespace MyREST
             }
 
             //firstly, check whiteList
-            if (_hasIpWhiteList == false)
+            if (_needCheckIpWhiteList == false)
             {
                 result = true;
-                checkMessage = "Firewall clientIpWhiteList check bypassed";
+                checkMessage = "Firewall ipWhiteList check bypassed";
             }
             else
             {
                 bool matched = false;
-                foreach (var glob in _clientIpWhiteGlobList)
+                foreach (var glob in _IpWhiteGlobList)
                 {
                     if (glob.IsMatch(clientIpAddress))
                     {
@@ -86,12 +80,12 @@ namespace MyREST
                 if (matched)
                 {
                     result = true;
-                    checkMessage = "Firewall clientIpWhiteList check passed";
+                    checkMessage = "Firewall ipWhiteList check passed";
                 }
                 else
                 {
                     result = false;
-                    checkMessage = "Firewall clientIpWhiteList check failed";
+                    checkMessage = "Firewall ipWhiteList check failed";
                 }
             }
             if (result == false)
@@ -100,15 +94,15 @@ namespace MyREST
             }
 
             //secondly, check blackList
-            if (_hasIpBlackList == false)
+            if (_needCheckIpBlackList == false)
             {
                 result = true;
-                checkMessage = "Firewall clientIpBlackList check bypassed";
+                checkMessage = "Firewall ipBlackList check bypassed";
             }
             else
             {
                 bool matched = false;
-                foreach (var glob in _clientIpBlackGlobList)
+                foreach (var glob in _ipBlackGlobList)
                 {
                     if (glob.IsMatch(clientIpAddress))
                     {
@@ -119,12 +113,12 @@ namespace MyREST
                 if (matched)
                 {
                     result = false;
-                    checkMessage = "Firewall clientIpBlackList check failed";
+                    checkMessage = "Firewall ipBlackList check failed";
                 }
                 else
                 {
                     result = true;
-                    checkMessage = "Firewall clientIpBlackList check passed";
+                    checkMessage = "Firewall ipBlackList check passed";
                 }
             }
 

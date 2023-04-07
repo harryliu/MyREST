@@ -32,5 +32,7 @@ namespace MyREST
             SqlResultWrapper result = _engine.process(clientIpAddress, sqlRequestWrapper);
             return result;
         }
+
+        //[HttpGet("/status")]
     }
 }

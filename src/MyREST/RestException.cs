@@ -48,6 +48,18 @@
         }
     }
 
+    public class AuthException : RestException
+    {
+        public AuthException(string message) : base(message)
+        {
+        }
+
+        public override int getErrorCode()
+        {
+            return 5;
+        }
+    }
+
     public class SqlExecuteException : RestException
     {
         public SqlExecuteException(string message) : base(message)
@@ -56,7 +68,7 @@
 
         public override int getErrorCode()
         {
-            return 5;
+            return 6;
         }
     }
 }

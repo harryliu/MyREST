@@ -19,24 +19,13 @@ namespace MyREST
 
         public bool writebackRequest { get; set; } = false;
 
-        public string[] firewallStrategies { get; set; }
-        public string[] clientIpWhiteList { get; set; }
-        public string[] clientIpBlackList { get; set; }
+        public bool enableIpWhiteList { get; set; } = false;
+        public bool enableIpBlackList { get; set; } = false;
+        public string[] ipWhiteList { get; set; }
+        public string[] ipBlackList { get; set; }
 
         public void validate()
         {
-            HashSet<string> builtinStrategies = new HashSet<string>() { "clientIpWhiteList", "clientIpBlackList" };
-            HashSet<string> userStrategies = new HashSet<string>();
-            foreach (var item in firewallStrategies)
-            {
-                userStrategies.Add(item);
-            }
-
-            var minusSet = userStrategies.Except(builtinStrategies);
-            if (minusSet.Count() > 0)
-            {
-                throw new Exception("invalid firewallStrategies. It can only contains clientIpWhiteList and clientIpBlackList ");
-            }
         }
     }
 

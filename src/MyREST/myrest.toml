@@ -4,9 +4,10 @@ enableClientSql=true  #allow client to submit SQL statement. It only works in de
 useResponseCompression=true
 hotReloadSqlFile=true
 writebackRequest=true # 在response中是否要回写完整的request
-firewallStrategies=["clientIpWhiteList","clientIpBlackList"]
-clientIpWhiteList=["127.0.0.1","192.168.0.1"]
-clientIpBlackList=["127.0.0.1","192.168.0.156"]
+enableIpWhiteList=true 
+enableIpBlackList=true 
+ipWhiteList=["127.0.0.1","192.168.0.1"]
+ipBlackList=["127.0.0.2","192.168.0.156"]
 
 
 
