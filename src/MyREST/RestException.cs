@@ -24,15 +24,27 @@
         }
     }
 
-    public class SqlFileException : RestException
+    public class XmlFileException : RestException
     {
-        public SqlFileException(string message) : base(message)
+        public XmlFileException(string message) : base(message)
         {
         }
 
         public override int getErrorCode()
         {
             return 3;
+        }
+    }
+
+    public class RequestArgumentException : RestException
+    {
+        public RequestArgumentException(string message) : base(message)
+        {
+        }
+
+        public override int getErrorCode()
+        {
+            return 4;
         }
     }
 
@@ -44,7 +56,7 @@
 
         public override int getErrorCode()
         {
-            return 4;
+            return 5;
         }
     }
 
@@ -56,7 +68,7 @@
 
         public override int getErrorCode()
         {
-            return 5;
+            return 6;
         }
     }
 }

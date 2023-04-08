@@ -34,7 +34,7 @@ namespace MyREST
             var matchedDbConfigs = from db in _dbConfigs where db.name.Trim() == dbName.Trim() select db;
             if (matchedDbConfigs.Count() != 1)
             {
-                throw new ArgumentException($"Expected one database named as {dbName}, but {matchedDbConfigs.Count()} found.");
+                throw new TomlFileException($"Expected one database named as {dbName}, but {matchedDbConfigs.Count()} found.");
             }
             else
             {
@@ -47,7 +47,7 @@ namespace MyREST
             //check traceId
             if (String.IsNullOrWhiteSpace(sqlRequestWrapper.request.traceId))
             {
-                throw new ArgumentException("request.traceId required");
+                throw new RequestArgumentException("request.traceId required");
             }
 
             var sqlContext = sqlRequestWrapper.request.sqlContext;
@@ -56,12 +56,12 @@ namespace MyREST
             string dbName = sqlContext.db;
             if (String.IsNullOrWhiteSpace(dbName))
             {
-                throw new ArgumentException("request.sqlContext.db required");
+                throw new RequestArgumentException("request.sqlContext.db required");
             }
             DbConfig dbConfig = getDbConfig(dbName);
             if (dbConfig == null)
             {
-                throw new ArgumentException($"database {dbName} not defined in configuration file");
+                throw new RequestArgumentException($"database {dbName} not defined in configuration file");
             }
 
             //check parameter.dataType
@@ -83,9 +83,9 @@ namespace MyREST
                 {
                     throw new SecurityException(firewallMsg);
                 }
-                runSql(sqlRequestWrapper, result);
+                executeSql(sqlRequestWrapper, result);
             }
-            catch (SecurityException ex)
+            catch (RestException ex)
             {
                 result.response.returnCode = ex.getErrorCode();
                 result.response.errorMessage = ex.Message;
@@ -98,7 +98,7 @@ namespace MyREST
             return result;
         }
 
-        private void runSql(SqlRequestWrapper sqlRequestWrapper, SqlResultWrapper result)
+        private void executeSql(SqlRequestWrapper sqlRequestWrapper, SqlResultWrapper result)
         {
             validateRequest(sqlRequestWrapper);
 
@@ -126,7 +126,7 @@ namespace MyREST
             }
             if (_systemConfig.enableClientSql == false && sqlContext.isUseClientSql())
             {
-                throw new ArgumentException("system does not allow clientSql ");
+                throw new RestException("system does not allow clientSql ");
             }
 
             if (_globalConfig.system.writebackRequest)

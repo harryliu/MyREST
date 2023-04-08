@@ -32,7 +32,7 @@ namespace MyREST
                 var xmlSqls = from sql in _xmlFileRoot.sqlList where sql.id.Trim() == sqlId.Trim() select sql;
                 if (xmlSqls.Count() != 1)
                 {
-                    throw new ArgumentException($"Expected one Sql node, but {xmlSqls.Count()} found.");
+                    throw new XmlFileException($"Expected one Sql node, but {xmlSqls.Count()} found.");
                 }
                 else
                 {
@@ -100,7 +100,7 @@ namespace MyREST
                                    select item;
                 if (serverParams.Count() > 1)
                 {
-                    throw new ArgumentException($"Expected 0 or 1 parameter {clientParam.name.Trim()} in server side, but {serverParams.Count()} found.");
+                    throw new XmlFileException($"Expected 0 or 1 parameter {clientParam.name.Trim()} in server side, but {serverParams.Count()} found.");
                 }
                 else if (serverParams.Count() == 1)
                 {
@@ -135,7 +135,7 @@ namespace MyREST
                                    select item;
                 if (clientParams.Count() > 1)
                 {
-                    throw new ArgumentException($"Expected 0 or 1 parameter {serverParam.name.Trim()} in client side, but {clientParams.Count()} found.");
+                    throw new XmlFileException($"Expected 0 or 1 parameter {serverParam.name.Trim()} in client side, but {clientParams.Count()} found.");
                 }
                 else if (clientParams.Count() == 1)
                 {

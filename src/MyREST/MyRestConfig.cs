@@ -44,27 +44,27 @@ namespace MyREST
         /// <summary>
         /// validate one single database configuration
         /// </summary>
-        /// <exception cref="Exception"></exception>
+        /// <exception cref="TomlFileException"></exception>
         public void validate()
         {
             if (string.IsNullOrWhiteSpace(name))
             {
-                throw new Exception("name should be assigned");
+                throw new TomlFileException("name should be assigned");
             }
 
             if (string.IsNullOrWhiteSpace(connectionString))
             {
-                throw new Exception($"connectionString should be assigned for database {name}");
+                throw new TomlFileException($"connectionString should be assigned for database {name}");
             }
 
             if (string.IsNullOrWhiteSpace(sqlFileHome))
             {
-                throw new Exception($"sqlFileHome should be assigned for database {name}");
+                throw new TomlFileException($"sqlFileHome should be assigned for database {name}");
             }
 
             if (Path.Exists(trimedSqlFileHome()) == false)
             {
-                throw new Exception($"sqlFileHome path {trimedSqlFileHome()} does not exist for database {name}");
+                throw new TomlFileException($"sqlFileHome path {trimedSqlFileHome()} does not exist for database {name}");
             }
 
             String supportedDbType = "sqlite,mysql,mssql,postgresql,oracle";
@@ -72,7 +72,7 @@ namespace MyREST
             List<string> builtinDbTypes = supportedDbTypeArray.ToList<String>();
             if (builtinDbTypes.Contains(dbType.Trim()) == false)
             {
-                throw new Exception($"invalid dbType {dbType.Trim()}. it should be {supportedDbType} ");
+                throw new TomlFileException($"invalid dbType {dbType.Trim()}. it should be {supportedDbType} ");
             }
         }
 
@@ -80,13 +80,13 @@ namespace MyREST
         /// validate all databases configuration
         /// </summary>
         /// <param name="dbConfigs"></param>
-        /// <exception cref="Exception"></exception>
+        /// <exception cref="TomlFileException"></exception>
         public static void validate(List<DbConfig> dbConfigs)
         {
             var names = from db in dbConfigs select db.name.Trim();
             if (names.Distinct().Count() != dbConfigs.Count())
             {
-                throw new Exception("duplicated db name found");
+                throw new TomlFileException("duplicated db name found");
             }
         }
     }
