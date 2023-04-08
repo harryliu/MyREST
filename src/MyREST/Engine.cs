@@ -1,5 +1,4 @@
 ﻿using Dapper;
-using MySql.Data.MySqlClient;
 using System.Data;
 
 namespace MyREST
@@ -139,7 +138,8 @@ namespace MyREST
                 result.request.traceId = traceId; //just only writeback traceId
             }
 
-            using (IDbConnection conn = new MySqlConnection(connectionString))
+            
+            using (IDbConnection conn = ConnectionFactory.newConnection(dbType, connectionString))
             {
                 if (sqlContext.isSelect)
                 {
