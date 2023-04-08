@@ -1,6 +1,7 @@
 using Dapper;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
+using MyREST.Plugin;
 using MySql.Data.MySqlClient;
 using System.Data;
 
@@ -15,7 +16,7 @@ namespace MyREST
         private Engine _engine;
 
         public Controller(ILogger<Controller> logger, IConfiguration configuration,
-            GlobalConfig globalConfig, SystemConfig systemConfig, List<DbConfig> dbConfigs, XmlFileContainer xmlFileContainer, Firewall firewall, Engine engine)
+            GlobalConfig globalConfig, SystemConfig systemConfig, List<DbConfig> dbConfigs, XmlFileContainer xmlFileContainer, FirewallPlugin firewall, Engine engine)
 
         {
             _logger = logger;
@@ -26,10 +27,7 @@ namespace MyREST
         [HttpPost("/invoke")]
         public SqlResultWrapper invoke([FromBody] SqlRequestWrapper sqlRequestWrapper)
         {
-            string? clientIpAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ??
-            HttpContext.Features.Get<IHttpConnectionFeature>()?.RemoteIpAddress?.ToString();
-
-            SqlResultWrapper result = _engine.process(clientIpAddress, sqlRequestWrapper);
+            SqlResultWrapper result = _engine.process(this.HttpContext, sqlRequestWrapper);
             return result;
         }
 

@@ -3,38 +3,30 @@ using System.Net;
 using Microsoft.Extensions.Logging;
 using System.Configuration;
 using GlobExpressions;
+using Microsoft.AspNetCore.Http.Features;
 
-namespace MyREST
+namespace MyREST.Plugin
 {
-    public class Firewall
+    public class FirewallPlugin : SecurityPlugin
     {
-        private readonly IConfiguration _configuration;
-        private readonly ILogger<Firewall>? _logger;
-        private GlobalConfig _globalConfig;
-        private SystemConfig _systemConfig;
         private bool _needCheckIpWhiteList;
         private bool _needCheckIpBlackList;
-        private List<String> _ipWhiteList;
+        private List<string> _ipWhiteList;
         private List<Glob> _IpWhiteGlobList;
         private List<Glob> _ipBlackGlobList;
-        private List<String> _ipBlackList;
+        private List<string> _ipBlackList;
 
-        public Firewall(ILogger<Firewall>? logger, IConfiguration configuration,
-            GlobalConfig globalConfig, SystemConfig systemConfig)
+        public FirewallPlugin(ILogger<SecurityPlugin>? logger, IConfiguration configuration, GlobalConfig globalConfig, SystemConfig systemConfig) :
+            base(logger, configuration, globalConfig, systemConfig)
         {
-            _logger = logger;
-            _configuration = configuration;
-            _globalConfig = globalConfig;
-            _systemConfig = systemConfig;
-
             _ipWhiteList = new List<string>();
             _IpWhiteGlobList = new List<Glob>();
-            foreach (var item in _systemConfig.ipWhiteList)
+            foreach (string item in _systemConfig.ipWhiteList)
             {
                 _ipWhiteList.Add(item.Trim());
                 _IpWhiteGlobList.Add(new Glob(item.Trim()));
             }
-            _needCheckIpWhiteList = (systemConfig.enableIpWhiteList && _ipWhiteList.Count() > 0);
+            _needCheckIpWhiteList = systemConfig.enableIpWhiteList && _ipWhiteList.Count() > 0;
 
             _ipBlackList = new List<string>();
             _ipBlackGlobList = new List<Glob>();
@@ -43,10 +35,17 @@ namespace MyREST
                 _ipBlackList.Add(item.Trim());
                 _ipBlackGlobList.Add(new Glob(item.Trim()));
             }
-            _needCheckIpBlackList = (systemConfig.enableIpBlackList && _ipBlackList.Count() > 0);
+            _needCheckIpBlackList = systemConfig.enableIpBlackList && _ipBlackList.Count() > 0;
         }
 
-        public bool pipelineCheck(string? clientIpAddress, out string checkMessage)
+        public override bool check(HttpContext httpContext, out string checkMessage)
+        {
+            string? clientIpAddress = httpContext.Connection.RemoteIpAddress?.ToString() ??
+                httpContext.Features.Get<IHttpConnectionFeature>()?.RemoteIpAddress?.ToString();
+            return pipelineCheck(clientIpAddress, out checkMessage);
+        }
+
+        private bool pipelineCheck(string? clientIpAddress, out string checkMessage)
         {
             //initial
             bool result = true;

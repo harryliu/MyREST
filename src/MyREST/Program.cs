@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.ResponseCompression;
+using MyREST.Plugin;
 using Nett;
 using System.IO.Compression;
 
@@ -102,9 +103,9 @@ namespace MyREST
 
             //register firewall object
             var provider = services.BuildServiceProvider();
-            var firewallLogger = provider.GetService<ILogger<Firewall>>();
-            Firewall firewall = new Firewall(firewallLogger, configuration, globalConfig, systemConfig);
-            services.AddSingleton<Firewall>(firewall);
+            var firewallLogger = provider.GetService<ILogger<FirewallPlugin>>();
+            FirewallPlugin firewall = new FirewallPlugin(firewallLogger, configuration, globalConfig, systemConfig);
+            services.AddSingleton<FirewallPlugin>(firewall);
 
             //register engine object
             var engineLLogger = provider.GetService<ILogger<Engine>>();

@@ -36,27 +36,15 @@
         }
     }
 
-    public class FirewallException : RestException
+    public class SecurityException : RestException
     {
-        public FirewallException(string message) : base(message)
+        public SecurityException(string message) : base(message)
         {
         }
 
         public override int getErrorCode()
         {
             return 4;
-        }
-    }
-
-    public class AuthException : RestException
-    {
-        public AuthException(string message) : base(message)
-        {
-        }
-
-        public override int getErrorCode()
-        {
-            return 5;
         }
     }
 
@@ -68,7 +56,7 @@
 
         public override int getErrorCode()
         {
-            return 6;
+            return 5;
         }
     }
 }

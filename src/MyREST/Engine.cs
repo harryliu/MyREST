@@ -1,4 +1,7 @@
 ﻿using Dapper;
+using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Mvc;
+using MyREST.Plugin;
 using System.Data;
 
 namespace MyREST
@@ -11,12 +14,12 @@ namespace MyREST
         private SystemConfig _systemConfig;
         private List<DbConfig> _dbConfigs;
         private XmlFileContainer _xmlFileContainer;
-        private Firewall _firewall;
+        private FirewallPlugin _firewall;
 
         private readonly ILogger<Engine>? _logger;
 
         public Engine(ILogger<Engine>? logger, IConfiguration configuration,
-            GlobalConfig globalConfig, SystemConfig systemConfig, List<DbConfig> dbConfigs, XmlFileContainer xmlFileContainer, Firewall firewall
+            GlobalConfig globalConfig, SystemConfig systemConfig, List<DbConfig> dbConfigs, XmlFileContainer xmlFileContainer, FirewallPlugin firewall
             )
         {
             _logger = logger;
@@ -70,7 +73,7 @@ namespace MyREST
             //check parameter.format
         }
 
-        public SqlResultWrapper process(String? clientIpAddress, SqlRequestWrapper sqlRequestWrapper)
+        public SqlResultWrapper process(HttpContext httpContext, SqlRequestWrapper sqlRequestWrapper)
         {
             SqlResultWrapper result = new SqlResultWrapper();
             SqlResponse sqlResponse = new SqlResponse();
@@ -78,13 +81,13 @@ namespace MyREST
             try
             {
                 string firewallMsg;
-                if (_firewall.pipelineCheck(clientIpAddress, out firewallMsg) == false)
+                if (_firewall.check(httpContext, out firewallMsg) == false)
                 {
-                    throw new FirewallException(firewallMsg);
+                    throw new SecurityException(firewallMsg);
                 }
-                internalProcess(sqlRequestWrapper, result);
+                runSql(sqlRequestWrapper, result);
             }
-            catch (FirewallException ex)
+            catch (SecurityException ex)
             {
                 result.response.returnCode = ex.getErrorCode();
                 result.response.errorMessage = ex.Message;
@@ -97,7 +100,7 @@ namespace MyREST
             return result;
         }
 
-        private void internalProcess(SqlRequestWrapper sqlRequestWrapper, SqlResultWrapper result)
+        private void runSql(SqlRequestWrapper sqlRequestWrapper, SqlResultWrapper result)
         {
             validateRequest(sqlRequestWrapper);
 
@@ -138,7 +141,6 @@ namespace MyREST
                 result.request.traceId = traceId; //just only writeback traceId
             }
 
-            
             using (IDbConnection conn = ConnectionFactory.newConnection(dbType, connectionString))
             {
                 if (sqlContext.isSelect)
