@@ -143,14 +143,26 @@ namespace MyREST
             {
                 if (sqlContext.isSelect)
                 {
-                    IEnumerable<dynamic> rows = conn.Query(sqlContext.sql);
-                    result.response.affectedCount = 0;
-                    result.response.rows = rows;
-                    result.response.rowCount = rows.Count();
+                    if (sqlContext.isScalar == false)
+                    {
+                        IEnumerable<dynamic> rows = conn.Query(sqlContext.sql);
+                        result.response.scalarValue = null;
+                        result.response.affectedCount = 0;
+                        result.response.rows = rows;
+                        result.response.rowCount = rows.Count();
+                    }
+                    else
+                    {
+                        result.response.scalarValue = conn.ExecuteScalar(sqlContext.sql);
+                        result.response.affectedCount = 0;
+                        result.response.rows = null;
+                        result.response.rowCount = 0;
+                    }
                 }
                 else
                 {
                     result.response.affectedCount = conn.Execute(sqlContext.sql);
+                    result.response.scalarValue = null;
                     result.response.rows = null;
                     result.response.rowCount = 0;
                 }

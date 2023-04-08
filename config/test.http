@@ -1,3 +1,16 @@
+tasks
+. 支持 parameters 
+. 支持Scalar标量查询
+. toml 判空处理
+. 支持多种数据库类型
+. 增加日志
+. 增加单元测试
+. 项目文档撰写
+. 增加安全插件机制,  Auth插件
+. Firewall 改造成插件形式
+. 增加 health check 
+. 支持优雅停机
+
 
 
 ==============================
@@ -17,6 +30,7 @@ content-type: application/json
     "sqlContext": {
       "db": "string",
       "isSelect": true,
+      "isScalar": false,
       "sqlFile": "string",
       "sqlId": "string",
       "sql": "string",
@@ -46,6 +60,7 @@ content-type: application/json
     "sqlContext": {
       "db": "db1",
       "isSelect": true,
+      "isScalar": false,
       "sqlFile": "",
       "sqlId": "",
       "sql": "select actor_id , first_name FirstName, last_name LastName, last_update LastUpdate   from actor      ",  
@@ -54,6 +69,28 @@ content-type: application/json
     "traceId": "1111"
   }
 }
+
+==============================
+Test Scalar select 
+==============================
+POST https://localhost:7241/invoke HTTP/1.1
+content-type: application/json
+
+{
+  "request": {
+    "sqlContext": {
+      "db": "db1",
+      "isSelect": true,
+      "isScalar": true,
+      "sqlFile": "",
+      "sqlId": "",
+      "sql": "select count(*) from actor      ",  
+      "parameters":[]
+    },
+    "traceId": "1111"
+  }
+}
+
 
 
 ==============================
@@ -67,6 +104,7 @@ content-type: application/json
     "sqlContext": {
       "db": "db1",
       "isSelect": false,
+      "isScalar": false,
       "sqlFile": "",
       "sqlId": "",
       "sql": "update actor set first_name='10' where actor_id=1 ;update actor set first_name='20' where actor_id=2 ; ",  
@@ -87,6 +125,7 @@ content-type: application/json
     "sqlContext": {
       "db": "db1",
       "isSelect": true,
+      "isScalar": false,
       "sqlFile": "/sql/sampleSql.xml",
       "sqlId": "queryAllActors",
       "sql": "",  

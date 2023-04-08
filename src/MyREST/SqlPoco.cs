@@ -54,6 +54,7 @@ namespace MyREST
     {
         public string db { get; set; } = "";
         public bool isSelect { get; set; } = true;
+        public bool isScalar { get; set; } = false;
         public string sqlFile { get; set; } = "";
         public string sqlId { get; set; } = "";
         public string sql { get; set; } = "";
@@ -87,6 +88,7 @@ namespace MyREST
         public int rowCount { get; set; }
         public int affectedCount { get; set; }
 
+        public dynamic scalarValue { get; set; }
         public IEnumerable<dynamic> rows { get; set; }
     }
 
