@@ -1,8 +1,4 @@
-﻿using System.Net.Sockets;
-using System.Net;
-using Microsoft.Extensions.Logging;
-using System.Configuration;
-using GlobExpressions;
+﻿using GlobExpressions;
 using Microsoft.AspNetCore.Http.Features;
 
 namespace MyREST.Plugin

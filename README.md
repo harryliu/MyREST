@@ -2,22 +2,25 @@
 a universal database RESTful service
 
 ## 背景
-在前后端分离架构越来越流行的今天, 我们是否可以再向前发展一步, 前端实现更多的CURD业务逻辑? 后端是否仅提供存储支持? 本项目将实现这样的愿景:提供一个通用的Restful数据库服务程序, 我们只需要在前端实现业务逻辑, 对于中小型应用, 极大提升项目开发效率. 
+在前后端分离架构越来越流行的今天, 我们是否可以再向前发展一步, 前端实现更多的CURD业务逻辑? 后端是否仅提供存储支持? 本项目将提供一个通用的Restful数据库服务程序, 我们只需要在前端实现业务逻辑, 这样的架构, 非常适合中小型应用, 可极大提升项目开发效率. 
 
 本项目受到 pREST 项目的启发, 该项目能将 PostgreSQL 数据库以RESTful方式暴露出来, 但 pREST 项目局限性太大, 便有想法自己造个轮子, pREST 项目限制有:
 1. 仅仅支持PostgreSQL数据库
-2. API 表达能力太弱. 
+2. API 表达能力太弱
 
-## 项目特性
+## 实现技术
 - 本项目采用 .net core 实现. 
-- 支持多种数据库, MySQL, SQLite, Postgresql 和 Oracle 等
 - 采用 Dapper ORM 框架
-- 使用 JWT 进行安全校验
+- 
+## 项目特性
+- 支持多种数据库, MySQL, SQLite, Postgresql 和 Oracle 等
+- 支持多个数据库连接 
 - 支持客户端SQL和服务端SQL(SQL语句存放在服务端)两种形式, 推荐使用服务端SQL形式
-- 支持白名单
-- 支持 OpenAPI
-- 支持 miniProfiler 
-- 支持优雅停机
+- 支持 OpenAPI 即 Swagger 
+- 内置防火墙安全插件(白名单或黑名单)
+- (todo) 支持外置 JWT Auth安全插件
+- (todo) 支持 miniProfiler 
+- (todo) 支持优雅停机
 
 ## 安全方面的设计
 - 后台数据库中, 需要增加一个表 myrest_users, 该table将作为前端应用的登录账号表, 对于具体应用可以再为这个表配一个从表, 用于扩展用户信息. 

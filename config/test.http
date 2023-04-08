@@ -7,7 +7,7 @@ tasks:
 . 增加单元测试
 . 项目文档撰写
 . 增加安全插件机制,  Auth插件
-. Firewall 改造成插件形式
+. Firewall 改造成安全插件形式
 . 增加 health check 
 . 支持优雅停机
 

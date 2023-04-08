@@ -1,6 +1,4 @@
-﻿using GlobExpressions;
-
-namespace MyREST.Plugin
+﻿namespace MyREST.Plugin
 {
     public abstract class SecurityPlugin
     {

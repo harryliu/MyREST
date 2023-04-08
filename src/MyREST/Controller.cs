@@ -1,9 +1,5 @@
-using Dapper;
-using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using MyREST.Plugin;
-using MySql.Data.MySqlClient;
-using System.Data;
 
 namespace MyREST
 {
