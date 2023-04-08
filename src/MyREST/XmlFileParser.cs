@@ -35,7 +35,7 @@ namespace MyREST
                 var xmlSqls = from sql in _xmlFileRoot.sqlList where sql.id.Trim() == sqlId.Trim() select sql;
                 if (xmlSqls.Count() != 1)
                 {
-                    throw new XmlFileException($"Expected one Sql node, but {xmlSqls.Count()} found.");
+                    throw new XmlFileException($"Expected one Sql node with id={sqlId}, but {xmlSqls.Count()} found.");
                 }
                 else
                 {
@@ -79,7 +79,7 @@ namespace MyREST
                 sqlContext.setUseClientSql(false);
 
                 //use serverSql in priority
-                sqlContext.sql = xmlSql.text;
+                sqlContext.sql = xmlSql.text.Trim();
 
                 //firstly, merge client side parameters into server side
                 mergeClientParamToServer(sqlContext, xmlSql);
@@ -328,6 +328,21 @@ namespace MyREST
                 else if (dataType == "DateTimeOffset".ToLower())
                 {
                     throw new MyRestException(exceptionMessage);
+                }
+                else if (dataType == "String Array".ToLower())
+                {
+                    newType = DbType.String;
+                    newValue = oldValue.Split(format);
+                }
+                else if (dataType == "Decimal Array".ToLower())
+                {
+                    newType = DbType.Decimal;
+                    string[] strArray = oldValue.Split(format);
+                    newValue = new List<decimal>();
+                    foreach (var item in strArray)
+                    {
+                        newValue = Convert.ToDecimal(item);
+                    }
                 }
                 else
                 {

@@ -201,7 +201,7 @@ content-type: application/json
 
 
 ==============================
-Test server side SQL with parameter
+Test server side SQL with parameters
 ==============================
 POST https://localhost:7241/invoke HTTP/1.1
 content-type: application/json
@@ -214,7 +214,7 @@ content-type: application/json
       "isScalar": false,
       "sqlFile": "",
       "sqlFile": "/sql/sampleSql.xml",
-      "sqlId": "queryAllActors",
+      "sqlId": "queryOneActor",
       "sql": "",  
       "parameters":[
          {
@@ -223,6 +223,38 @@ content-type: application/json
           "dataType": "",
           "direction": "",
           "format": ""
+        }
+      ]
+    },
+    "traceId": "1111"
+  }
+}
+
+ 
+
+==============================
+Test server side SQL with parameters
+==============================
+POST https://localhost:7241/invoke HTTP/1.1
+content-type: application/json
+
+{
+  "request": {
+    "sqlContext": {
+      "db": "db1",
+      "isSelect": true,
+      "isScalar": false,
+      "sqlFile": "",
+      "sqlFile": "/sql/sampleSql.xml",
+      "sqlId": "queryOtherActor",
+      "sql": "",  
+      "parameters":[
+         {
+          "name": "@id",
+          "value": "1,2",
+          "dataType": "",
+          "direction": "",
+          "format": ","
         }
       ]
     },

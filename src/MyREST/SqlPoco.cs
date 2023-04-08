@@ -93,7 +93,7 @@ namespace MyREST
         public IEnumerable<dynamic> rows { get; set; }
     }
 
-    [XmlRoot(ElementName = "parameters")]
+    
     public class XmlSqlParameters
     {
         [XmlElement(ElementName = "parameter")]
