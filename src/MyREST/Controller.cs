@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using MyREST.Plugin;
 
 namespace MyREST
@@ -21,7 +22,7 @@ namespace MyREST
         }
 
         [HttpPost("/invoke")]
-        public SqlResultWrapper invoke([FromBody] SqlRequestWrapper sqlRequestWrapper)
+        public SqlResultWrapper invoke([FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] SqlRequestWrapper sqlRequestWrapper)
         {
             SqlResultWrapper result = _engine.process(this.HttpContext, sqlRequestWrapper);
             return result;

@@ -13,6 +13,7 @@ tasks:
 
 
 
+
 ==============================
 Swagger UI url 
 ==============================
@@ -155,6 +156,75 @@ Accept-Encoding: br, gzip
       "sqlId": "",
       "sql": "select actor_id , first_name FirstName, last_name LastName, last_update LastUpdate   from actor      ",  
       "parameters":[]
+    },
+    "traceId": "1111"
+  }
+}
+
+
+
+==============================
+Test client side SQL with parameter
+==============================
+POST https://localhost:7241/invoke HTTP/1.1
+content-type: application/json
+
+{
+  "request": {
+    "sqlContext": {
+      "db": "db1",
+      "isSelect": true,
+      "isScalar": false,
+      "sqlFile": "",
+      "sqlId": "",
+      "sql": "select actor_id , first_name FirstName, last_name LastName, last_update LastUpdate   from actor   where actor_id=@actorId1 or actor_id=@actorId2     ",  
+      "parameters":[
+         {
+          "name": "@actorId1",
+          "value": "1",
+          "dataType": "Int32",
+          "direction": "Input",
+          "format": ""
+        },
+        {
+          "name": "@actorId2",
+          "value": "20",
+          "dataType": "Int32",
+          "direction": "Input",
+          "format": ""
+        }
+      ]
+    },
+    "traceId": "1111"
+  }
+}
+
+
+==============================
+Test server side SQL with parameter
+==============================
+POST https://localhost:7241/invoke HTTP/1.1
+content-type: application/json
+
+{
+  "request": {
+    "sqlContext": {
+      "db": "db1",
+      "isSelect": true,
+      "isScalar": false,
+      "sqlFile": "",
+      "sqlFile": "/sql/sampleSql.xml",
+      "sqlId": "queryAllActors",
+      "sql": "",  
+      "parameters":[
+         {
+          "name": "@id",
+          "value": "1",
+          "dataType": "",
+          "direction": "",
+          "format": ""
+        }
+      ]
     },
     "traceId": "1111"
   }

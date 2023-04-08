@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using MyREST.Plugin;
 using System.Data;
+using System.Diagnostics;
 
 namespace MyREST
 {
@@ -62,13 +63,7 @@ namespace MyREST
             if (dbConfig == null)
             {
                 throw new RequestArgumentException($"database {dbName} not defined in configuration file");
-            }
-
-            //check parameter.dataType
-
-            //check parameter.direction
-
-            //check parameter.format
+            }             
         }
 
         public SqlResultWrapper process(HttpContext httpContext, SqlRequestWrapper sqlRequestWrapper)
@@ -78,14 +73,30 @@ namespace MyREST
             result.response = sqlResponse;
             try
             {
+                //feedback traceId
+                string traceId = sqlRequestWrapper.request.traceId;
+                if (_globalConfig.system.writebackRequest)
+                {
+                    result.request = sqlRequestWrapper.request; //writeback both sqlContext and traceId
+                }
+                else
+                {
+                    result.request = new SqlRequest(); //set one empty request in result object
+                    result.request.traceId = traceId; //just only writeback traceId
+                }
+
+                //security check 
                 string firewallMsg;
                 if (_firewall.check(httpContext, out firewallMsg) == false)
                 {
                     throw new SecurityException(firewallMsg);
                 }
+
+                validateRequest(sqlRequestWrapper);
+
                 executeSql(sqlRequestWrapper, result);
             }
-            catch (RestException ex)
+            catch (MyRestException ex)
             {
                 result.response.returnCode = ex.getErrorCode();
                 result.response.errorMessage = ex.Message;
@@ -100,15 +111,54 @@ namespace MyREST
 
         private void executeSql(SqlRequestWrapper sqlRequestWrapper, SqlResultWrapper result)
         {
-            validateRequest(sqlRequestWrapper);
+            SqlContext sqlContext;
+            DynamicParameters dapperParameters;
+            prepareDapperArguments(sqlRequestWrapper, result, out sqlContext, out dapperParameters);
 
-            SqlRequest request = sqlRequestWrapper.request;
-            string traceId = request.traceId;
-            SqlContext sqlContext = request.sqlContext;
             string dbName = sqlContext.db;
             DbConfig dbConfig = getDbConfig(dbName);
             string connectionString = dbConfig.connectionString;
             string dbType = dbConfig.dbType;
+
+            using (IDbConnection conn = ConnectionFactory.newConnection(dbType, connectionString))
+            {
+                if (sqlContext.isSelect)
+                {
+                    if (sqlContext.isScalar == false)
+                    {
+                        IEnumerable<dynamic> rows = conn.Query(sqlContext.sql, dapperParameters);
+                        result.response.scalarValue = null;
+                        result.response.affectedCount = 0;
+                        result.response.rows = rows;
+                        result.response.rowCount = rows.Count();
+                    }
+                    else
+                    {
+                        result.response.scalarValue = conn.ExecuteScalar(sqlContext.sql, dapperParameters);
+                        result.response.affectedCount = 0;
+                        result.response.rows = null;
+                        result.response.rowCount = 0;
+                    }
+                }
+                else
+                {
+                    result.response.affectedCount = conn.Execute(sqlContext.sql, dapperParameters);
+                    result.response.scalarValue = null;
+                    result.response.rows = null;
+                    result.response.rowCount = 0;
+                }
+            }
+            result.response.returnCode = 0;
+            result.response.errorMessage = "";
+        }
+
+        private void prepareDapperArguments(SqlRequestWrapper sqlRequestWrapper, SqlResultWrapper result, out SqlContext sqlContext, out DynamicParameters dapperParameters)
+        {
+            SqlRequest request = sqlRequestWrapper.request;
+            string traceId = request.traceId;
+            sqlContext = request.sqlContext;
+            string dbName = sqlContext.db;
+            DbConfig dbConfig = getDbConfig(dbName);
             string sqlFileHome = dbConfig.trimedSqlFileHome();
             string sqlFile = sqlContext.sqlFile;
             string sqlId = sqlContext.sqlId;
@@ -126,49 +176,11 @@ namespace MyREST
             }
             if (_systemConfig.enableClientSql == false && sqlContext.isUseClientSql())
             {
-                throw new RestException("system does not allow clientSql ");
+                throw new MyRestException("system does not allow clientSql ");
             }
 
-            if (_globalConfig.system.writebackRequest)
-            {
-                result.request = request; //writeback both sqlContext and traceId
-            }
-            else
-            {
-                result.request = new SqlRequest();
-                result.request.traceId = traceId; //just only writeback traceId
-            }
-
-            using (IDbConnection conn = ConnectionFactory.newConnection(dbType, connectionString))
-            {
-                if (sqlContext.isSelect)
-                {
-                    if (sqlContext.isScalar == false)
-                    {
-                        IEnumerable<dynamic> rows = conn.Query(sqlContext.sql);
-                        result.response.scalarValue = null;
-                        result.response.affectedCount = 0;
-                        result.response.rows = rows;
-                        result.response.rowCount = rows.Count();
-                    }
-                    else
-                    {
-                        result.response.scalarValue = conn.ExecuteScalar(sqlContext.sql);
-                        result.response.affectedCount = 0;
-                        result.response.rows = null;
-                        result.response.rowCount = 0;
-                    }
-                }
-                else
-                {
-                    result.response.affectedCount = conn.Execute(sqlContext.sql);
-                    result.response.scalarValue = null;
-                    result.response.rows = null;
-                    result.response.rowCount = 0;
-                }
-            }
-            result.response.returnCode = 0;
-            result.response.errorMessage = "";
+            //build dapper parameters
+            dapperParameters = XmlFileParser.buildDapperParameters(sqlContext);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Xml.Serialization;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System.Xml.Serialization;
 
 namespace MyREST
 {

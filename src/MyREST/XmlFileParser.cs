@@ -1,4 +1,7 @@
-﻿using System.Xml.Serialization;
+﻿using Dapper;
+using System.Data;
+using System.Globalization;
+using System.Xml.Serialization;
 
 namespace MyREST
 {
@@ -159,6 +162,193 @@ namespace MyREST
                     //nothing
                 }
             }
+        }
+
+        private static ParameterDirection? getDapperDirection(string oldDirection)
+        {
+            ParameterDirection? dapperDirection = null;
+            if (string.IsNullOrWhiteSpace(oldDirection) == false)
+            {
+                var direction = oldDirection.Trim().ToLower();
+                if (direction == "Input".ToLower())
+                {
+                    dapperDirection = ParameterDirection.Input;
+                }
+                else if (direction == "Output".ToLower())
+                {
+                    dapperDirection = ParameterDirection.Output;
+                }
+                else if (direction == "InputOutput".ToLower())
+                {
+                    dapperDirection = ParameterDirection.InputOutput;
+                }
+                else if (direction == "ReturnValue".ToLower())
+                {
+                    dapperDirection = ParameterDirection.ReturnValue;
+                }
+                else
+                {
+                    throw new MyRestException($"invalid parameter direction {oldDirection} . It must be assigned as Input/OutputInputOutput/ReturnValue");
+                }
+            }
+            return dapperDirection;
+        }
+
+        private static void convertDapperDataType(string oldType, string oldValue, string format, out DbType? newType, out object? newValue)
+        {
+            newType = null;
+            newValue = null;
+            var exceptionMessage = $"invalid parameter dataType {oldType}. Only some common kinds of dataType are supported at https://learn.microsoft.com/en-us/dotnet/api/system.data.dbtype";
+            if (string.IsNullOrWhiteSpace(oldType) == false)
+            {
+                var dataType = oldType.Trim().ToLower();
+                if (dataType == "AnsiString".ToLower())
+                {
+                    newType = DbType.AnsiString;
+                    newValue = oldValue;
+                }
+                else if (dataType == "Binary".ToLower())
+                {
+                    throw new MyRestException(exceptionMessage);
+                }
+                else if (dataType == "Byte".ToLower())
+                {
+                    newType = DbType.Byte;
+                    newValue = Convert.ToByte(oldValue);
+                }
+                else if (dataType == "Boolean".ToLower())
+                {
+                    newType = DbType.Boolean;
+                    newValue = Convert.ToBoolean(oldValue);
+                }
+                else if (dataType == "Currency".ToLower())
+                {
+                    throw new MyRestException(exceptionMessage);
+                }
+                else if (dataType == "Date".ToLower())
+                {
+                    newType = DbType.Date;
+                    newValue = DateTime.ParseExact(oldValue, format, CultureInfo.InvariantCulture);
+                }
+                else if (dataType == "DateTime".ToLower())
+                {
+                    newType = DbType.DateTime;
+                    newValue = DateTime.ParseExact(oldValue, format, CultureInfo.InvariantCulture);
+                }
+                else if (dataType == "Decimal".ToLower())
+                {
+                    newType = DbType.Decimal;
+                    newValue = Convert.ToDecimal(oldValue);
+                }
+                else if (dataType == "Double".ToLower())
+                {
+                    newType = DbType.Double;
+                    newValue = Convert.ToDouble(oldValue);
+                }
+                else if (dataType == "Guid".ToLower())
+                {
+                    throw new MyRestException(exceptionMessage);
+                }
+                else if (dataType == "Int16".ToLower())
+                {
+                    newType = DbType.Int16;
+                    newValue = Convert.ToInt16(oldValue);
+                }
+                else if (dataType == "Int32".ToLower())
+                {
+                    newType = DbType.Int32;
+                    newValue = Convert.ToInt32(oldValue);
+                }
+                else if (dataType == "Int64".ToLower())
+                {
+                    newType = DbType.Int64;
+                    newValue = Convert.ToInt64(oldValue);
+                }
+                else if (dataType == "Object".ToLower())
+                {
+                    throw new MyRestException(exceptionMessage);
+                }
+                else if (dataType == "SByte".ToLower())
+                {
+                    newType = DbType.SByte;
+                    newValue = Convert.ToSByte(oldValue);
+                }
+                else if (dataType == "Single".ToLower())
+                {
+                    newType = DbType.Single;
+                    newValue = Convert.ToSingle(oldValue);
+                }
+                else if (dataType == "String".ToLower())
+                {
+                    newType = DbType.String;
+                    newValue = oldValue;
+                }
+                else if (dataType == "Time".ToLower())
+                {
+                    newType = DbType.Time;
+                    newValue = DateTime.ParseExact(oldValue, format, CultureInfo.InvariantCulture);
+                }
+                else if (dataType == "UInt16".ToLower())
+                {
+                    newType = DbType.UInt16;
+                    newValue = Convert.ToUInt16(oldValue);
+                }
+                else if (dataType == "UInt32".ToLower())
+                {
+                    newType = DbType.UInt32;
+                    newValue = Convert.ToUInt32(oldValue);
+                }
+                else if (dataType == "UInt64".ToLower())
+                {
+                    newType = DbType.UInt64;
+                    newValue = Convert.ToUInt64(oldValue);
+                }
+                else if (dataType == "VarNumeric".ToLower())
+                {
+                    throw new MyRestException(exceptionMessage);
+                }
+                else if (dataType == "AnsiStringFixedLength".ToLower())
+                {
+                    newType = DbType.AnsiStringFixedLength;
+                    newValue = oldValue;
+                }
+                else if (dataType == "StringFixedLength".ToLower())
+                {
+                    newType = DbType.StringFixedLength;
+                    newValue = oldValue;
+                }
+                else if (dataType == "Xml".ToLower())
+                {
+                    throw new MyRestException(exceptionMessage);
+                }
+                else if (dataType == "DateTime2".ToLower())
+                {
+                    throw new MyRestException(exceptionMessage);
+                }
+                else if (dataType == "DateTimeOffset".ToLower())
+                {
+                    throw new MyRestException(exceptionMessage);
+                }
+                else
+                {
+                    throw new MyRestException(exceptionMessage);
+                }
+            }
+        }
+
+        public static DynamicParameters buildDapperParameters(SqlContext sqlContext)
+        {
+            DynamicParameters dapperParameters = new DynamicParameters();
+            foreach (var param in sqlContext.parameters)
+            {
+                DbType? dapperDataType = null;
+                object? newValue = null;
+                ParameterDirection? dapperDirection = getDapperDirection(param.direction);
+                convertDapperDataType(param.dataType, param.value, param.format, out dapperDataType, out newValue);
+                dapperParameters.Add(param.name, newValue, dapperDataType, dapperDirection);
+            }
+
+            return dapperParameters;
         }
     }
 }

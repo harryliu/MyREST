@@ -1,8 +1,8 @@
 ﻿namespace MyREST
 {
-    public class RestException : Exception
+    public class MyRestException : Exception
     {
-        public RestException(string message) : base(message)
+        public MyRestException(string message) : base(message)
         {
         }
 
@@ -12,7 +12,7 @@
         }
     }
 
-    public class TomlFileException : RestException
+    public class TomlFileException : MyRestException
     {
         public TomlFileException(string message) : base(message)
         {
@@ -24,7 +24,7 @@
         }
     }
 
-    public class XmlFileException : RestException
+    public class XmlFileException : MyRestException
     {
         public XmlFileException(string message) : base(message)
         {
@@ -36,7 +36,7 @@
         }
     }
 
-    public class RequestArgumentException : RestException
+    public class RequestArgumentException : MyRestException
     {
         public RequestArgumentException(string message) : base(message)
         {
@@ -48,7 +48,7 @@
         }
     }
 
-    public class SecurityException : RestException
+    public class SecurityException : MyRestException
     {
         public SecurityException(string message) : base(message)
         {
@@ -60,7 +60,7 @@
         }
     }
 
-    public class SqlExecuteException : RestException
+    public class SqlExecuteException : MyRestException
     {
         public SqlExecuteException(string message) : base(message)
         {
