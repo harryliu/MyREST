@@ -20,9 +20,16 @@ sqlFileHome="D://my_workspace//source//src1//github//MyREST//MyREST//src//MyREST
 
 [[databases]]
 name="db2"
-dbType="mysql" # sqlite,mysql,mssql,postgresql,oracle
-connectionString="Server=localhost;Port=3306;Database=sakila;Uid=root;Pwd=TOOR;"    
-sqlFileHome="d:/"   #sql file home
+dbType="mssql" # sqlite,mysql,mssql,postgresql,oracle
+connectionString="Server=localhost;Database=Oee;User Id=sa;Password=root;Encrypt=True;TrustServerCertificate=True"    
+sqlFileHome="D://my_workspace//source//src1//github//MyREST//MyREST//src//MyREST//bin//Debug//net7.0"   #sql file home
+
+[[databases]]
+name="db3"
+dbType="postgresql" # sqlite,mysql,mssql,postgresql,oracle
+connectionString="Server=127.0.0.1;Port=5432;Database=camunda;User Id=postgres;Password=ROOT;"    
+sqlFileHome="D://my_workspace//source//src1//github//MyREST//MyREST//src//MyREST//bin//Debug//net7.0"   #sql file home
+
 
 
 [authaaaa]

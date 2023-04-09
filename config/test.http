@@ -10,6 +10,7 @@ tasks:
 . Firewall 改造成安全插件形式
 . 增加 health check 
 . 支持优雅停机
+. 支持 miniProfiler
 
 
 
@@ -41,7 +42,8 @@ content-type: application/json
           "value": "string",
           "dataType": "string",
           "direction": "string",
-          "format": "string"
+          "format": "string",
+          "separator":"string"
         }
       ]
     },
@@ -184,14 +186,16 @@ content-type: application/json
           "value": "1",
           "dataType": "Int32",
           "direction": "Input",
-          "format": ""
+          "format": "",
+          "separator":""
         },
         {
           "name": "@actorId2",
           "value": "20",
           "dataType": "Int32",
           "direction": "Input",
-          "format": ""
+          "format": "",
+          "separator":""
         }
       ]
     },
@@ -212,7 +216,6 @@ content-type: application/json
       "db": "db1",
       "isSelect": true,
       "isScalar": false,
-      "sqlFile": "",
       "sqlFile": "/sql/sampleSql.xml",
       "sqlId": "queryOneActor",
       "sql": "",  
@@ -222,7 +225,8 @@ content-type: application/json
           "value": "1",
           "dataType": "",
           "direction": "",
-          "format": ""
+          "format": "",
+          "separator":""
         }
       ]
     },
@@ -233,7 +237,7 @@ content-type: application/json
  
 
 ==============================
-Test server side SQL with parameters
+Test IN clause for MySQL DB
 ==============================
 POST https://localhost:7241/invoke HTTP/1.1
 content-type: application/json
@@ -243,21 +247,85 @@ content-type: application/json
     "sqlContext": {
       "db": "db1",
       "isSelect": true,
-      "isScalar": false,
+      "isScalar": false,      
       "sqlFile": "",
-      "sqlFile": "/sql/sampleSql.xml",
-      "sqlId": "queryOtherActor",
-      "sql": "",  
+      "sqlId": "",
+      "sql": "select actor_id , first_name FirstName, last_name LastName, last_update LastUpdate  from actor where actor_id in @ids",  
       "parameters":[
          {
           "name": "@id",
           "value": "1,2",
-          "dataType": "",
-          "direction": "",
-          "format": ","
+          "dataType": "Decimal Array",
+          "direction": "Input",
+          "format": ",",
+          "separator":","
         }
       ]
     },
     "traceId": "1111"
   }
 }
+
+
+
+==============================
+Test IN clause for MS SQL server DB
+==============================
+POST https://localhost:7241/invoke HTTP/1.1
+content-type: application/json
+
+{
+  "request": {
+    "sqlContext": {
+      "db": "db2",
+      "isSelect": true,
+      "isScalar": false,
+      "sqlFile": "",
+      "sqlId": "",
+      "sql": "select * from oee.dbo.OEE_Hour_Dimension where Hour_Id in @hourid ",  
+      "parameters":[       
+        {
+          "name": "@hourid",
+          "value": "2021-12-16 00,2021-12-16 10",
+          "dataType": "String Array",
+          "direction": "Input",
+          "format": "",
+          "separator":","
+        }
+      ]
+    },
+    "traceId": "1111"
+  }
+}
+
+
+==============================
+Test IN clause for postgresql DB
+==============================
+POST https://localhost:7241/invoke HTTP/1.1
+content-type: application/json
+
+{
+  "request": {
+    "sqlContext": {
+      "db": "db3",
+      "isSelect": true,
+      "isScalar": false,
+      "sqlFile": "",
+      "sqlId": "",
+      "sql": "SELECT id, name , age, email FROM mybatis.users where id in :ids",  
+      "parameters":[       
+        {
+          "name": ":ids",
+          "value": "1,2",
+          "dataType": "int32 array",
+          "direction": "Input",
+          "format": "",
+          "separator":","
+        }
+      ]
+    },
+    "traceId": "1111"
+  }
+}
+

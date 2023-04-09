@@ -1,7 +1,6 @@
 ﻿using Dapper;
 using MyREST.Plugin;
 using System.Data;
-using System.Diagnostics;
 
 namespace MyREST
 {
@@ -63,7 +62,7 @@ namespace MyREST
             if (dbConfig == null)
             {
                 throw new RequestArgumentException($"database {dbName} not defined in configuration file");
-            }             
+            }
         }
 
         public SqlResultWrapper process(HttpContext httpContext, SqlRequestWrapper sqlRequestWrapper)
@@ -85,7 +84,7 @@ namespace MyREST
                     result.request.traceId = traceId; //just only writeback traceId
                 }
 
-                //security check 
+                //security check
                 string firewallMsg;
                 if (_firewall.check(httpContext, out firewallMsg) == false)
                 {
@@ -112,7 +111,7 @@ namespace MyREST
         private void executeSql(SqlRequestWrapper sqlRequestWrapper, SqlResultWrapper result)
         {
             SqlContext sqlContext;
-            DynamicParameters dapperParameters;
+            object dapperParameters;
             prepareDapperArguments(sqlRequestWrapper, result, out sqlContext, out dapperParameters);
 
             string dbName = sqlContext.db;
@@ -152,7 +151,7 @@ namespace MyREST
             result.response.errorMessage = "";
         }
 
-        private void prepareDapperArguments(SqlRequestWrapper sqlRequestWrapper, SqlResultWrapper result, out SqlContext sqlContext, out DynamicParameters dapperParameters)
+        private void prepareDapperArguments(SqlRequestWrapper sqlRequestWrapper, SqlResultWrapper result, out SqlContext sqlContext, out object dapperParameters)
         {
             SqlRequest request = sqlRequestWrapper.request;
             string traceId = request.traceId;

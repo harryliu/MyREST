@@ -1,6 +1,8 @@
 ﻿using Dapper;
 using System.Data;
+using System.Dynamic;
 using System.Globalization;
+using System.Text.RegularExpressions;
 using System.Xml.Serialization;
 
 namespace MyREST
@@ -121,6 +123,10 @@ namespace MyREST
                     {
                         clientParam.format = serverParam.format;
                     }
+                    if (String.IsNullOrWhiteSpace(clientParam.separator))
+                    {
+                        clientParam.separator = serverParam.separator;
+                    }
                 }
                 else
                 {
@@ -155,6 +161,10 @@ namespace MyREST
                     if (String.IsNullOrWhiteSpace(serverParam.format))
                     {
                         serverParam.format = clientParam.format;
+                    }
+                    if (String.IsNullOrWhiteSpace(serverParam.separator))
+                    {
+                        serverParam.separator = clientParam.separator;
                     }
                 }
                 else
@@ -194,10 +204,12 @@ namespace MyREST
             return dapperDirection;
         }
 
-        private static void convertDapperDataType(string oldType, string oldValue, string format, out DbType? newType, out object? newValue)
+        private static void convertDapperDataType(string oldType, string oldValue, string format, string separator,
+            out DbType? newType, out object newValue, out bool valueIsArray)
         {
             newType = null;
             newValue = null;
+            valueIsArray = false;
             var exceptionMessage = $"invalid parameter dataType {oldType}. Only some common kinds of dataType are supported at https://learn.microsoft.com/en-us/dotnet/api/system.data.dbtype";
             if (string.IsNullOrWhiteSpace(oldType) == false)
             {
@@ -253,6 +265,11 @@ namespace MyREST
                 {
                     newType = DbType.Int16;
                     newValue = Convert.ToInt16(oldValue);
+                }
+                else if (dataType == "Int".ToLower())
+                {
+                    newType = DbType.Int32;
+                    newValue = Convert.ToInt32(oldValue);
                 }
                 else if (dataType == "Int32".ToLower())
                 {
@@ -329,20 +346,35 @@ namespace MyREST
                 {
                     throw new MyRestException(exceptionMessage);
                 }
-                else if (dataType == "String Array".ToLower())
+                else if (dataType == "String Array".ToLower() || dataType == "String List".ToLower())
                 {
-                    newType = DbType.String;
-                    newValue = oldValue.Split(format);
+                    //newType = DbType.String;
+                    newValue = oldValue.Split(separator);
+                    valueIsArray = true;
                 }
-                else if (dataType == "Decimal Array".ToLower())
+                else if (dataType == "Decimal Array".ToLower() || dataType == "Decimal List".ToLower())
                 {
-                    newType = DbType.Decimal;
-                    string[] strArray = oldValue.Split(format);
-                    newValue = new List<decimal>();
+                    //newType = DbType.Decimal;
+                    string[] strArray = oldValue.Split(separator);
+                    var newValueList = new List<decimal>();
                     foreach (var item in strArray)
                     {
-                        newValue = Convert.ToDecimal(item);
+                        newValueList.Add(Convert.ToDecimal(item));
                     }
+                    newValue = newValueList;
+                    valueIsArray = true;
+                }
+                else if (dataType == "Int Array".ToLower() || dataType == "Int List".ToLower() || dataType == "Int32 Array".ToLower() || dataType == "Int32 List".ToLower())
+                {
+                    //newType = DbType.Decimal;
+                    string[] strArray = oldValue.Split(separator);
+                    var newValueList = new List<int>();
+                    foreach (var item in strArray)
+                    {
+                        newValueList.Add(Convert.ToInt32(item));
+                    }
+                    newValue = newValueList;
+                    valueIsArray = true;
                 }
                 else
                 {
@@ -351,19 +383,57 @@ namespace MyREST
             }
         }
 
-        public static DynamicParameters buildDapperParameters(SqlContext sqlContext)
+        public static string removeSpecialChars(string paramName)
         {
+            // Regular expression to match special characters
+            Regex regex = new Regex("[@!#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]");
+
+            // Replace special characters with an empty string
+            return regex.Replace(paramName, "");
+        }
+
+        public static object buildDapperParameters(SqlContext sqlContext)
+        {
+            List<DapperParameterItem> dapperParameterList = new List<DapperParameterItem>();
             DynamicParameters dapperParameters = new DynamicParameters();
+            bool returnAnonymousObj = false;
             foreach (var param in sqlContext.parameters)
             {
                 DbType? dapperDataType = null;
                 object? newValue = null;
                 ParameterDirection? dapperDirection = getDapperDirection(param.direction);
-                convertDapperDataType(param.dataType, param.value, param.format, out dapperDataType, out newValue);
+                bool valueIsArray;
+                convertDapperDataType(param.dataType, param.value, param.format, param.separator, out dapperDataType, out newValue, out valueIsArray);
+                if (valueIsArray == true)
+                {
+                    returnAnonymousObj = true;
+                }
                 dapperParameters.Add(param.name, newValue, dapperDataType, dapperDirection);
+                dapperParameterList.Add(new DapperParameterItem()
+                {
+                    name = param.name,
+                    value = newValue,
+                    dataType = dapperDataType,
+                    direction = dapperDirection
+                });
             }
 
-            return dapperParameters;
+            if (returnAnonymousObj == true)
+            {
+                //for supporting In clause, select * from table1 where id in @ids
+                //we should create Anonymous object as Dapper Parameters holder
+                dynamic expObj = new ExpandoObject();
+                foreach (var item in dapperParameterList)
+                {
+                    var propertyName = removeSpecialChars(item.name); //to remove @ or : symbol
+                    ((IDictionary<string, object>)expObj)[propertyName] = item.value;
+                }
+                return expObj;
+            }
+            else
+            {
+                return dapperParameters;
+            }
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System.Data;
 using System.Xml.Serialization;
 
 namespace MyREST
@@ -38,6 +39,9 @@ namespace MyREST
 
         [XmlAttribute(AttributeName = "format")]
         public string format { get; set; }
+
+        [XmlAttribute(AttributeName = "separator")]
+        public string separator { get; set; }
     }
 
     public class SqlRequestWrapper
@@ -93,7 +97,6 @@ namespace MyREST
         public IEnumerable<dynamic> rows { get; set; }
     }
 
-    
     public class XmlSqlParameters
     {
         [XmlElement(ElementName = "parameter")]
@@ -124,5 +127,13 @@ namespace MyREST
 
         [XmlText]
         public string text { get; set; }
+    }
+
+    public class DapperParameterItem
+    {
+        public string name { get; set; }
+        public object value { get; set; }
+        public DbType? dataType { get; set; }
+        public ParameterDirection? direction { get; set; }
     }
 }
