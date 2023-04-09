@@ -348,13 +348,13 @@ namespace MyREST
                 }
                 else if (dataType == "String Array".ToLower() || dataType == "String List".ToLower())
                 {
-                    //newType = DbType.String;
+                    newType = DbType.String;
                     newValue = oldValue.Split(separator);
                     valueIsArray = true;
                 }
                 else if (dataType == "Decimal Array".ToLower() || dataType == "Decimal List".ToLower())
                 {
-                    //newType = DbType.Decimal;
+                    newType = DbType.Decimal;
                     string[] strArray = oldValue.Split(separator);
                     var newValueList = new List<decimal>();
                     foreach (var item in strArray)
@@ -366,12 +366,24 @@ namespace MyREST
                 }
                 else if (dataType == "Int Array".ToLower() || dataType == "Int List".ToLower() || dataType == "Int32 Array".ToLower() || dataType == "Int32 List".ToLower())
                 {
-                    //newType = DbType.Decimal;
+                    newType = DbType.Int32;
                     string[] strArray = oldValue.Split(separator);
                     var newValueList = new List<int>();
                     foreach (var item in strArray)
                     {
                         newValueList.Add(Convert.ToInt32(item));
+                    }
+                    newValue = newValueList;
+                    valueIsArray = true;
+                }
+                else if (dataType == "DateTime Array".ToLower() || dataType == "DateTime List".ToLower())
+                {
+                    newType = DbType.DateTime;
+                    string[] strArray = oldValue.Split(separator);
+                    var newValueList = new List<DateTime>();
+                    foreach (var item in strArray)
+                    {
+                        newValueList.Add(DateTime.ParseExact(item, format, CultureInfo.InvariantCulture));
                     }
                     newValue = newValueList;
                     valueIsArray = true;
