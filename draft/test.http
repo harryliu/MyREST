@@ -4,7 +4,7 @@ tasks:
 . (done) 支持多种数据库类型
 . (done) 支持Scalar标量查询
 . (done)支持 parameters 
-. toml 判空处理
+. (done) toml 判空处理
 . 增加日志
 . 增加单元测试
 . 项目文档撰写

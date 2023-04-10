@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root version="1.0">
+	<sql id="queryAllActors">
+		<![CDATA[
+		  select actor_id , first_name FirstName, last_name LastName, last_update LastUpdate
+           from actor    
+		]]>
+		<parameters>
+		</parameters>
+	</sql>
+
+	<sql id="queryOneActor">
+		<![CDATA[
+		  select actor_id , first_name FirstName, last_name LastName, last_update LastUpdate
+           from actor where actor_id=@id
+		]]>
+		<parameters>
+			<parameter name="@id" dataType="Int32"  direction="Input" format="" separator="" ></parameter>
+		</parameters>
+	</sql>
+
+	<sql id="queryOtherActor">
+		<![CDATA[
+		  select actor_id , first_name FirstName, last_name LastName, last_update LastUpdate
+           from actor where actor_id in @ids
+		]]>
+		<parameters>
+			<parameter name="@id" dataType="Decimal Array"  direction="Input" format="" separator=","></parameter>
+		</parameters>
+	</sql>	
+</root>

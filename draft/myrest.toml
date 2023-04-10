@@ -1,0 +1,44 @@
+[system]
+enableSwagger=true 
+enableClientSql=true  #allow client to submit SQL statement. It only works in debug mode. 
+useResponseCompression=true
+hotReloadSqlFile=true
+writebackRequest=true # writeback the whole request rather than only traceId
+enableIpWhiteList=true 
+enableIpBlackList=true 
+ipWhiteList=["127.0.0.1","192.168.0.1"]
+ipBlackList=["127.0.0.2","192.168.0.156"]
+
+
+
+
+[[databases]]
+name="db1"
+dbType="mysql" # sqlite,mysql,mssql,postgresql,oracle
+connectionString="Server=localhost;Port=3306;Database=sakila;Uid=root;Pwd=TOOR;"    
+sqlFileHome="D://my_workspace//source//src1//github//MyREST//MyREST//src//MyREST//bin//Debug//net7.0"   #sql file home
+
+[[databases]]
+name="db2"
+dbType="mssql" # sqlite,mysql,mssql,postgresql,oracle
+connectionString="Server=localhost;Database=Oee;User Id=sa;Password=root;Encrypt=True;TrustServerCertificate=True"    
+sqlFileHome="D://my_workspace//source//src1//github//MyREST//MyREST//src//MyREST//bin//Debug//net7.0"   #sql file home
+
+[[databases]]
+name="db3"
+dbType="postgresql" # sqlite,mysql,mssql,postgresql,oracle
+connectionString="Server=127.0.0.1;Port=5432;Database=camunda;User Id=postgres;Password=ROOT;"    
+sqlFileHome="D://my_workspace//source//src1//github//MyREST//MyREST//src//MyREST//bin//Debug//net7.0"   #sql file home
+
+
+
+[authaaaa]
+enabled = true  #enable JWT authentication
+route = "/auth"
+userTable="myrest_users"
+type = "body"
+encrypt = "MD5"
+accessTokenExpires=10	#unit:minute
+refreshTokenExpire=60  #unit:minute
+jwtKey="secret"
+jwtAlgo="HS256"
