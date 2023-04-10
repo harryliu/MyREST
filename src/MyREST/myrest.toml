@@ -3,7 +3,7 @@ enableSwagger=true
 enableClientSql=true  #allow client to submit SQL statement. It only works in debug mode. 
 useResponseCompression=true
 hotReloadSqlFile=true
-writebackRequest=true # 在response中是否要回写完整的request
+writebackRequest=true # writeback the whole request rather than only traceId
 enableIpWhiteList=true 
 enableIpBlackList=true 
 ipWhiteList=["127.0.0.1","192.168.0.1"]
@@ -33,7 +33,7 @@ sqlFileHome="D://my_workspace//source//src1//github//MyREST//MyREST//src//MyREST
 
 
 [authaaaa]
-enabled = true  #是否启用 authentication
+enabled = true  #enable JWT authentication
 route = "/auth"
 userTable="myrest_users"
 type = "body"

@@ -33,12 +33,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Update="nlog.config">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
     <None Update="myrest.toml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

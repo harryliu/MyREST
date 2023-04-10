@@ -22,6 +22,7 @@ namespace MyREST
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            //enable NLog
             builder.Logging.ClearProviders();
             builder.Host.UseNLog();
 
@@ -59,6 +60,7 @@ namespace MyREST
             {
                 options.Providers.Add<GzipCompressionProvider>();
                 options.Providers.Add<BrotliCompressionProvider>();
+                options.EnableForHttps = true;
             });
             services.Configure<BrotliCompressionProviderOptions>(options =>
             {
@@ -79,8 +81,7 @@ namespace MyREST
             IConfiguration configuration = builder.Build();
             services.AddSingleton<IConfiguration>(configuration);
 
-            ////Add NLog
-
+            //Add NLog
             var logger = LogManager.Setup()
                                    .LoadConfigurationFromSection(configuration)
                                    .GetCurrentClassLogger();

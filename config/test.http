@@ -1,28 +1,15 @@
-https://geeksarray.com/blog/aspnet-core-application-and-kestrel-web-server-settings
-https://www.tektutorialshub.com/asp-net-core/asp-net-core-kestrel-web-server/
-You can run PowerServer Web APIs on Kestrel and as a service:
-
-Step 1: Publish the PowerServer Web APIs from the SnapDevelop IDE to a folder by following instructions in this section.
-
-The Web APIs will be compiled as an ASP.NET Core app and all files (such as configuration files, assembly files, dependencies, .NET runtime etc.) required to run the app will be copied to the publish folder.
-
-Step 2: Copy all files from the publish folder to the server.
-
-Alternatively, you can directly run the app using this command:
-
-dotnet <app_assembly>.dll
 
 
 tasks: 
 . (done) 支持多种数据库类型
 . (done) 支持Scalar标量查询
-. 支持 parameters 
+. (done)支持 parameters 
 . toml 判空处理
 . 增加日志
 . 增加单元测试
 . 项目文档撰写
-. 增加安全插件机制,  Auth插件
-. Firewall 改造成安全插件形式
+. (done)Firewall 改造成安全插件形式
+. JWT Auth 安全插件
 . 增加 health check 
 . 支持优雅停机
 . 支持 miniProfiler
@@ -33,13 +20,13 @@ tasks:
 ==============================
 Swagger UI url 
 ==============================
-https://localhost:7241/swagger/index.html 
+http://localhost:5001/swagger/index.html 
 
 
 ==============================
 API format 
 ==============================
-POST https://localhost:7241/run HTTP/1.1
+POST http://localhost:5001/run HTTP/1.1
 content-type: application/json
 
 {
@@ -70,7 +57,7 @@ content-type: application/json
 ==============================
 Test client side SQL 
 ==============================
-POST https://localhost:7241/run HTTP/1.1
+POST http://localhost:5001/run HTTP/1.1
 content-type: application/json
 
 {
@@ -114,7 +101,7 @@ content-type: application/json
 ==============================
 Test DML statement  
 ==============================
-POST https://localhost:7241/run HTTP/1.1
+POST http://localhost:5001/run HTTP/1.1
 content-type: application/json
 
 {
@@ -135,7 +122,7 @@ content-type: application/json
 ==============================
 Test server side sql
 ==============================
-POST https://localhost:7241/run HTTP/1.1
+POST http://localhost:5001/run HTTP/1.1
 content-type: application/json
 
 {
@@ -159,7 +146,7 @@ content-type: application/json
 ==============================
 compress response
 ==============================
-POST https://localhost:7241/run HTTP/1.1
+POST http://localhost:5001/run HTTP/1.1
 Content-type: application/json
 Accept-Encoding: br, gzip
 
@@ -183,7 +170,7 @@ Accept-Encoding: br, gzip
 ==============================
 Test client side SQL with parameter
 ==============================
-POST https://localhost:7241/run HTTP/1.1
+POST http://localhost:5001/run HTTP/1.1
 content-type: application/json
 
 {
@@ -222,7 +209,7 @@ content-type: application/json
 ==============================
 Test server side SQL with parameters
 ==============================
-POST https://localhost:7241/run HTTP/1.1
+POST http://localhost:5001/run HTTP/1.1
 content-type: application/json
 
 {
@@ -254,7 +241,7 @@ content-type: application/json
 ==============================
 Test IN clause for MySQL DB
 ==============================
-POST https://localhost:7241/run HTTP/1.1
+POST http://localhost:5001/run HTTP/1.1
 content-type: application/json
 
 {
@@ -286,7 +273,7 @@ content-type: application/json
 ==============================
 Test IN clause for MS SQL server DB
 ==============================
-POST https://localhost:7241/run HTTP/1.1
+POST http://localhost:5001/run HTTP/1.1
 content-type: application/json
 
 {
@@ -317,7 +304,7 @@ content-type: application/json
 ==============================
 Test IN clause for postgresql DB
 ==============================
-POST https://localhost:7241/run HTTP/1.1
+POST http://localhost:5001/run HTTP/1.1
 content-type: application/json
 
 {

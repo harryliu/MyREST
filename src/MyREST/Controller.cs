@@ -19,7 +19,6 @@ namespace MyREST
             _logger = logger;
             _configuration = configuration;
             _engine = engine;
-            _logger.LogInformation("aaaaaaaaaaaaaaaa");
         }
 
         [HttpPost("/run")]

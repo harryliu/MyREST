@@ -5,8 +5,8 @@ namespace MyREST.Plugin
 {
     public class FirewallPlugin : SecurityPlugin
     {
-        private bool _needCheckIpWhiteList;
-        private bool _needCheckIpBlackList;
+        private bool _needCheckIpWhiteList = false;
+        private bool _needCheckIpBlackList = false;
         private List<string> _ipWhiteList;
         private List<Glob> _IpWhiteGlobList;
         private List<Glob> _ipBlackGlobList;
@@ -17,19 +17,25 @@ namespace MyREST.Plugin
         {
             _ipWhiteList = new List<string>();
             _IpWhiteGlobList = new List<Glob>();
-            foreach (string item in _systemConfig.ipWhiteList)
+            if (_systemConfig.ipWhiteList != null)
             {
-                _ipWhiteList.Add(item.Trim());
-                _IpWhiteGlobList.Add(new Glob(item.Trim()));
+                foreach (string item in _systemConfig.ipWhiteList)
+                {
+                    _ipWhiteList.Add(item.Trim());
+                    _IpWhiteGlobList.Add(new Glob(item.Trim()));
+                }
             }
             _needCheckIpWhiteList = systemConfig.enableIpWhiteList && _ipWhiteList.Count() > 0;
 
             _ipBlackList = new List<string>();
             _ipBlackGlobList = new List<Glob>();
-            foreach (var item in _systemConfig.ipBlackList)
+            if (_systemConfig.ipBlackList != null)
             {
-                _ipBlackList.Add(item.Trim());
-                _ipBlackGlobList.Add(new Glob(item.Trim()));
+                foreach (var item in _systemConfig.ipBlackList)
+                {
+                    _ipBlackList.Add(item.Trim());
+                    _ipBlackGlobList.Add(new Glob(item.Trim()));
+                }
             }
             _needCheckIpBlackList = systemConfig.enableIpBlackList && _ipBlackList.Count() > 0;
         }
