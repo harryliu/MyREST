@@ -19,6 +19,8 @@ namespace MyREST
 
         public bool writebackRequest { get; set; } = false;
 
+        public bool writebackInBase64 { get; set; } = false;
+
         public bool enableIpWhiteList { get; set; } = false;
         public bool enableIpBlackList { get; set; } = false;
         public string[] ipWhiteList { get; set; }

@@ -65,6 +65,31 @@ namespace MyREST
             }
         }
 
+        private void writebackRequest(SqlRequestWrapper sqlRequestWrapper, SqlResultWrapper result)
+        {
+            string traceId = sqlRequestWrapper.request.traceId;
+            if (_systemConfig.writebackRequest)
+            {
+                result.request = sqlRequestWrapper.request; //writeback both sqlContext and traceId
+                if (_systemConfig.writebackInBase64)
+                {
+                    result.request.sqlContext.sql = result.request.sqlContext.getBase64Sql();
+                }
+                else
+                {
+                    result.request.sqlContext.sql = result.request.sqlContext.getPlainSql();
+                }
+            }
+            else
+            {
+                if (result.request == null)
+                {
+                    result.request = new SqlRequest(); //set one empty request in result object
+                }
+                result.request.traceId = traceId; //just only writeback traceId
+            }
+        }
+
         public SqlResultWrapper process(HttpContext httpContext, SqlRequestWrapper sqlRequestWrapper)
         {
             SqlResultWrapper result = new SqlResultWrapper();
@@ -72,18 +97,6 @@ namespace MyREST
             result.response = sqlResponse;
             try
             {
-                //feedback traceId
-                string traceId = sqlRequestWrapper.request.traceId;
-                if (_globalConfig.system.writebackRequest)
-                {
-                    result.request = sqlRequestWrapper.request; //writeback both sqlContext and traceId
-                }
-                else
-                {
-                    result.request = new SqlRequest(); //set one empty request in result object
-                    result.request.traceId = traceId; //just only writeback traceId
-                }
-
                 //security check
                 string firewallMsg;
                 if (_firewall.check(httpContext, out firewallMsg) == false)
@@ -91,8 +104,10 @@ namespace MyREST
                     throw new SecurityException(firewallMsg);
                 }
 
+                //validate request and sqlFile
                 validateRequest(sqlRequestWrapper);
 
+                //execute SQL
                 executeSql(sqlRequestWrapper, result);
             }
             catch (MyRestException ex)
@@ -104,6 +119,11 @@ namespace MyREST
             {
                 result.response.returnCode = 1;
                 result.response.errorMessage = ex.Message;
+            }
+            finally
+            {
+                //feedback request
+                writebackRequest(sqlRequestWrapper, result);
             }
             return result;
         }
@@ -125,7 +145,7 @@ namespace MyREST
                 {
                     if (sqlContext.isScalar == false)
                     {
-                        IEnumerable<dynamic> rows = conn.Query(sqlContext.sql, dapperParameters);
+                        IEnumerable<dynamic> rows = conn.Query(sqlContext.getPlainSql(), dapperParameters);
                         result.response.scalarValue = null;
                         result.response.affectedCount = 0;
                         result.response.rows = rows;
@@ -133,7 +153,7 @@ namespace MyREST
                     }
                     else
                     {
-                        result.response.scalarValue = conn.ExecuteScalar(sqlContext.sql, dapperParameters);
+                        result.response.scalarValue = conn.ExecuteScalar(sqlContext.getPlainSql(), dapperParameters);
                         result.response.affectedCount = 0;
                         result.response.rows = null;
                         result.response.rowCount = 0;
@@ -141,7 +161,7 @@ namespace MyREST
                 }
                 else
                 {
-                    result.response.affectedCount = conn.Execute(sqlContext.sql, dapperParameters);
+                    result.response.affectedCount = conn.Execute(sqlContext.getPlainSql(), dapperParameters);
                     result.response.scalarValue = null;
                     result.response.rows = null;
                     result.response.rowCount = 0;
