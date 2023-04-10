@@ -2,6 +2,10 @@ using Microsoft.AspNetCore.ResponseCompression;
 using MyREST.Plugin;
 using Nett;
 using System.IO.Compression;
+using NLog;
+using static Org.BouncyCastle.Math.EC.ECCurve;
+using NLog.Extensions.Logging;
+using NLog.Web;
 
 namespace MyREST
 {
@@ -17,6 +21,9 @@ namespace MyREST
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            builder.Logging.ClearProviders();
+            builder.Host.UseNLog();
 
             GlobalConfig globalConfig;
             AddConfiguration(builder.Services, out globalConfig);
@@ -40,7 +47,7 @@ namespace MyREST
                 app.UseSwaggerUI();
             }
 
-            app.UseHttpsRedirection();
+            app.UseHttpsRedirection();  //
             app.UseAuthorization();
             app.MapControllers();
             app.Run();
@@ -67,11 +74,18 @@ namespace MyREST
         {
             IConfigurationBuilder builder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json");
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
 
             IConfiguration configuration = builder.Build();
             services.AddSingleton<IConfiguration>(configuration);
 
+            ////Add NLog
+
+            var logger = LogManager.Setup()
+                                   .LoadConfigurationFromSection(configuration)
+                                   .GetCurrentClassLogger();
+
+            //read myrest.toml file
             string tomlFile = "myrest.toml";
 
             //read system configuration in toml file

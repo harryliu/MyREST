@@ -19,10 +19,11 @@ namespace MyREST
             _logger = logger;
             _configuration = configuration;
             _engine = engine;
+            _logger.LogInformation("aaaaaaaaaaaaaaaa");
         }
 
-        [HttpPost("/invoke")]
-        public SqlResultWrapper invoke([FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] SqlRequestWrapper sqlRequestWrapper)
+        [HttpPost("/run")]
+        public SqlResultWrapper run([FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] SqlRequestWrapper sqlRequestWrapper)
         {
             SqlResultWrapper result = _engine.process(this.HttpContext, sqlRequestWrapper);
             return result;
