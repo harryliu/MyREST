@@ -12,12 +12,12 @@ namespace MyREST
         private SystemConfig _systemConfig;
         private List<DbConfig> _dbConfigs;
         private XmlFileContainer _xmlFileContainer;
-        private FirewallPlugin _firewall;
+        private FirewallPlugin _firewallPlugin;
 
         private readonly ILogger<Engine>? _logger;
 
         public Engine(ILogger<Engine>? logger, IConfiguration configuration,
-            GlobalConfig globalConfig, SystemConfig systemConfig, List<DbConfig> dbConfigs, XmlFileContainer xmlFileContainer, FirewallPlugin firewall
+            GlobalConfig globalConfig, SystemConfig systemConfig, List<DbConfig> dbConfigs, XmlFileContainer xmlFileContainer, FirewallPlugin firewallPlugin
             )
         {
             _logger = logger;
@@ -26,7 +26,7 @@ namespace MyREST
             _systemConfig = systemConfig;
             _dbConfigs = dbConfigs;
             _xmlFileContainer = xmlFileContainer;
-            _firewall = firewall;
+            _firewallPlugin = firewallPlugin;
         }
 
         private DbConfig getDbConfig(string dbName)
@@ -99,7 +99,7 @@ namespace MyREST
             {
                 //security check
                 string firewallMsg;
-                if (_firewall.check(httpContext, out firewallMsg) == false)
+                if (_firewallPlugin.check(httpContext, out firewallMsg) == false)
                 {
                     throw new SecurityException(firewallMsg);
                 }

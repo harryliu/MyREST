@@ -5,6 +5,7 @@ namespace MyREST.Plugin
 {
     public class FirewallPlugin : SecurityPlugin
     {
+        private FirewallConfig _firewallConfig;
         private bool _needCheckIpWhiteList = false;
         private bool _needCheckIpBlackList = false;
         private List<string> _ipWhiteList;
@@ -12,32 +13,34 @@ namespace MyREST.Plugin
         private List<Glob> _ipBlackGlobList;
         private List<string> _ipBlackList;
 
-        public FirewallPlugin(ILogger<SecurityPlugin>? logger, IConfiguration configuration, GlobalConfig globalConfig, SystemConfig systemConfig) :
-            base(logger, configuration, globalConfig, systemConfig)
+        public FirewallPlugin(ILogger<SecurityPlugin>? logger, IConfiguration configuration, GlobalConfig globalConfig) :
+            base(logger, configuration, globalConfig)
         {
+            _firewallConfig = globalConfig.firewall;
+
             _ipWhiteList = new List<string>();
             _IpWhiteGlobList = new List<Glob>();
-            if (_systemConfig.ipWhiteList != null)
+            if (_firewallConfig.ipWhiteList != null)
             {
-                foreach (string item in _systemConfig.ipWhiteList)
+                foreach (string item in _firewallConfig.ipWhiteList)
                 {
                     _ipWhiteList.Add(item.Trim());
                     _IpWhiteGlobList.Add(new Glob(item.Trim()));
                 }
             }
-            _needCheckIpWhiteList = systemConfig.enableIpWhiteList && _ipWhiteList.Count() > 0;
+            _needCheckIpWhiteList = _firewallConfig.enableIpWhiteList && _ipWhiteList.Count() > 0;
 
             _ipBlackList = new List<string>();
             _ipBlackGlobList = new List<Glob>();
-            if (_systemConfig.ipBlackList != null)
+            if (_firewallConfig.ipBlackList != null)
             {
-                foreach (var item in _systemConfig.ipBlackList)
+                foreach (var item in _firewallConfig.ipBlackList)
                 {
                     _ipBlackList.Add(item.Trim());
                     _ipBlackGlobList.Add(new Glob(item.Trim()));
                 }
             }
-            _needCheckIpBlackList = systemConfig.enableIpBlackList && _ipBlackList.Count() > 0;
+            _needCheckIpBlackList = _firewallConfig.enableIpBlackList && _ipBlackList.Count() > 0;
         }
 
         public override bool check(HttpContext httpContext, out string checkMessage)

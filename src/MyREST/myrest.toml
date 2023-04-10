@@ -4,11 +4,13 @@ enableClientSql=true  # allow client to submit SQL statement. It only works in d
 hotReloadSqlFile=true # hot reload server side SQL file 
 writebackRequest=true # writeback the whole request rather than only traceId
 writebackInBase64=false # writeback SQL in plain or base64 format
+useResponseCompression=false # enable response compression
+
+[firewall]
 enableIpWhiteList=true # enable IP white list
 enableIpBlackList=true # enable IP black list
 ipWhiteList=["127.0.0.1","192.168.0.1"]
-ipBlackList=["127.0.0.2","192.168.0.156"]
-useResponseCompression=false # enable response compression
+ipBlackList=["127.0.0.1","192.168.0.156"]
 
 
 

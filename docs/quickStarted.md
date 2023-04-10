@@ -1,5 +1,5 @@
 ## 安装 dotnet
-目前支持 .net7 +
+目前支持 .net6 和 .net7
 
 ## 下载 MyRest 编译包
 github 主页中下载编译包
@@ -15,6 +15,7 @@ enableSwagger=true # allow enable Swagger UI
 enableClientSql=true  # allow client to submit SQL statement. It only works in debug mode. 
 hotReloadSqlFile=true # hot reload server side SQL file 
 writebackRequest=true # writeback the whole request rather than only traceId
+writebackInBase64=false # writeback SQL in plain or base64 format
 enableIpWhiteList=true # enable IP white list
 enableIpBlackList=true # enable IP black list
 ipWhiteList=["127.0.0.1","192.168.0.1"]

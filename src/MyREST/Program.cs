@@ -98,6 +98,8 @@ namespace MyREST
                 globalConfig = Toml.ReadFile<GlobalConfig>(tomlFile);
                 SystemConfig systemConfig = globalConfig.system;
                 systemConfig.validate();
+                FirewallConfig firewallConfig = globalConfig.firewall;
+                firewallConfig.validate();
 
                 //read db configurations in toml file
                 TomlTableArray databaseTable = Toml.ReadFile(tomlFile).Get<TomlTableArray>("databases");
@@ -113,6 +115,7 @@ namespace MyREST
 
                 //register Toml configuration objects into DI
                 services.AddSingleton<SystemConfig>(systemConfig);
+                services.AddSingleton<FirewallConfig>(firewallConfig);
                 services.AddSingleton<GlobalConfig>(globalConfig);
                 services.AddSingleton<List<DbConfig>>(dbConfigList);
 
@@ -124,12 +127,12 @@ namespace MyREST
                 //register firewall object
                 var provider = services.BuildServiceProvider();
                 var firewallLogger = provider.GetService<ILogger<FirewallPlugin>>();
-                FirewallPlugin firewall = new FirewallPlugin(firewallLogger, configuration, globalConfig, systemConfig);
-                services.AddSingleton<FirewallPlugin>(firewall);
+                FirewallPlugin firewallPlugin = new FirewallPlugin(firewallLogger, configuration, globalConfig);
+                services.AddSingleton<FirewallPlugin>(firewallPlugin);
 
                 //register engine object
                 var engineLLogger = provider.GetService<ILogger<Engine>>();
-                Engine engine = new Engine(engineLLogger, configuration, globalConfig, systemConfig, dbConfigList, xmlFileContainer, firewall);
+                Engine engine = new Engine(engineLLogger, configuration, globalConfig, systemConfig, dbConfigList, xmlFileContainer, firewallPlugin);
                 services.AddSingleton<Engine>(engine);
             }
             catch (Exception ex)

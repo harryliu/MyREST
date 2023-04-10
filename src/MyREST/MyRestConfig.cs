@@ -6,7 +6,7 @@ namespace MyREST
     {
         public SystemConfig system { get; set; }
 
-        //public AuthConfig auth { get; set; }
+        public FirewallConfig firewall { get; set; }
     }
 
     public class SystemConfig
@@ -21,6 +21,13 @@ namespace MyREST
 
         public bool writebackInBase64 { get; set; } = false;
 
+        public void validate()
+        {
+        }
+    }
+
+    public class FirewallConfig
+    {
         public bool enableIpWhiteList { get; set; } = false;
         public bool enableIpBlackList { get; set; } = false;
         public string[] ipWhiteList { get; set; }
