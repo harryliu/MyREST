@@ -6,6 +6,7 @@ using NLog;
 using static Org.BouncyCastle.Math.EC.ECCurve;
 using NLog.Extensions.Logging;
 using NLog.Web;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace MyREST
 {
@@ -74,6 +75,7 @@ namespace MyREST
 
         private static void AddConfiguration(IServiceCollection services, out GlobalConfig globalConfig)
         {
+            var provider = services.BuildServiceProvider();
             globalConfig = new GlobalConfig();
 
             IConfigurationBuilder builder = new ConfigurationBuilder()
@@ -124,15 +126,20 @@ namespace MyREST
                 XmlFileContainer xmlFileContainer = new XmlFileContainer(hotReload);
                 services.AddSingleton<XmlFileContainer>(xmlFileContainer);
 
-                //register firewall object
-                var provider = services.BuildServiceProvider();
+                //register firewallPlugin object
                 var firewallLogger = provider.GetService<ILogger<FirewallPlugin>>();
                 FirewallPlugin firewallPlugin = new FirewallPlugin(firewallLogger, configuration, globalConfig);
                 services.AddSingleton<FirewallPlugin>(firewallPlugin);
 
+                //register basicAuthPlugin object
+                var basicAuthLogger = provider.GetService<ILogger<BasicAuthPlugin>>();
+                BasicAuthPlugin basicAuthPlugin = new BasicAuthPlugin(basicAuthLogger, configuration, globalConfig);
+                services.AddSingleton<BasicAuthPlugin>(basicAuthPlugin);
+
                 //register engine object
                 var engineLLogger = provider.GetService<ILogger<Engine>>();
-                Engine engine = new Engine(engineLLogger, configuration, globalConfig, systemConfig, dbConfigList, xmlFileContainer, firewallPlugin);
+                Engine engine = new Engine(engineLLogger, configuration, globalConfig, systemConfig,
+                    dbConfigList, xmlFileContainer, firewallPlugin, basicAuthPlugin);
                 services.AddSingleton<Engine>(engine);
             }
             catch (Exception ex)

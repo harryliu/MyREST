@@ -7,6 +7,7 @@ namespace MyREST
         public SystemConfig system { get; set; }
 
         public FirewallConfig firewall { get; set; }
+        public BasicAuthConfig basicAuth { get; set; }
     }
 
     public class SystemConfig
@@ -35,6 +36,28 @@ namespace MyREST
 
         public void validate()
         {
+        }
+    }
+
+    public class BasicAuthConfig
+    {
+        public bool enableBasicAuth { get; set; } = false;
+        public string username { get; set; }
+        public string password { get; set; }
+
+        public void validate()
+        {
+            if (enableBasicAuth)
+            {
+                if (string.IsNullOrWhiteSpace(username))
+                {
+                    throw new SecurityException("username is required in basicAuth section");
+                }
+                if (string.IsNullOrWhiteSpace(password))
+                {
+                    throw new SecurityException("password is required in basicAuth section");
+                }
+            }
         }
     }
 

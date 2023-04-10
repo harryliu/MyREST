@@ -43,7 +43,7 @@ namespace MyREST.Plugin
             _needCheckIpBlackList = _firewallConfig.enableIpBlackList && _ipBlackList.Count() > 0;
         }
 
-        public override bool check(HttpContext httpContext, out string checkMessage)
+        protected override bool internalCheck(HttpContext httpContext, out string checkMessage)
         {
             string? clientIpAddress = httpContext.Connection.RemoteIpAddress?.ToString() ??
                 httpContext.Features.Get<IHttpConnectionFeature>()?.RemoteIpAddress?.ToString();

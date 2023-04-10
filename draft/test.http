@@ -101,6 +101,31 @@ content-type: application/json
 
 
 ==============================
+Test BasicAuth 安全插件
+dXNlcjEyMzpwYXNzd29yZDEyMw== 是 user123:password123 的base64形式
+==============================
+POST http://localhost:5001/run HTTP/1.1
+content-type: application/json
+Authorization: Basic dXNlcjEyMzpwYXNzd29yZDEyMw==
+
+{
+  "request": {
+    "sqlContext": {
+      "db": "sakila",
+      "isSelect": true,
+      "isScalar": true,
+      "sqlFile": "",
+      "sqlId": "",
+      "sql": "select count(*) from actor      ",  
+      "parameters":[]
+    },
+    "traceId": "1111"
+  }
+}
+
+
+
+==============================
 Test DML statement  
 ==============================
 POST http://localhost:5001/run HTTP/1.1

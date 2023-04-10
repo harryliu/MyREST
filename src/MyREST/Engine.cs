@@ -13,12 +13,13 @@ namespace MyREST
         private List<DbConfig> _dbConfigs;
         private XmlFileContainer _xmlFileContainer;
         private FirewallPlugin _firewallPlugin;
+        private BasicAuthPlugin _basicAuthPlugin;
 
         private readonly ILogger<Engine>? _logger;
 
         public Engine(ILogger<Engine>? logger, IConfiguration configuration,
-            GlobalConfig globalConfig, SystemConfig systemConfig, List<DbConfig> dbConfigs, XmlFileContainer xmlFileContainer, FirewallPlugin firewallPlugin
-            )
+            GlobalConfig globalConfig, SystemConfig systemConfig, List<DbConfig> dbConfigs,
+            XmlFileContainer xmlFileContainer, FirewallPlugin firewallPlugin, BasicAuthPlugin basicAuthPlugin)
         {
             _logger = logger;
             _configuration = configuration;
@@ -27,6 +28,7 @@ namespace MyREST
             _dbConfigs = dbConfigs;
             _xmlFileContainer = xmlFileContainer;
             _firewallPlugin = firewallPlugin;
+            _basicAuthPlugin = basicAuthPlugin;
         }
 
         private DbConfig getDbConfig(string dbName)
@@ -97,11 +99,18 @@ namespace MyREST
             result.response = sqlResponse;
             try
             {
-                //security check
+                //firewall check
                 string firewallMsg;
                 if (_firewallPlugin.check(httpContext, out firewallMsg) == false)
                 {
                     throw new SecurityException(firewallMsg);
+                }
+
+                //basic auth check
+                string basicAuthCheckMsg;
+                if (_basicAuthPlugin.check(httpContext, out basicAuthCheckMsg) == false)
+                {
+                    throw new SecurityException(basicAuthCheckMsg);
                 }
 
                 //validate request and sqlFile

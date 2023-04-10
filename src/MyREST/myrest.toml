@@ -10,7 +10,14 @@ useResponseCompression=false # enable response compression
 enableIpWhiteList=true # enable IP white list
 enableIpBlackList=true # enable IP black list
 ipWhiteList=["127.0.0.1","192.168.0.1"]
-ipBlackList=["127.0.0.1","192.168.0.156"]
+ipBlackList=["127.0.0.2","192.168.0.156"]
+
+
+[basicAuth]
+enableBasicAuth=false # enable Basic Auth
+username="user123"
+password="password123"
+
 
 
 
