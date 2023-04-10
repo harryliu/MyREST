@@ -34,12 +34,24 @@ namespace MyREST
         public string name { get; set; }
         public string dbType { get; set; }
         public string connectionString { get; set; }
-        public string sqlFileHome { get; set; }
 
-        public string trimedSqlFileHome()
+        public string sqlFileHome
         {
-            return sqlFileHome.Trim();
+            get
+            {
+                if (String.IsNullOrWhiteSpace(_sqlFileHome))
+                {
+                    return Directory.GetCurrentDirectory();
+                }
+                else
+                {
+                    return _sqlFileHome.Trim();
+                }
+            }
+            set { _sqlFileHome = value; }
         }
+
+        private string? _sqlFileHome = null;
 
         /// <summary>
         /// validate one single database configuration
@@ -62,9 +74,9 @@ namespace MyREST
                 throw new TomlFileException($"sqlFileHome should be assigned for database {name}");
             }
 
-            if (Path.Exists(trimedSqlFileHome()) == false)
+            if (Path.Exists(sqlFileHome) == false)
             {
-                throw new TomlFileException($"sqlFileHome path {trimedSqlFileHome()} does not exist for database {name}");
+                throw new TomlFileException($"sqlFileHome path {sqlFileHome} does not exist for database {name}");
             }
 
             String supportedDbType = "sqlite,mysql,mssql,postgresql,oracle";

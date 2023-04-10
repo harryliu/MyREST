@@ -158,7 +158,7 @@ namespace MyREST
             sqlContext = request.sqlContext;
             string dbName = sqlContext.db;
             DbConfig dbConfig = getDbConfig(dbName);
-            string sqlFileHome = dbConfig.trimedSqlFileHome();
+            string sqlFileHome = dbConfig.sqlFileHome;
             string sqlFile = sqlContext.sqlFile;
             string sqlId = sqlContext.sqlId;
 

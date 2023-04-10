@@ -25,6 +25,7 @@ namespace MyREST
         public SqlResultWrapper run([FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] SqlRequestWrapper sqlRequestWrapper)
         {
             SqlResultWrapper result = _engine.process(this.HttpContext, sqlRequestWrapper);
+            _logger.LogInformation("run() done");
             return result;
         }
 

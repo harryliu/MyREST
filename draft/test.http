@@ -63,7 +63,7 @@ content-type: application/json
 {
   "request": {
     "sqlContext": {
-      "db": "db1",
+      "db": "sakila",
       "isSelect": true,
       "isScalar": false,
       "sqlFile": "",
@@ -84,7 +84,7 @@ content-type: application/json
 {
   "request": {
     "sqlContext": {
-      "db": "db1",
+      "db": "sakila",
       "isSelect": true,
       "isScalar": true,
       "sqlFile": "",
@@ -107,7 +107,7 @@ content-type: application/json
 {
   "request": {
     "sqlContext": {
-      "db": "db1",
+      "db": "sakila",
       "isSelect": false,
       "isScalar": false,
       "sqlFile": "",
@@ -128,10 +128,10 @@ content-type: application/json
 {
   "request": {
     "sqlContext": {
-      "db": "db1",
+      "db": "sakila",
       "isSelect": true,
       "isScalar": false,
-      "sqlFile": "/sql/sampleSql.xml",
+      "sqlFile": "/sampleSql.xml",
       "sqlId": "queryAllActors",
       "sql": "",  
       "parameters":[]
@@ -153,7 +153,7 @@ Accept-Encoding: br, gzip
 {
   "request": {
     "sqlContext": {
-      "db": "db1",
+      "db": "sakila",
       "isSelect": true,
       "isScalar": false,
       "sqlFile": "",
@@ -176,7 +176,7 @@ content-type: application/json
 {
   "request": {
     "sqlContext": {
-      "db": "db1",
+      "db": "sakila",
       "isSelect": true,
       "isScalar": false,
       "sqlFile": "",
@@ -215,10 +215,10 @@ content-type: application/json
 {
   "request": {
     "sqlContext": {
-      "db": "db1",
+      "db": "sakila",
       "isSelect": true,
       "isScalar": false,
-      "sqlFile": "/sql/sampleSql.xml",
+      "sqlFile": "sampleSql.xml",
       "sqlId": "queryOneActor",
       "sql": "",  
       "parameters":[
@@ -247,7 +247,7 @@ content-type: application/json
 {
   "request": {
     "sqlContext": {
-      "db": "db1",
+      "db": "sakila",
       "isSelect": true,
       "isScalar": false,      
       "sqlFile": "",
@@ -279,7 +279,7 @@ content-type: application/json
 {
   "request": {
     "sqlContext": {
-      "db": "db2",
+      "db": "northwind",
       "isSelect": true,
       "isScalar": false,
       "sqlFile": "",
@@ -299,35 +299,4 @@ content-type: application/json
     "traceId": "1111"
   }
 }
-
-
-==============================
-Test IN clause for postgresql DB
-==============================
-POST http://localhost:5001/run HTTP/1.1
-content-type: application/json
-
-{
-  "request": {
-    "sqlContext": {
-      "db": "db3",
-      "isSelect": true,
-      "isScalar": false,
-      "sqlFile": "",
-      "sqlId": "",
-      "sql": "SELECT id, name , age, email FROM mybatis.users where id in :ids",  
-      "parameters":[       
-        {
-          "name": ":ids",
-          "value": "1,2",
-          "dataType": "int32 array",
-          "direction": "Input",
-          "format": "",
-          "separator":","
-        }
-      ]
-    },
-    "traceId": "1111"
-  }
-}
-
+ 

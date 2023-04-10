@@ -22,7 +22,7 @@ namespace MyREST
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            //enable NLog
+            //register NLog
             builder.Logging.ClearProviders();
             builder.Host.UseNLog();
 
@@ -83,10 +83,11 @@ namespace MyREST
             IConfiguration configuration = builder.Build();
             services.AddSingleton<IConfiguration>(configuration);
 
-            //Add NLog
+            //initialize logger object
             var logger = LogManager.Setup()
                                    .LoadConfigurationFromSection(configuration)
                                    .GetCurrentClassLogger();
+            //var logger2 = LogManager.GetCurrentClassLogger();
 
             try
             {

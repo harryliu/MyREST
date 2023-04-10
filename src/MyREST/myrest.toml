@@ -15,10 +15,10 @@ useResponseCompression=false # enable response compression
 name="sakila"  # db connection name 
 dbType="mysql" # sqlite,mysql,mssql,postgresql,oracle
 connectionString="Server=localhost;Port=3306;Database=sakila;Uid=root;Pwd=TOOR;"    
-sqlFileHome="c://temp"   #sql file home
+sqlFileHome="./sql"   #sql file home
 
 [[databases]]
 name="northwind" # db connection name 
 dbType="mssql" # sqlite,mysql,mssql,postgresql,oracle
 connectionString="Server=localhost;Database=Oee;User Id=sa;Password=root;Encrypt=True;TrustServerCertificate=True"    
-sqlFileHome="c://temp"  #sql file home
+sqlFileHome="./sql"  #sql file home
