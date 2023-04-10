@@ -76,7 +76,7 @@ namespace MyREST
                 throw new TomlFileException($"sqlFileHome should be assigned for database {name}");
             }
 
-            if (Path.Exists(sqlFileHome) == false)
+            if (Directory.Exists(sqlFileHome) == false)
             {
                 throw new TomlFileException($"sqlFileHome path {sqlFileHome} does not exist for database {name}");
             }
