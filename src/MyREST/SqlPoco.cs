@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Data;
+using System.Text;
 using System.Xml.Serialization;
 
 namespace MyREST
@@ -10,17 +11,6 @@ namespace MyREST
         public int index { get; set; }
         public string dataType { get; set; }
     }
-
-    //public class SqlParameter
-    //{
-    //    public string name { get; set; }
-    //    public string value { get; set; }
-    //    public string dataType { get; set; }
-    //    public string direction { get; set; }
-    //    public string format { get; set; }
-
-    //    //direction: out/in/return
-    //}
 
     [XmlRoot(ElementName = "parameter")]
     public class SqlParameter
@@ -63,6 +53,7 @@ namespace MyREST
         public string sqlFile { get; set; } = "";
         public string sqlId { get; set; } = "";
         public string sql { get; set; } = "";
+
         public List<SqlParameter> parameters { get; set; }
 
         private bool useClientSql = true; //default true
@@ -75,6 +66,44 @@ namespace MyREST
         public void setUseClientSql(bool value)
         {
             useClientSql = value;
+        }
+
+        public string getPlainSql()
+        {
+            if (sqlIsBase64() == true)
+            {
+                byte[] base64EncodedBytes = Convert.FromBase64String(sql);
+                return Encoding.UTF8.GetString(base64EncodedBytes);
+            }
+            return sql;
+        }
+
+        public string getBase64Sql()
+        {
+            if (sqlIsBase64() == false)
+            {
+                byte[] byteArray = System.Text.Encoding.UTF8.GetBytes(sql);
+                return System.Convert.ToBase64String(byteArray);
+            }
+            return sql;
+        }
+
+        private bool sqlIsBase64()
+        {
+            bool isBase64 = false;
+            if (string.IsNullOrWhiteSpace(sql) == false)
+            {
+                try
+                {
+                    Convert.FromBase64String(sql);
+                    isBase64 = true;
+                }
+                catch (FormatException)
+                {
+                    // The input string was not Base64-encoded
+                }
+            }
+            return isBase64;
         }
     }
 
