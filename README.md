@@ -130,3 +130,5 @@ content-type: application/json
 
 ## 更多文档
 - Quick started : <https://github.com/harryliu/MyREST/blob/main/docs/quickStarted.md>
+- Configurations : <https://github.com/harryliu/MyREST/blob/main/docs/configuration.md>
+
