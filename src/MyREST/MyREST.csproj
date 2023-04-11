@@ -29,7 +29,8 @@
     <PackageReference Include="NLog.Web.AspNetCore" Version="5.2.3" />
     <PackageReference Include="Npgsql" Version="7.0.2" />
     <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="3.21.100" />    
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />	  
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />    
+    <PackageReference Include="ToString.Fody" Version="1.11.1" />	  
 
   </ItemGroup>
 

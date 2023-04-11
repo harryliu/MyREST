@@ -7,6 +7,7 @@ using static Org.BouncyCastle.Math.EC.ECCurve;
 using NLog.Extensions.Logging;
 using NLog.Web;
 using Microsoft.Extensions.DependencyInjection;
+using System.Configuration;
 
 namespace MyREST
 {
@@ -27,6 +28,7 @@ namespace MyREST
             builder.Logging.ClearProviders();
             builder.Host.UseNLog();
 
+            var logger = LogManager.GetCurrentClassLogger();
             GlobalConfig globalConfig;
             AddConfiguration(builder.Services, out globalConfig);
 
@@ -52,6 +54,7 @@ namespace MyREST
             app.UseHttpsRedirection();  //
             app.UseAuthorization();
             app.MapControllers();
+            logger.Info("MyREST service started");
             app.Run();
         }
 

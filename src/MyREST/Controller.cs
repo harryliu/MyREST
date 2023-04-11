@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.Extensions.Logging;
 using MyREST.Plugin;
 
 namespace MyREST
@@ -24,8 +25,9 @@ namespace MyREST
         [HttpPost("/run")]
         public SqlResultWrapper run([FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] SqlRequestWrapper sqlRequestWrapper)
         {
+            _logger.LogInformation("Incoming request ==> " + sqlRequestWrapper.ToString());
             SqlResultWrapper result = _engine.process(this.HttpContext, sqlRequestWrapper);
-            _logger.LogInformation("run() done");
+            _logger.LogInformation("Output response ==> " + result.ToString());
             return result;
         }
 

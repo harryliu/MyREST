@@ -21,10 +21,10 @@ a universal database RESTful service
 - 支持客户端直接提交SQL命令
 - 支持调用服务端SQL(推荐)
 - SQL 命令支持绑定变量(参数化)
-- 支持ResponseCompression 压缩(gzip/br格式)
+- 支持 ResponseCompression 压缩(gzip/br格式)
 - 支持 OpenAPI (即 Swagger)
 - 内置防火墙安全插件(白名单或黑名单)
-- (todo) 支持 Basic Auth安全插件
+- 支持 Basic Auth安全插件
 - (todo) 支持 JWT Auth安全插件
 - (todo) 支持 miniProfiler 
 - (todo) 支持优雅停机
@@ -130,5 +130,5 @@ content-type: application/json
 
 ## 更多文档
 - Quick started : <https://github.com/harryliu/MyREST/blob/main/docs/quickStarted.md>
-- Configurations : <https://github.com/harryliu/MyREST/blob/main/docs/configuration.md>
+- Configurations : <https://github.com/harryliu/MyREST/blob/main/docs/configurations.md>
 

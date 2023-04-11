@@ -13,7 +13,7 @@ namespace MyREST.Plugin
         private List<Glob> _ipBlackGlobList;
         private List<string> _ipBlackList;
 
-        public FirewallPlugin(ILogger<SecurityPlugin>? logger, IConfiguration configuration, GlobalConfig globalConfig) :
+        public FirewallPlugin(ILogger<SecurityPlugin> logger, IConfiguration configuration, GlobalConfig globalConfig) :
             base(logger, configuration, globalConfig)
         {
             _firewallConfig = globalConfig.firewall;
@@ -45,9 +45,14 @@ namespace MyREST.Plugin
 
         protected override bool internalCheck(HttpContext httpContext, out string checkMessage)
         {
+            _logger.LogInformation("Begin firewall check ");
+
             string? clientIpAddress = httpContext.Connection.RemoteIpAddress?.ToString() ??
                 httpContext.Features.Get<IHttpConnectionFeature>()?.RemoteIpAddress?.ToString();
-            return pipelineCheck(clientIpAddress, out checkMessage);
+            bool result = pipelineCheck(clientIpAddress, out checkMessage);
+
+            _logger.LogInformation($"{checkMessage} for incoming ip address {clientIpAddress} ");
+            return result;
         }
 
         private bool pipelineCheck(string? clientIpAddress, out string checkMessage)

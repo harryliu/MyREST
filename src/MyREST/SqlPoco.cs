@@ -34,17 +34,20 @@ namespace MyREST
         public string separator { get; set; }
     }
 
+    [ToString]
     public class SqlRequestWrapper
     {
         public SqlRequest request { get; set; }
     }
 
+    [ToString]
     public class SqlResultWrapper
     {
         public SqlRequest request { get; set; }
         public SqlResponse response { get; set; }
     }
 
+    [ToString]
     public class SqlContext
     {
         public string db { get; set; } = "";
@@ -107,12 +110,14 @@ namespace MyREST
         }
     }
 
+    [ToString]
     public class SqlRequest
     {
         public SqlContext sqlContext { get; set; }
         public string traceId { get; set; }
     }
 
+    [ToString]
     public class SqlResponse
     {
         //public List<FieldMeta> meta { get; set; }

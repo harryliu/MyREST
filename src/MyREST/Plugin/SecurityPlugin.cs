@@ -3,10 +3,10 @@
     public abstract class SecurityPlugin
     {
         protected readonly IConfiguration _configuration;
-        protected readonly ILogger<SecurityPlugin>? _logger;
+        protected readonly ILogger<SecurityPlugin> _logger;
         protected GlobalConfig _globalConfig;
 
-        public SecurityPlugin(ILogger<SecurityPlugin>? logger, IConfiguration configuration,
+        public SecurityPlugin(ILogger<SecurityPlugin> logger, IConfiguration configuration,
             GlobalConfig globalConfig)
         {
             _logger = logger;

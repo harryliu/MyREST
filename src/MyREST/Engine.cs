@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Microsoft.Extensions.Logging;
 using MyREST.Plugin;
 using System.Data;
 
@@ -15,9 +16,9 @@ namespace MyREST
         private FirewallPlugin _firewallPlugin;
         private BasicAuthPlugin _basicAuthPlugin;
 
-        private readonly ILogger<Engine>? _logger;
+        private readonly ILogger<Engine> _logger;
 
-        public Engine(ILogger<Engine>? logger, IConfiguration configuration,
+        public Engine(ILogger<Engine> logger, IConfiguration configuration,
             GlobalConfig globalConfig, SystemConfig systemConfig, List<DbConfig> dbConfigs,
             XmlFileContainer xmlFileContainer, FirewallPlugin firewallPlugin, BasicAuthPlugin basicAuthPlugin)
         {
@@ -121,11 +122,15 @@ namespace MyREST
             }
             catch (MyRestException ex)
             {
+                _logger.LogWarning(ex.Message);
+                _logger.LogDebug(ex.ToString());
                 result.response.returnCode = ex.getErrorCode();
                 result.response.errorMessage = ex.Message;
             }
             catch (Exception ex)
             {
+                _logger.LogWarning(ex.Message);
+                _logger.LogDebug(ex.ToString());
                 result.response.returnCode = 1;
                 result.response.errorMessage = ex.Message;
             }
@@ -150,6 +155,7 @@ namespace MyREST
 
             using (IDbConnection conn = ConnectionFactory.newConnection(dbType, connectionString))
             {
+                _logger.LogInformation($"Begin to run SQL in db {dbName}, SQL: {sqlContext.getPlainSql()}");
                 if (sqlContext.isSelect)
                 {
                     if (sqlContext.isScalar == false)
@@ -176,6 +182,7 @@ namespace MyREST
                     result.response.rowCount = 0;
                 }
             }
+            _logger.LogInformation($"End to run SQL in db {dbName}, SQL: {sqlContext.getPlainSql()}");
             result.response.returnCode = 0;
             result.response.errorMessage = "";
         }

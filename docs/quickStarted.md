@@ -51,6 +51,7 @@ password="password123"
 ```
 
 3. 配置 database 
+下面是配置一个mysql数据库的示例, 我们可以配置多个数据库. 
 ```toml
 [[databases]]
 name="sakila"  # db connection name 
@@ -68,6 +69,6 @@ dotnet MyREST.dll
 
 
 ## 访问 MyREST Swagger Endpoint
-Swagger UI <http://localhost:5001/swagger/index.html>
+Swagger UI <https://localhost:5002/swagger/index.html>
 
 

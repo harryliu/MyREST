@@ -10,13 +10,21 @@ namespace MyREST.Plugin
     {
         private BasicAuthConfig _basicAuthConfig;
 
-        public BasicAuthPlugin(ILogger<SecurityPlugin>? logger, IConfiguration configuration, GlobalConfig globalConfig) :
+        public BasicAuthPlugin(ILogger<SecurityPlugin> logger, IConfiguration configuration, GlobalConfig globalConfig) :
             base(logger, configuration, globalConfig)
         {
             _basicAuthConfig = globalConfig.basicAuth;
         }
 
         protected override bool internalCheck(HttpContext httpContext, out string checkMessage)
+        {
+            _logger.LogInformation("Begin to do basicAuth check ");
+            bool result = basicAuthCheck(httpContext, out checkMessage);
+            _logger.LogInformation(checkMessage);
+            return result;
+        }
+
+        private bool basicAuthCheck(HttpContext httpContext, out string checkMessage)
         {
             checkMessage = "BasicAuth check bypassed";
             if (_basicAuthConfig.enableBasicAuth == false)
@@ -32,6 +40,8 @@ namespace MyREST.Plugin
                 if (string.IsNullOrWhiteSpace(header) == false && header.StartsWith("Basic"))
                 {
                     string encodedUserPass = header.Substring("Basic ".Length).Trim();
+                    _logger.LogDebug($"Incoming basicAuth encodedUserPass is {encodedUserPass}");
+
                     Encoding encoding = Encoding.GetEncoding("iso-8859-1");
                     string userPass = encoding.GetString(Convert.FromBase64String(encodedUserPass));
                     string[] parts = userPass.Split(':');
@@ -45,7 +55,7 @@ namespace MyREST.Plugin
                 }
             }
 
-            checkMessage = "BasicAuth check failed";
+            checkMessage = "BasicAuth check failed because of missed authorization header";
             return false;
         }
     }
