@@ -331,12 +331,25 @@ content-type: application/json
 }
  
 
+===========================
+kestrel web server:
+https://learn.microsoft.com/zh-cn/aspnet/core/fundamentals/servers/kestrel/endpoints?view=aspnetcore-6.0
+https://geeksarray.com/blog/aspnet-core-application-and-kestrel-web-server-settings
+https://www.tektutorialshub.com/asp-net-core/asp-net-core-kestrel-web-server/
+===========================
 
+
+===========================
+mini profiler 
+https://www.cnblogs.com/lwqlun/p/10222505.html
+https://code4it.dev/blog/miniprofiler/
+https://ilovedotnet.org/blogs/profiling-webapi-with-mini-profiler/
 ===========================
 
 ## Auth API 设计
 https://dapper-tutorial.net/parameter-dynamic
 参考 [](https://jasonwatmore.com/post/2021/06/15/net-5-api-jwt-authentication-with-refresh-tokens)
+
 [](https://www.cnblogs.com/ittranslator/p/refresh-jwt-with-refresh-tokens-in-asp-net-core-5-rest-api-step-by-step.html)
 [](https://jasontaylor.dev/api-key-authentication-with-aspnetcore/)
 [](https://andrewlock.net/5-new-mvc-features-in-dotnet-7/)
