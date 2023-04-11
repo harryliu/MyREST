@@ -68,7 +68,12 @@ dotnet MyREST.dll
 ```
 
 
-## 访问 MyREST Swagger Endpoint
+## 访问 MyREST http endpoint
+1. 访问 MyREST Swagger end point
 Swagger UI <https://localhost:5002/swagger/index.html>
 
-
+2. 访问 MyREST health check end point
+```
+GET http://localhost:5001/health
+content-type: application/json
+```

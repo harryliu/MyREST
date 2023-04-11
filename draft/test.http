@@ -25,6 +25,9 @@ Swagger UI url
 http://localhost:5001/swagger/index.html 
 
 
+GET http://localhost:5001/health
+content-type: application/json
+
 ==============================
 API format 
 ==============================

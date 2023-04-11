@@ -7,7 +7,7 @@
 MyRest 使用ADO.net connection string, 您按照下面网站的示例生成您的数据库connection string. 
 [www.connectionstrings.com](https://www.connectionstrings.com/)
 
-## 发出第一个 SQL 命令
+## 发出第一个client side SQL 命令
 您可以使用 postman 或 jmeter等工具发送http请求, 也可以使用Visual studio code的 REST Client插件. 下面是一个示例:
 ```
 POST http://localhost:5001/run HTTP/1.1
@@ -62,3 +62,60 @@ content-type: application/json
   - format 参数, 用于设定 datetime 类型的格式, [参考微软文档](https://learn.microsoft.com/zh-cn/dotnet/standard/base-types/standard-date-and-time-format-strings)
   - separator 参数, 用于支持SQL的 in 子句, value 参数应该是一个可以分隔的字符串, 使用 separator 设定具体的分隔符 
 
+
+## 发出第一个server side SQL 命令
+服务器保存一个xml文件, 保存文件名为 `sampleSql.xml`, 内容如下: 
+```xml
+<?xml version="1.0" encoding="utf-8" ?>
+<root version="1.0">
+    <sql id="queryOneActor">
+        <![CDATA[
+          select actor_id , first_name FirstName, last_name LastName, last_update LastUpdate
+           from actor where actor_id=@id
+        ]]>
+        <parameters>
+            <parameter name="@id" dataType="Int32"  direction="Input" format="" separator="" ></parameter>
+        </parameters>
+    </sql>
+	
+    <sql id="queryAllActors">
+        <![CDATA[
+          select actor_id , first_name FirstName, last_name LastName, last_update LastUpdate
+           from actor    
+        ]]>
+        <parameters>
+        </parameters>
+    </sql>
+</root>
+```
+
+您可以使用 postman 或 jmeter等工具发送http请求, 也可以使用Visual studio code的 REST Client插件. 下面是执行服务器端 `queryOneActor` SQL的示例:
+```
+POST http://localhost:5001/run HTTP/1.1
+content-type: application/json
+
+{
+  "request": {
+    "sqlContext": {
+      "db": "sakila",
+      "isSelect": true,
+      "isScalar": false,
+      "sqlFile": "sampleSql.xml",
+      "sqlId": "queryOneActor",
+      "sql": "",  
+      "parameters":[
+         {
+          "name": "@id",
+          "value": "1",
+          "dataType": "",
+          "direction": "",
+          "format": "",
+          "separator":""
+        }
+      ]
+    },
+    "traceId": "1111"
+  }
+}
+
+```
