@@ -127,6 +127,30 @@ Authorization: Basic dXNlcjEyMzpwYXNzd29yZDEyMw==
 }
 
 
+==============================
+Test BasicAuth 安全插件
+dXNlcjEyMzpwYXNzd29yZDEyMw== 是 user123:password123 的base64形式
+==============================
+POST http://localhost:5001/run HTTP/1.1
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjpbeyJ0b29sdHQiOiJodHRwczovL3Rvb2x0dC5jb20ifV0sImlhdCI6MTY4MTM5Mjc4MiwiZXhwIjoxNjgxNDAxNTk5LCJhdWQiOiJteXJlc3QgY2xpZW50IiwiaXNzIjoic29tZSBhdXRoIHNlcnZlciIsInN1YiI6IiJ9.t6nut-GtmfiMfjMutlv0yFBuUUR9GC8kVoi4ICEDQiY
+
+{
+  "request": {
+    "sqlContext": {
+      "db": "sakila",
+      "isSelect": true,
+      "isScalar": true,
+      "sqlFile": "",
+      "sqlId": "",
+      "sql": "select count(*) from actor      ",  
+      "parameters":[]
+    },
+    "traceId": "1111"
+  }
+}
+
+
 
 ==============================
 Test DML statement  
@@ -347,6 +371,7 @@ https://ilovedotnet.org/blogs/profiling-webapi-with-mini-profiler/
 ===========================
 
 ## Auth API 设计
+https://blog.csdn.net/HongzhuoO/article/details/115290559
 https://dapper-tutorial.net/parameter-dynamic
 参考 [](https://jasonwatmore.com/post/2021/06/15/net-5-api-jwt-authentication-with-refresh-tokens)
 

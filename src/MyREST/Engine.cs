@@ -15,12 +15,12 @@ namespace MyREST
         private XmlFileContainer _xmlFileContainer;
         private FirewallPlugin _firewallPlugin;
         private BasicAuthPlugin _basicAuthPlugin;
-
+        private JwtAuthPlugin _jwtAuthPlugin;
         private readonly ILogger<Engine> _logger;
 
         public Engine(ILogger<Engine> logger, IConfiguration configuration,
             GlobalConfig globalConfig, SystemConfig systemConfig, List<DbConfig> dbConfigs,
-            XmlFileContainer xmlFileContainer, FirewallPlugin firewallPlugin, BasicAuthPlugin basicAuthPlugin)
+            XmlFileContainer xmlFileContainer, FirewallPlugin firewallPlugin, BasicAuthPlugin basicAuthPlugin, JwtAuthPlugin jwtAuthPlugin)
         {
             _logger = logger;
             _configuration = configuration;
@@ -30,6 +30,7 @@ namespace MyREST
             _xmlFileContainer = xmlFileContainer;
             _firewallPlugin = firewallPlugin;
             _basicAuthPlugin = basicAuthPlugin;
+            _jwtAuthPlugin = jwtAuthPlugin;
         }
 
         private DbConfig getDbConfig(string dbName)
@@ -112,6 +113,13 @@ namespace MyREST
                 if (_basicAuthPlugin.check(httpContext, out basicAuthCheckMsg) == false)
                 {
                     throw new SecurityException(basicAuthCheckMsg);
+                }
+
+                //jwt auth check
+                string jwtAuthCheckMsg;
+                if (_jwtAuthPlugin.check(httpContext, out jwtAuthCheckMsg) == false)
+                {
+                    throw new SecurityException(jwtAuthCheckMsg);
                 }
 
                 //validate request and sqlFile

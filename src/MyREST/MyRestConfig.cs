@@ -8,6 +8,7 @@ namespace MyREST
 
         public FirewallConfig firewall { get; set; }
         public BasicAuthConfig basicAuth { get; set; }
+        public JwtAuthConfig jwtAuth { get; set; }
     }
 
     public class SystemConfig
@@ -57,6 +58,33 @@ namespace MyREST
                 {
                     throw new SecurityException("password is required in basicAuth section");
                 }
+            }
+        }
+    }
+
+    public class JwtAuthConfig
+    {
+        public bool enableJwtAuth { get; set; } = false;
+        public string audience { get; set; }
+        public bool validateAudience { get; set; } = true;
+        public string issuer { get; set; }
+        public bool validateIssuer { get; set; } = true;
+        public string publicKey { get; set; }
+        public bool validateIssuerSigningKey { get; set; } = true;
+
+        public void validate()
+        {
+            if (validateAudience && string.IsNullOrWhiteSpace(audience))
+            {
+                throw new SecurityException("audience is required in jwtAuth section");
+            }
+            if (validateIssuer && string.IsNullOrWhiteSpace(issuer))
+            {
+                throw new SecurityException("issuer is required in basicAuth section");
+            }
+            if (validateIssuerSigningKey && string.IsNullOrWhiteSpace(publicKey))
+            {
+                throw new SecurityException("publicKey is required in basicAuth section");
             }
         }
     }

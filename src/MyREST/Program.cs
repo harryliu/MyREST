@@ -141,10 +141,15 @@ namespace MyREST
                 BasicAuthPlugin basicAuthPlugin = new BasicAuthPlugin(basicAuthLogger, configuration, globalConfig);
                 services.AddSingleton<BasicAuthPlugin>(basicAuthPlugin);
 
+                //register jwtAuthPlugin object
+                var jwtAuthLogger = provider.GetService<ILogger<JwtAuthPlugin>>();
+                JwtAuthPlugin jwtAuthPlugin = new JwtAuthPlugin(jwtAuthLogger, configuration, globalConfig);
+                services.AddSingleton<JwtAuthPlugin>(jwtAuthPlugin);
+
                 //register engine object
                 var engineLLogger = provider.GetService<ILogger<Engine>>();
                 Engine engine = new Engine(engineLLogger, configuration, globalConfig, systemConfig,
-                    dbConfigList, xmlFileContainer, firewallPlugin, basicAuthPlugin);
+                    dbConfigList, xmlFileContainer, firewallPlugin, basicAuthPlugin, jwtAuthPlugin);
                 services.AddSingleton<Engine>(engine);
             }
             catch (Exception ex)
