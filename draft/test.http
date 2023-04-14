@@ -128,12 +128,11 @@ Authorization: Basic dXNlcjEyMzpwYXNzd29yZDEyMw==
 
 
 ==============================
-Test BasicAuth 安全插件
-dXNlcjEyMzpwYXNzd29yZDEyMw== 是 user123:password123 的base64形式
+Test JwtAuth 安全插件
 ==============================
 POST http://localhost:5001/run HTTP/1.1
 content-type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjpbeyJ0b29sdHQiOiJodHRwczovL3Rvb2x0dC5jb20ifV0sImlhdCI6MTY4MTM5Mjc4MiwiZXhwIjoxNjgxNDAxNTk5LCJhdWQiOiJteXJlc3QgY2xpZW50IiwiaXNzIjoic29tZSBhdXRoIHNlcnZlciIsInN1YiI6IiJ9.t6nut-GtmfiMfjMutlv0yFBuUUR9GC8kVoi4ICEDQiY
+Authorization: Bearer eyJhbGciOiJSUzI1NiIsImVudGl0bGVtZW50IjoieWxjMzJkMmFpcG8wZnJ1MDJxdWRucGMifQ.eyJpc3MiOiJzb21lIGF1dGggc2VydmVyIiwic3ViIjoibmFpbWlzaCIsImF1ZCI6Im15cmVzdCBjbGllbnQiLCJpYXQiOjE2ODE0ODAyMzIsImV4cCI6MTY4MjQ4MDgzMn0.FPDzCOffg3yNyj1E6BdUJi8r_U2gkU4I07uIi7IZj7VcjkHiSp5O9m5TVZk9y9acv7s55ttrOOSi0ptQRjARQ40xg3z1ZS-pDVHogWhSiY89fYAddGfcd_9_wKqSBDvDyZgbT0rLQxK-KSDOKlXGvnkRVdKCogKDGMVYhA4j3bCPwhMUQZzaQAbvCONy9uPiso50xIJxPSuE4erDKvfNcqrBVs7jX62JKytl8mV4ajIn3GNXbnfcctjwvnnOZAtKKNF2lHUpts6Piwqacd0kVI47oOND2KYd4q_SLmNAHMjTW780NAgt3REoyt_CPS5JEdt4lgp7kw86EI9dxtVUTg
 
 {
   "request": {
@@ -150,6 +149,50 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjpbeyJ0b29sd
   }
 }
 
+
+
+https://dinochiesa.github.io/jwt/ 生成的私钥/公钥和token
+
+-----BEGIN PRIVATE KEY-----
+MIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQC4OcloYUhMyacW
+titbVkwr1hcT72ZKglE8Msa7fdV6k5oDf41RYBoBJbzHMv6lZYgUuC8vBwxgwi/x
+i9JE1rOUyumx20uztJgQHHljWbdELSnjry+1RXJaacVGgakbRVGX2fl41LPiImbb
+Nv7PpAjkNF34pVUcunDDIpZdMfCaDLaa+9PSiEGMqdbz8tf+vQfTSol3l8lVHApa
+kZRfj9SFQ/A7+U3Apu6RX4kco5DrK1uAcsKBMhLFi1Pd2zMFUxh6hD1iUSpVxpR5
+kpAjKcaDAEsSBVSGe28mBJTYPBsLrI9QGXTFdqa1mLP3cMTltatMKBpKo8ZFEM63
+IQx6Ye2RAgMBAAECggEAGeN3q+UX3ZVCQiJ2yflrmjFrbCVqpjKAAJ9QvCJScKJI
+tLsk/HguegDNRt+iAf4tobPBtbBziy60Fr6ZCDbKZQYgJxqecxzVeFYisip2Yuyc
+hAl8q9LxifEZLu+jowMaaeYmH6vMXOKMD7w/vKWG4QLW6HfbaRPDgDiJEYRQv7pS
+UCpZW3/7BoNike4Y22KkXlNtVBOqUJ31608KdCWQZVYV1AG3iTNF0Rnc/CbE6mmj
+MdixzKBR4tROU+zPA3sAk+OpwFbNSiekMW6yuifi3I7zGDcxAXc+N+xJf3DMA9nH
+gnRmj2pugG1jPg8gO2ltMfWabRA5w49lXM8ve2vNjQKBgQDvRbWfgd8BokNDxleH
+Q3M4z+EP3SYYPDxCzwcrhJbw1ilqlDGZIai0pUcHy6gsii7HGl0i+kXJ+RoL9fmp
+AyQesFzw8j2wBTxSh47BsYycNcyuOOI2+HY2IMToOcO2GWkLmpBV/uSw+5J9oA5T
+a3mW1Z11ApBLyoBMbUxLK2474wKBgQDFGuaiJ23QidBLHFEowWrkzpXImOf8AtxR
+WGLhOEuNLtEf3rNq0plCHKgQeqgHA2qOGA1sdIvCZYO7z/ZvTmSRBrdaHSIjFtXt
++AzAqR3TxquCoZKQxem7K46rrBeCcHn+4T58NMHY0APBvVLxa7v03aVURa08rtiR
+4tGy2K/S+wKBgQCgdZE9bOzOvbB6TRL5xQQKP25hIx+e9RY8f3YBeyN2U0jnDobM
+eMQYkRY3Zh5b8Dc6krWO9WPD9OfAya4p589bPU62zt0LpBc2CW50+sqfH30qAT/D
+OZCc8BDc45AaGKRXgcn1wcA/6BXvZVz2GIcr3gmAJL379ctgdZPKfU+pnQKBgQCt
+4kWE1/Pw/SNcn+aZZci/geBxzzMZCA0FVkwlFFzSeHLVAsqVeqTpxg4eO5bwWPsv
+z9hHzaleHeBRV+231Bi0OJCYVws+mW6xORtG++rsYV/9Jjz+qxq/nHWIzZEP6do2
+GM/fE0vP0fL+f98kTD7MjpzD85QY7MbyLH+Cn9a88QKBgQCOfMJvDswSvl0BHqu1
+PHCnxQA8dtPvulpHp7Dv5jyo23c7ejNj2fT2QdTcn0O6u3cbPVr2HD0CG3UJMj16
+aPLqrbGg40kSpq7lBySNjzDkhrUUEvjNshb8ZWzY6qvPiV2szC/0Z4taQYcw85ql
+7Pc6Xt7MuA+7DZ6LaN9Ysy+jLA==
+-----END PRIVATE KEY-----
+
+
+
+-----BEGIN PUBLIC KEY-----
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuDnJaGFITMmnFrYrW1ZM
+K9YXE+9mSoJRPDLGu33VepOaA3+NUWAaASW8xzL+pWWIFLgvLwcMYMIv8YvSRNaz
+lMrpsdtLs7SYEBx5Y1m3RC0p468vtUVyWmnFRoGpG0VRl9n5eNSz4iJm2zb+z6QI
+5DRd+KVVHLpwwyKWXTHwmgy2mvvT0ohBjKnW8/LX/r0H00qJd5fJVRwKWpGUX4/U
+hUPwO/lNwKbukV+JHKOQ6ytbgHLCgTISxYtT3dszBVMYeoQ9YlEqVcaUeZKQIynG
+gwBLEgVUhntvJgSU2DwbC6yPUBl0xXamtZiz93DE5bWrTCgaSqPGRRDOtyEMemHt
+kQIDAQAB
+-----END PUBLIC KEY-----
 
 
 ==============================

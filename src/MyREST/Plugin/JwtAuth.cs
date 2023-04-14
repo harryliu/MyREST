@@ -12,6 +12,10 @@ using System.Text;
 
 namespace MyREST.Plugin
 {
+    /// <summary>
+    /// JWT auth, use RSA
+    /// https://blog.csdn.net/HongzhuoO/article/details/115290559
+    /// </summary>
     public class JwtAuthPlugin : SecurityPlugin
     {
         private JwtAuthConfig _jwtAuthConfig;
@@ -24,19 +28,21 @@ namespace MyREST.Plugin
         {
             _jwtAuthConfig = globalConfig.jwtAuth;
 
-            //https://blog.csdn.net/HongzhuoO/article/details/115290559
+            _tokenHandler = new JwtSecurityTokenHandler();
+
             //非对称密钥
             var rsa = RSA.Create();
-            byte[] publicKey = Convert.FromBase64String("公钥Base64(掐头去尾,不带Begin...以及回车空格等格式的)");
-            //rsa.ImportPkcs8PublicKey 这是一个扩展方法,来源于 RSAExtensions 包，大家可以关注一下这位大哥的Github  https://github.com/stulzq/RSAExtensions 。这个包提供了导入 pkcs8 格式公钥的方法。
+            // "公钥Base64(掐头去尾,不带Begin...以及回车空格等格式的)"
+            byte[] publicKey = Convert.FromBase64String(_jwtAuthConfig.publicKey);
+            //rsa.ImportPkcs8PublicKey 这是一个扩展方法,来源于 RSAExtensions 包，
+            //大家可以关注一下这位大哥的Github  https://github.com/stulzq/RSAExtensions 。这个包提供了导入 pkcs8 格式公钥的方法。
             rsa.ImportPkcs8PublicKey(publicKey);
-
             var sKey = new RsaSecurityKey(rsa);
 
             //非对称密钥
             _signingCredentials = new SigningCredentials(sKey, SecurityAlgorithms.RsaPKCS1);
 
-            var validationParameters = new TokenValidationParameters
+            _validationParameters = new TokenValidationParameters
             {
                 ValidateIssuer = _jwtAuthConfig.validateIssuer,
                 ValidIssuer = _jwtAuthConfig.issuer,
@@ -65,7 +71,7 @@ namespace MyREST.Plugin
             {
                 if (string.IsNullOrWhiteSpace(header) == false && header.StartsWith("Bearer "))
                 {
-                    result = header.Substring("Bearer  ".Length).Trim();
+                    result = header.Substring("Bearer ".Length).Trim();
                 }
             }
             return result;
