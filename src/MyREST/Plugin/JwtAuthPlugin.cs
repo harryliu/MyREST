@@ -14,7 +14,7 @@ namespace MyREST.Plugin
 {
     /// <summary>
     /// JWT auth, use RSA
-    /// https://blog.csdn.net/HongzhuoO/article/details/115290559
+    /// code copied from https://blog.csdn.net/HongzhuoO/article/details/115290559
     /// </summary>
     public class JwtAuthPlugin : SecurityPlugin
     {
@@ -28,36 +28,39 @@ namespace MyREST.Plugin
         {
             _jwtAuthConfig = globalConfig.jwtAuth;
 
-            _tokenHandler = new JwtSecurityTokenHandler();
-
-            //非对称密钥
-            var rsa = RSA.Create();
-            // "公钥Base64(掐头去尾,不带Begin...以及回车空格等格式的)"
-            byte[] publicKey = Convert.FromBase64String(_jwtAuthConfig.publicKey);
-            //rsa.ImportPkcs8PublicKey 这是一个扩展方法,来源于 RSAExtensions 包，
-            //大家可以关注一下这位大哥的Github  https://github.com/stulzq/RSAExtensions 。这个包提供了导入 pkcs8 格式公钥的方法。
-            rsa.ImportPkcs8PublicKey(publicKey);
-            var sKey = new RsaSecurityKey(rsa);
-
-            //非对称密钥
-            _signingCredentials = new SigningCredentials(sKey, SecurityAlgorithms.RsaPKCS1);
-
-            _validationParameters = new TokenValidationParameters
+            if (_jwtAuthConfig.enableJwtAuth == true)
             {
-                ValidateIssuer = _jwtAuthConfig.validateIssuer,
-                ValidIssuer = _jwtAuthConfig.issuer,
-                ValidateAudience = _jwtAuthConfig.validateAudience,
-                ValidAudience = _jwtAuthConfig.audience,
-                ValidateIssuerSigningKey = _jwtAuthConfig.validateIssuerSigningKey,
-                IssuerSigningKey = _signingCredentials.Key,
-                ValidateLifetime = true,
-                ClockSkew = TimeSpan.FromMinutes(0.5),
-            };
+                _tokenHandler = new JwtSecurityTokenHandler();
+
+                //非对称密钥
+                var rsa = RSA.Create();
+                // "公钥Base64(掐头去尾,不带Begin...以及回车空格等格式的)"
+                byte[] publicKey = Convert.FromBase64String(_jwtAuthConfig.publicKey);
+                //rsa.ImportPkcs8PublicKey 这是一个扩展方法,来源于 RSAExtensions 包，
+                //大家可以关注一下这位大哥的Github  https://github.com/stulzq/RSAExtensions 。这个包提供了导入 pkcs8 格式公钥的方法。
+                rsa.ImportPkcs8PublicKey(publicKey);
+                var sKey = new RsaSecurityKey(rsa);
+
+                //非对称密钥
+                _signingCredentials = new SigningCredentials(sKey, SecurityAlgorithms.RsaPKCS1);
+
+                _validationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = _jwtAuthConfig.validateIssuer,
+                    ValidIssuer = _jwtAuthConfig.issuer,
+                    ValidateAudience = _jwtAuthConfig.validateAudience,
+                    ValidAudience = _jwtAuthConfig.audience,
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = _signingCredentials.Key,
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.FromMinutes(0.5),
+                };
+            }
         }
 
         protected override bool internalCheck(HttpContext httpContext, out string checkMessage)
         {
-            _logger.LogInformation("Begin to do jwtAuth check ");
+            _logger.LogInformation("Begin to do JwtAuth check ");
             bool result = jwtAuthCheck(httpContext, out checkMessage);
             _logger.LogInformation(checkMessage);
             return result;

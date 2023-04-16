@@ -70,7 +70,6 @@ namespace MyREST
         public string issuer { get; set; }
         public bool validateIssuer { get; set; } = true;
         public string publicKey { get; set; }
-        public bool validateIssuerSigningKey { get; set; } = true;
 
         public void validate()
         {
@@ -80,11 +79,7 @@ namespace MyREST
             }
             if (validateIssuer && string.IsNullOrWhiteSpace(issuer))
             {
-                throw new SecurityException("issuer is required in basicAuth section");
-            }
-            if (validateIssuerSigningKey && string.IsNullOrWhiteSpace(publicKey))
-            {
-                throw new SecurityException("publicKey is required in basicAuth section");
+                throw new SecurityException("issuer is required in jwtAuth section");
             }
         }
     }

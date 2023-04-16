@@ -132,22 +132,22 @@ namespace MyREST
                 services.AddSingleton<XmlFileContainer>(xmlFileContainer);
 
                 //register firewallPlugin object
-                var firewallLogger = provider.GetService<ILogger<FirewallPlugin>>();
+                var firewallLogger = provider.GetRequiredService<ILogger<FirewallPlugin>>();
                 FirewallPlugin firewallPlugin = new FirewallPlugin(firewallLogger, configuration, globalConfig);
                 services.AddSingleton<FirewallPlugin>(firewallPlugin);
 
                 //register basicAuthPlugin object
-                var basicAuthLogger = provider.GetService<ILogger<BasicAuthPlugin>>();
+                var basicAuthLogger = provider.GetRequiredService<ILogger<BasicAuthPlugin>>();
                 BasicAuthPlugin basicAuthPlugin = new BasicAuthPlugin(basicAuthLogger, configuration, globalConfig);
                 services.AddSingleton<BasicAuthPlugin>(basicAuthPlugin);
 
                 //register jwtAuthPlugin object
-                var jwtAuthLogger = provider.GetService<ILogger<JwtAuthPlugin>>();
+                var jwtAuthLogger = provider.GetRequiredService<ILogger<JwtAuthPlugin>>();
                 JwtAuthPlugin jwtAuthPlugin = new JwtAuthPlugin(jwtAuthLogger, configuration, globalConfig);
                 services.AddSingleton<JwtAuthPlugin>(jwtAuthPlugin);
 
                 //register engine object
-                var engineLLogger = provider.GetService<ILogger<Engine>>();
+                var engineLLogger = provider.GetRequiredService<ILogger<Engine>>();
                 Engine engine = new Engine(engineLLogger, configuration, globalConfig, systemConfig,
                     dbConfigList, xmlFileContainer, firewallPlugin, basicAuthPlugin, jwtAuthPlugin);
                 services.AddSingleton<Engine>(engine);

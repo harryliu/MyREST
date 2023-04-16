@@ -14,19 +14,19 @@ ipBlackList=["127.0.0.2","192.168.0.156"]
 
 
 [basicAuth]
-enableBasicAuth=false # enable Basic Auth
+enableBasicAuth=true # enable Basic Auth
 username="user123"
 password="password123"
 
 
 [jwtAuth]
-enableJwtAuth=true # enable JWT Auth
+enableJwtAuth=false # enable JWT Auth
 audience="myrest client"
 validateAudience=true
 issuer="some auth server"
 validateIssuer=true
 publicKey="MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuDnJaGFITMmnFrYrW1ZMK9YXE+9mSoJRPDLGu33VepOaA3+NUWAaASW8xzL+pWWIFLgvLwcMYMIv8YvSRNazlMrpsdtLs7SYEBx5Y1m3RC0p468vtUVyWmnFRoGpG0VRl9n5eNSz4iJm2zb+z6QI5DRd+KVVHLpwwyKWXTHwmgy2mvvT0ohBjKnW8/LX/r0H00qJd5fJVRwKWpGUX4/UhUPwO/lNwKbukV+JHKOQ6ytbgHLCgTISxYtT3dszBVMYeoQ9YlEqVcaUeZKQIynGgwBLEgVUhntvJgSU2DwbC6yPUBl0xXamtZiz93DE5bWrTCgaSqPGRRDOtyEMemHtkQIDAQAB"
-validateIssuerSigningKey=true
+
 
 
 #https://zzzcode.ai/results/88134f92-f554-4b54-a5b9-c74d08f79cd6
