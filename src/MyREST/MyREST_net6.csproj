@@ -4,8 +4,8 @@
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <AssemblyVersion>0.1.2</AssemblyVersion>
-    <FileVersion>0.1.2</FileVersion>
+    <AssemblyVersion>0.1.5</AssemblyVersion>
+    <FileVersion>0.1.5</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -30,7 +30,9 @@
     <PackageReference Include="NLog.Web.AspNetCore" Version="5.2.3" />
     <PackageReference Include="Npgsql" Version="7.0.2" />
     <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="3.21.100" />    
+    <PackageReference Include="RSAExtensions" Version="1.1.1" />    
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />	  
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.28.1" />    
     <PackageReference Include="ToString.Fody" Version="1.11.1" />	  
 
   </ItemGroup>
