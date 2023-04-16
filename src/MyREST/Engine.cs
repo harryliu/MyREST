@@ -13,6 +13,7 @@ namespace MyREST
         private SystemConfig _systemConfig;
         private List<DbConfig> _dbConfigs;
         private XmlFileContainer _xmlFileContainer;
+        private AppState _appState;
         private FirewallPlugin _firewallPlugin;
         private BasicAuthPlugin _basicAuthPlugin;
         private JwtAuthPlugin _jwtAuthPlugin;
@@ -20,7 +21,8 @@ namespace MyREST
 
         public Engine(ILogger<Engine> logger, IConfiguration configuration,
             GlobalConfig globalConfig, SystemConfig systemConfig, List<DbConfig> dbConfigs,
-            XmlFileContainer xmlFileContainer, FirewallPlugin firewallPlugin, BasicAuthPlugin basicAuthPlugin, JwtAuthPlugin jwtAuthPlugin)
+            XmlFileContainer xmlFileContainer, AppState appState,
+            FirewallPlugin firewallPlugin, BasicAuthPlugin basicAuthPlugin, JwtAuthPlugin jwtAuthPlugin)
         {
             _logger = logger;
             _configuration = configuration;
@@ -28,6 +30,7 @@ namespace MyREST
             _systemConfig = systemConfig;
             _dbConfigs = dbConfigs;
             _xmlFileContainer = xmlFileContainer;
+            _appState = appState;
             _firewallPlugin = firewallPlugin;
             _basicAuthPlugin = basicAuthPlugin;
             _jwtAuthPlugin = jwtAuthPlugin;
@@ -101,6 +104,8 @@ namespace MyREST
             result.response = sqlResponse;
             try
             {
+                _appState.markNewRequest();
+
                 //firewall check
                 string firewallMsg;
                 if (_firewallPlugin.check(httpContext, out firewallMsg) == false)
@@ -127,9 +132,12 @@ namespace MyREST
 
                 //execute SQL
                 executeSql(sqlRequestWrapper, result);
+
+                _appState.markRequestCompleted(isFailed: false);
             }
             catch (MyRestException ex)
             {
+                _appState.markRequestCompleted(isFailed: true);
                 _logger.LogWarning(ex.Message);
                 _logger.LogDebug(ex.ToString());
                 result.response.returnCode = ex.getErrorCode();
@@ -137,6 +145,7 @@ namespace MyREST
             }
             catch (Exception ex)
             {
+                _appState.markRequestCompleted(isFailed: true);
                 _logger.LogWarning(ex.Message);
                 _logger.LogDebug(ex.ToString());
                 result.response.returnCode = 1;

@@ -17,8 +17,7 @@ namespace MyREST
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            //   Add services to the container.
-
+            // Add services to the DI container
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -31,7 +30,7 @@ namespace MyREST
 
             var logger = LogManager.GetCurrentClassLogger();
             GlobalConfig globalConfig;
-            AddConfiguration(builder.Services, out globalConfig);
+            AddCustomizedObjects(builder.Services, out globalConfig);
 
             if (globalConfig.system.useResponseCompression)
             {
@@ -78,16 +77,16 @@ namespace MyREST
             });
         }
 
-        private static void AddConfiguration(IServiceCollection services, out GlobalConfig globalConfig)
+        private static void AddCustomizedObjects(IServiceCollection services, out GlobalConfig globalConfig)
         {
             var provider = services.BuildServiceProvider();
             globalConfig = new GlobalConfig();
 
-            IConfigurationBuilder builder = new ConfigurationBuilder()
+            IConfigurationBuilder cfgBuilder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
 
-            IConfiguration configuration = builder.Build();
+            IConfiguration configuration = cfgBuilder.Build();
             services.AddSingleton<IConfiguration>(configuration);
 
             //initialize logger object
@@ -146,11 +145,30 @@ namespace MyREST
                 JwtAuthPlugin jwtAuthPlugin = new JwtAuthPlugin(jwtAuthLogger, configuration, globalConfig);
                 services.AddSingleton<JwtAuthPlugin>(jwtAuthPlugin);
 
+                //register AppState object
+                var appState = new AppState() { startTime = DateTime.Now };
+                services.AddSingleton<AppState>(appState);
+
                 //register engine object
                 var engineLLogger = provider.GetRequiredService<ILogger<Engine>>();
                 Engine engine = new Engine(engineLLogger, configuration, globalConfig, systemConfig,
-                    dbConfigList, xmlFileContainer, firewallPlugin, basicAuthPlugin, jwtAuthPlugin);
+                    dbConfigList, xmlFileContainer, appState, firewallPlugin, basicAuthPlugin, jwtAuthPlugin);
                 services.AddSingleton<Engine>(engine);
+
+                //register IHostApplicationLifetime callbacks
+                var appLifetime = provider.GetRequiredService<IHostApplicationLifetime>();
+                appLifetime.ApplicationStopping.Register(() =>
+                {
+                    if (appState.getRunningRequests() > 0)
+                    {
+                        logger.Warn($"There are {appState.getRunningRequests()} running requests. ");
+                    }
+                    appLifetime.StopApplication(); //Stop accepting new requests, gracefully shutdown application
+                });
+                appLifetime.ApplicationStopped.Register(() =>
+                {
+                    appLifetime.StopApplication(); //Stop accepting new requests, gracefully shutdown application
+                });
             }
             catch (Exception ex)
             {

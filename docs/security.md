@@ -35,7 +35,6 @@ publicKey="MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuDnJaGFITMmnFrYrW1ZMK9YXE
 - 可以自行确定是否要验证JWT token中的 audience 信息(推荐验证). 
 - 可以自行确定是否要验证JWT token中的 issuer 信息(推荐验证).
 - publicKey 取值, 需要将 PEM-formatted public key 去除掉首行和尾行, 并将中间各行的回车换行符, 下面是个示例: 
-- 验证 JWT token时可以按需设置是否验证 audience 和 issuer(推荐验证这两项)
 
 PEM-formatted public key 格式的Key
 ```
