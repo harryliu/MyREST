@@ -170,7 +170,7 @@ namespace MyREST
             string connectionString = dbConfig.connectionString;
             string dbType = dbConfig.dbType;
 
-            using (IDbConnection conn = ConnectionFactory.newConnection(dbType, connectionString))
+            using (IDbConnection conn = DbFactory.newConnection(dbType, connectionString))
             {
                 _logger.LogInformation($"Begin to run SQL in db {dbName}, SQL: {sqlContext.getPlainSql()}");
                 if (sqlContext.isSelect)

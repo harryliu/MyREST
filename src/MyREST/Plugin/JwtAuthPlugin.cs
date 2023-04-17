@@ -60,7 +60,6 @@ namespace MyREST.Plugin
 
         protected override bool internalCheck(HttpContext httpContext, out string checkMessage)
         {
-            _logger.LogInformation("Begin to do JwtAuth check ");
             bool result = jwtAuthCheck(httpContext, out checkMessage);
             _logger.LogInformation(checkMessage);
             return result;

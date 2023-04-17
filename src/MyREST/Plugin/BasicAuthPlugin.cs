@@ -18,7 +18,6 @@ namespace MyREST.Plugin
 
         protected override bool internalCheck(HttpContext httpContext, out string checkMessage)
         {
-            _logger.LogInformation("Begin to do basicAuth check ");
             bool result = basicAuthCheck(httpContext, out checkMessage);
             _logger.LogInformation(checkMessage);
             return result;

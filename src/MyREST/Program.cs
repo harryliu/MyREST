@@ -156,19 +156,19 @@ namespace MyREST
                 services.AddSingleton<Engine>(engine);
 
                 //register IHostApplicationLifetime callbacks
-                var appLifetime = provider.GetRequiredService<IHostApplicationLifetime>();
-                appLifetime.ApplicationStopping.Register(() =>
-                {
-                    if (appState.getRunningRequests() > 0)
-                    {
-                        logger.Warn($"There are {appState.getRunningRequests()} running requests. ");
-                    }
-                    appLifetime.StopApplication(); //Stop accepting new requests, gracefully shutdown application
-                });
-                appLifetime.ApplicationStopped.Register(() =>
-                {
-                    appLifetime.StopApplication(); //Stop accepting new requests, gracefully shutdown application
-                });
+                //var appLifetime = provider.GetRequiredService<IHostApplicationLifetime>();
+                //appLifetime.ApplicationStopping.Register(() =>
+                //{
+                //    if (appState.getRunningRequests() > 0)
+                //    {
+                //        logger.Warn($"There are {appState.getRunningRequests()} running requests. ");
+                //    }
+                //    appLifetime.StopApplication(); //Stop accepting new requests, gracefully shutdown application
+                //});
+                //appLifetime.ApplicationStopped.Register(() =>
+                //{
+                //    appLifetime.StopApplication(); //Stop accepting new requests, gracefully shutdown application
+                //});
             }
             catch (Exception ex)
             {

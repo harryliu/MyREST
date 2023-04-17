@@ -45,8 +45,6 @@ namespace MyREST.Plugin
 
         protected override bool internalCheck(HttpContext httpContext, out string checkMessage)
         {
-            _logger.LogInformation("Begin firewall check ");
-
             string? clientIpAddress = httpContext.Connection.RemoteIpAddress?.ToString() ??
                 httpContext.Features.Get<IHttpConnectionFeature>()?.RemoteIpAddress?.ToString();
             bool result = pipelineCheck(clientIpAddress, out checkMessage);
