@@ -206,7 +206,6 @@ namespace MyREST
         private void prepareDapperArguments(SqlRequestWrapper sqlRequestWrapper, SqlResultWrapper result, out SqlContext sqlContext, out object dapperParameters)
         {
             SqlRequest request = sqlRequestWrapper.request;
-            string traceId = request.traceId;
             sqlContext = request.sqlContext;
             string dbName = sqlContext.db;
             DbConfig dbConfig = getDbConfig(dbName);
