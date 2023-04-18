@@ -1,5 +1,4 @@
 ﻿using Dapper;
-using Microsoft.Extensions.Logging;
 using MyREST.Plugin;
 using System.Data;
 

@@ -1,14 +1,7 @@
-﻿using GlobExpressions;
-using Microsoft.AspNetCore.DataProtection;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Features;
-using Microsoft.IdentityModel.Tokens;
-using MySqlX.XDevAPI;
+﻿using Microsoft.IdentityModel.Tokens;
 using RSAExtensions;
 using System.IdentityModel.Tokens.Jwt;
-using System.Net.Http.Headers;
 using System.Security.Cryptography;
-using System.Text;
 
 namespace MyREST.Plugin
 {

@@ -1,13 +1,10 @@
 using Microsoft.AspNetCore.ResponseCompression;
 using MyREST.Plugin;
 using Nett;
-using System.IO.Compression;
 using NLog;
-using static Org.BouncyCastle.Math.EC.ECCurve;
 using NLog.Extensions.Logging;
 using NLog.Web;
-using Microsoft.Extensions.DependencyInjection;
-using System.Configuration;
+using System.IO.Compression;
 
 namespace MyREST
 {

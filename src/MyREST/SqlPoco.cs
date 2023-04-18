@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
-using System.Data;
+﻿using System.Data;
 using System.Text;
 using System.Xml.Serialization;
 

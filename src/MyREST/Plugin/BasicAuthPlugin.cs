@@ -1,8 +1,4 @@
-﻿using GlobExpressions;
-using Microsoft.AspNetCore.Http.Features;
-using MySqlX.XDevAPI;
-using System.Net.Http.Headers;
-using System.Text;
+﻿using System.Text;
 
 namespace MyREST.Plugin
 {
