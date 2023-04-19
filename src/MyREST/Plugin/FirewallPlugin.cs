@@ -43,22 +43,22 @@ namespace MyREST.Plugin
             _needCheckIpBlackList = _firewallConfig.enableIpBlackList && _ipBlackList.Count() > 0;
         }
 
-        protected override bool internalCheck(HttpContext httpContext, out string checkMessage)
+        protected override bool internalCheck(HttpContext httpContext, EndpointContext endpointContext, out string checkMessage)
         {
             string? clientIpAddress = httpContext.Connection.RemoteIpAddress?.ToString() ??
                 httpContext.Features.Get<IHttpConnectionFeature>()?.RemoteIpAddress?.ToString();
-            bool result = pipelineCheck(clientIpAddress, out checkMessage);
+            bool result = pipelineCheck(clientIpAddress, endpointContext, out checkMessage);
 
             _logger.LogInformation($"{checkMessage} for incoming ip address {clientIpAddress} ");
             return result;
         }
 
-        private bool pipelineCheck(string? clientIpAddress, out string checkMessage)
+        private bool pipelineCheck(string? clientIpAddress, EndpointContext endpointContext, out string checkMessage)
         {
             //initial
             bool result = true;
             checkMessage = "Firewall check bypassed ";
-            if (string.IsNullOrEmpty(clientIpAddress))
+            if (string.IsNullOrEmpty(clientIpAddress) || endpointContext.needFirewallCheck == false)
             {
                 return result;
             }

@@ -14,13 +14,13 @@
             _globalConfig = globalConfig;
         }
 
-        protected abstract bool internalCheck(HttpContext httpContext, out string checkMessage);
+        protected abstract bool internalCheck(HttpContext httpContext, EndpointContext endpointContext, out string checkMessage);
 
-        public bool check(HttpContext httpContext, out string checkMessage)
+        public bool check(HttpContext httpContext, EndpointContext endpointContext, out string checkMessage)
         {
             try
             {
-                return internalCheck(httpContext, out checkMessage);
+                return internalCheck(httpContext, endpointContext, out checkMessage);
             }
             catch (Exception ex)
             {

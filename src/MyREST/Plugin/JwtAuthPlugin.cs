@@ -51,9 +51,9 @@ namespace MyREST.Plugin
             }
         }
 
-        protected override bool internalCheck(HttpContext httpContext, out string checkMessage)
+        protected override bool internalCheck(HttpContext httpContext, EndpointContext endpointContext, out string checkMessage)
         {
-            bool result = jwtAuthCheck(httpContext, out checkMessage);
+            bool result = jwtAuthCheck(httpContext, endpointContext, out checkMessage);
             _logger.LogInformation(checkMessage);
             return result;
         }
@@ -72,10 +72,10 @@ namespace MyREST.Plugin
             return result;
         }
 
-        private bool jwtAuthCheck(HttpContext httpContext, out string checkMessage)
+        private bool jwtAuthCheck(HttpContext httpContext, EndpointContext endpointContext, out string checkMessage)
         {
             checkMessage = "JwtAuth check bypassed";
-            if (_jwtAuthConfig.enableJwtAuth == false)
+            if (_jwtAuthConfig.enableJwtAuth == false || endpointContext.needJwtAuthCheck == false)
             {
                 return true;
             }

@@ -12,17 +12,17 @@ namespace MyREST.Plugin
             _basicAuthConfig = globalConfig.basicAuth;
         }
 
-        protected override bool internalCheck(HttpContext httpContext, out string checkMessage)
+        protected override bool internalCheck(HttpContext httpContext, EndpointContext endpointContext, out string checkMessage)
         {
-            bool result = basicAuthCheck(httpContext, out checkMessage);
+            bool result = basicAuthCheck(httpContext, endpointContext, out checkMessage);
             _logger.LogInformation(checkMessage);
             return result;
         }
 
-        private bool basicAuthCheck(HttpContext httpContext, out string checkMessage)
+        private bool basicAuthCheck(HttpContext httpContext, EndpointContext endpointContext, out string checkMessage)
         {
             checkMessage = "BasicAuth check bypassed";
-            if (_basicAuthConfig.enableBasicAuth == false)
+            if (_basicAuthConfig.enableBasicAuth == false || endpointContext.needBasicAuthCheck == false)
             {
                 return true;
             }

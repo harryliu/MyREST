@@ -32,11 +32,40 @@ namespace MyREST
             _firewallPlugin = firewallPlugin;
         }
 
-        [HttpPost("/run")]
-        public SqlResultWrapper run([FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] SqlRequestWrapper sqlRequestWrapper)
+        [HttpPost("/sql")]
+        public SqlResultWrapper runSql([FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] SqlRequestWrapper sqlRequestWrapper)
         {
             _logger.LogInformation("Run endpoint request ==> " + sqlRequestWrapper.ToString());
-            SqlResultWrapper result = _engine.process(this.HttpContext, sqlRequestWrapper);
+            EndpointContext endpointContext = new EndpointContext()
+            {
+                name = "sql",
+                needBasicAuthCheck = true,
+                needJwtAuthCheck = true,
+                needFirewallCheck = true,
+                onlyAllowSelect = false,
+                onlyServerSideSql = false
+            };
+
+            SqlResultWrapper result = _engine.process(this.HttpContext, sqlRequestWrapper, endpointContext);
+            _logger.LogInformation("Run endpoint response ==> " + result.ToString());
+            return result;
+        }
+
+        [HttpPost("/greenChannelSql")]
+        public SqlResultWrapper runGreenChannelSql([FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] SqlRequestWrapper sqlRequestWrapper)
+        {
+            _logger.LogInformation("Run endpoint request ==> " + sqlRequestWrapper.ToString());
+            EndpointContext endpointContext = new EndpointContext()
+            {
+                name = "greenChannelSql",
+                needBasicAuthCheck = false,
+                needJwtAuthCheck = false,
+                needFirewallCheck = true,
+                onlyAllowSelect = true,
+                onlyServerSideSql = true
+            };
+
+            SqlResultWrapper result = _engine.process(this.HttpContext, sqlRequestWrapper, endpointContext);
             _logger.LogInformation("Run endpoint response ==> " + result.ToString());
             return result;
         }
@@ -53,13 +82,22 @@ namespace MyREST
         [HttpGet("/status")]
         public StateQueryResult queryStatus()
         {
-            StateQueryResult result = new StateQueryResult();
+            EndpointContext endpointContext = new EndpointContext()
+            {
+                name = "status",
+                needBasicAuthCheck = false,
+                needJwtAuthCheck = false,
+                needFirewallCheck = true,
+                onlyAllowSelect = true,
+                onlyServerSideSql = true
+            };
 
+            StateQueryResult result = new StateQueryResult();
             try
             {
                 //firewall check
                 string firewallMsg;
-                if (_firewallPlugin.check(this.HttpContext, out firewallMsg) == false)
+                if (_firewallPlugin.check(this.HttpContext, endpointContext, out firewallMsg) == false)
                 {
                     throw new SecurityException(firewallMsg);
                 }

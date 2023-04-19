@@ -4,11 +4,14 @@ using System.Xml.Serialization;
 
 namespace MyREST
 {
-    public class FieldMeta
+    public class EndpointContext
     {
         public string name { get; set; }
-        public int index { get; set; }
-        public string dataType { get; set; }
+        public bool needFirewallCheck { get; set; } = true;
+        public bool needBasicAuthCheck { get; set; } = true;
+        public bool needJwtAuthCheck { get; set; } = true;
+        public bool onlyAllowSelect { get; set; } = false;
+        public bool onlyServerSideSql { get; set; } = false;
     }
 
     [XmlRoot(ElementName = "parameter")]

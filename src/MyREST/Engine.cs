@@ -96,7 +96,7 @@ namespace MyREST
             }
         }
 
-        public SqlResultWrapper process(HttpContext httpContext, SqlRequestWrapper sqlRequestWrapper)
+        public SqlResultWrapper process(HttpContext httpContext, SqlRequestWrapper sqlRequestWrapper, EndpointContext endpointContext)
         {
             SqlResultWrapper result = new SqlResultWrapper();
             SqlResponse sqlResponse = new SqlResponse();
@@ -107,21 +107,21 @@ namespace MyREST
 
                 //firewall check
                 string firewallMsg;
-                if (_firewallPlugin.check(httpContext, out firewallMsg) == false)
+                if (_firewallPlugin.check(httpContext, endpointContext, out firewallMsg) == false)
                 {
                     throw new SecurityException(firewallMsg);
                 }
 
                 //basic auth check
                 string basicAuthCheckMsg;
-                if (_basicAuthPlugin.check(httpContext, out basicAuthCheckMsg) == false)
+                if (_basicAuthPlugin.check(httpContext, endpointContext, out basicAuthCheckMsg) == false)
                 {
                     throw new SecurityException(basicAuthCheckMsg);
                 }
 
                 //jwt auth check
                 string jwtAuthCheckMsg;
-                if (_jwtAuthPlugin.check(httpContext, out jwtAuthCheckMsg) == false)
+                if (_jwtAuthPlugin.check(httpContext, endpointContext, out jwtAuthCheckMsg) == false)
                 {
                     throw new SecurityException(jwtAuthCheckMsg);
                 }
