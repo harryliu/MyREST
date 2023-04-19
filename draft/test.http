@@ -25,12 +25,24 @@ Swagger UI url
 http://localhost:5001/swagger/index.html 
 
 
+==============================
+health check  url 
+==============================
+GET http://localhost:5001/
+content-type: application/json
+
 GET http://localhost:5001/health
 content-type: application/json
 
 
+
+==============================
+App status check  url 
+behind firewall
+==============================
 GET http://localhost:5001/status
 content-type: application/json
+
 
 
 

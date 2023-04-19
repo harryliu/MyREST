@@ -74,5 +74,7 @@
     {
         public AppState appState { get; set; }
         public List<DbState> DbStates { get; set; }
+
+        public string message { get; set; } = "";
     }
 }

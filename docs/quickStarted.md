@@ -77,3 +77,10 @@ Swagger UI <https://localhost:5002/swagger/index.html>
 GET http://localhost:5001/health
 content-type: application/json
 ```
+
+3. 访问系统状态 end point
+```
+GET http://localhost:5001/status
+content-type: application/json
+```
+

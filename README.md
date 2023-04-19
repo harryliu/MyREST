@@ -26,6 +26,7 @@ a universal database RESTful service
 - 内置防火墙安全插件(白名单或黑名单)
 - 支持 Basic Auth安全插件
 - 支持 JWT Auth安全插件
+- 提供健康检查和状态检查接口
 - (todo) 支持 miniProfiler 
 - (todo) 支持优雅停机
 

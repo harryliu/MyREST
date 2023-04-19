@@ -19,7 +19,6 @@ namespace MyREST
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
-            builder.Services.AddHealthChecks();
 
             //register NLog
             builder.Logging.ClearProviders();
@@ -51,7 +50,6 @@ namespace MyREST
             app.UseHttpsRedirection();  //
             app.UseAuthorization();
             app.MapControllers();
-            app.UseHealthChecks("/health");
             logger.Info("MyREST service started");
             app.Run();
         }
