@@ -130,7 +130,7 @@ namespace MyREST
                 validateRequest(sqlRequestWrapper);
 
                 //execute SQL
-                executeSql(sqlRequestWrapper, result);
+                executeSql(sqlRequestWrapper, endpointContext, result);
 
                 _appState.markRequestCompleted(isFailed: false);
             }
@@ -158,11 +158,11 @@ namespace MyREST
             return result;
         }
 
-        private void executeSql(SqlRequestWrapper sqlRequestWrapper, SqlResultWrapper result)
+        private void executeSql(SqlRequestWrapper sqlRequestWrapper, EndpointContext endpointContext, SqlResultWrapper result)
         {
             SqlContext sqlContext;
             object dapperParameters;
-            prepareDapperArguments(sqlRequestWrapper, result, out sqlContext, out dapperParameters);
+            prepareDapperArguments(sqlRequestWrapper, endpointContext, result, out sqlContext, out dapperParameters);
 
             string dbName = sqlContext.db;
             DbConfig dbConfig = getDbConfig(dbName);
@@ -190,12 +190,16 @@ namespace MyREST
                         result.response.rowCount = 0;
                     }
                 }
-                else
+                else if (sqlContext.isSelect == false && endpointContext.onlyAllowSelect == false)
                 {
                     result.response.affectedCount = conn.Execute(sqlContext.getPlainSql(), dapperParameters);
                     result.response.scalarValue = null;
                     result.response.rows = null;
                     result.response.rowCount = 0;
+                }
+                else
+                {
+                    throw new SqlExecuteException($"{endpointContext.name} only allow select statement");
                 }
             }
             _logger.LogInformation($"End to run SQL in db {dbName}, SQL: {sqlContext.getPlainSql()}");
@@ -203,7 +207,8 @@ namespace MyREST
             result.response.errorMessage = "";
         }
 
-        private void prepareDapperArguments(SqlRequestWrapper sqlRequestWrapper, SqlResultWrapper result, out SqlContext sqlContext, out object dapperParameters)
+        private void prepareDapperArguments(SqlRequestWrapper sqlRequestWrapper, EndpointContext endpointContext,
+            SqlResultWrapper result, out SqlContext sqlContext, out object dapperParameters)
         {
             SqlRequest request = sqlRequestWrapper.request;
             sqlContext = request.sqlContext;
@@ -226,7 +231,11 @@ namespace MyREST
             }
             if (_systemConfig.enableClientSql == false && sqlContext.isUseClientSql())
             {
-                throw new MyRestException("system does not allow clientSql ");
+                throw new MyRestException("system configuration does not allow clientSql ");
+            }
+            if (endpointContext.onlyServerSideSql && sqlContext.isUseClientSql())
+            {
+                throw new MyRestException($"{endpointContext.name} endpoint does not allow clientSql ");
             }
 
             //build dapper parameters
