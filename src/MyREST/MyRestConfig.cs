@@ -16,7 +16,7 @@ namespace MyREST
         public bool enableSwagger { get; set; } = true;
         public bool enableClientSql { get; set; } = false;
 
-        public bool enableGreenChannelSql { get; set; } = false;
+        public bool enableGreenChannelSelect { get; set; } = false;
 
         public bool useResponseCompression { get; set; } = false;
         public bool hotReloadSqlFile { get; set; } = false;

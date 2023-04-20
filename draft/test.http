@@ -18,6 +18,11 @@ tasks:
 . 支持 base64 encoded SQL
 
 
+==============================
+index url
+==============================
+GET http://localhost:5001/
+content-type: application/json
 
 ==============================
 Swagger UI url 
@@ -28,9 +33,6 @@ http://localhost:5001/swagger/index.html
 ==============================
 health check  url 
 ==============================
-GET http://localhost:5001/
-content-type: application/json
-
 GET http://localhost:5001/health
 content-type: application/json
 
@@ -49,7 +51,7 @@ content-type: application/json
 ==============================
 API format 
 ==============================
-POST http://localhost:5001/run HTTP/1.1
+POST http://localhost:5001/sql HTTP/1.1
 content-type: application/json
 
 {
@@ -80,7 +82,7 @@ content-type: application/json
 ==============================
 Test client side SQL 
 ==============================
-POST http://localhost:5001/run HTTP/1.1
+POST http://localhost:5001/sql HTTP/1.1
 content-type: application/json
 
 {
@@ -99,9 +101,43 @@ content-type: application/json
 }
 
 ==============================
+Test greenChannelSelect select 
+no need check BasicAuth/JwtAuth.
+only server side select statement is allowed, and recordset must have 1 row
+==============================
+POST http://localhost:5001/greenChannelSelect HTTP/1.1
+content-type: application/json
+
+{
+  "request": {
+    "sqlContext": {
+      "db": "sakila",
+      "isSelect": true,
+      "isScalar": false,
+      "sqlFile": "/sampleSql.xml",
+      "sqlId": "queryOneActor",
+      "sql": "",  
+      "parameters":[
+         {
+          "name": "@id",
+          "value": "1",
+          "dataType": "",
+          "direction": "",
+          "format": "",
+          "separator":""
+        }
+      ]
+    },
+    "traceId": "1111"
+  }
+}
+
+
+
+==============================
 Test Scalar select 
 ==============================
-POST http://localhost:5001/run HTTP/1.1
+POST http://localhost:5001/sql HTTP/1.1
 content-type: application/json
 
 {
@@ -125,7 +161,7 @@ content-type: application/json
 Test BasicAuth 安全插件
 dXNlcjEyMzpwYXNzd29yZDEyMw== 是 user123:password123 的base64形式
 ==============================
-POST http://localhost:5001/run HTTP/1.1
+POST http://localhost:5001/sql HTTP/1.1
 content-type: application/json
 Authorization: Basic dXNlcjEyMzpwYXNzd29yZDEyMw==
 
@@ -148,7 +184,7 @@ Authorization: Basic dXNlcjEyMzpwYXNzd29yZDEyMw==
 ==============================
 Test JwtAuth 安全插件
 ==============================
-POST http://localhost:5001/run HTTP/1.1
+POST http://localhost:5001/sql HTTP/1.1
 content-type: application/json
 Authorization: Bearer eyJhbGciOiJSUzI1NiIsImVudGl0bGVtZW50IjoieWxjMzJkMmFpcG8wZnJ1MDJxdWRucGMifQ.eyJpc3MiOiJzb21lIGF1dGggc2VydmVyIiwic3ViIjoibmFpbWlzaCIsImF1ZCI6Im15cmVzdCBjbGllbnQiLCJpYXQiOjE2ODE0ODAyMzIsImV4cCI6MTY4MjQ4MDgzMn0.FPDzCOffg3yNyj1E6BdUJi8r_U2gkU4I07uIi7IZj7VcjkHiSp5O9m5TVZk9y9acv7s55ttrOOSi0ptQRjARQ40xg3z1ZS-pDVHogWhSiY89fYAddGfcd_9_wKqSBDvDyZgbT0rLQxK-KSDOKlXGvnkRVdKCogKDGMVYhA4j3bCPwhMUQZzaQAbvCONy9uPiso50xIJxPSuE4erDKvfNcqrBVs7jX62JKytl8mV4ajIn3GNXbnfcctjwvnnOZAtKKNF2lHUpts6Piwqacd0kVI47oOND2KYd4q_SLmNAHMjTW780NAgt3REoyt_CPS5JEdt4lgp7kw86EI9dxtVUTg
 
@@ -216,7 +252,7 @@ kQIDAQAB
 ==============================
 Test DML statement  
 ==============================
-POST http://localhost:5001/run HTTP/1.1
+POST http://localhost:5001/sql HTTP/1.1
 content-type: application/json
 
 {
@@ -237,7 +273,7 @@ content-type: application/json
 ==============================
 Test server side sql
 ==============================
-POST http://localhost:5001/run HTTP/1.1
+POST http://localhost:5001/sql HTTP/1.1
 content-type: application/json
 
 {
@@ -261,7 +297,7 @@ content-type: application/json
 ==============================
 compress response
 ==============================
-POST http://localhost:5001/run HTTP/1.1
+POST http://localhost:5001/sql HTTP/1.1
 Content-type: application/json
 Accept-Encoding: br, gzip
 
@@ -285,7 +321,7 @@ Accept-Encoding: br, gzip
 ==============================
 Test client side SQL with parameter
 ==============================
-POST http://localhost:5001/run HTTP/1.1
+POST http://localhost:5001/sql HTTP/1.1
 content-type: application/json
 
 {
@@ -324,7 +360,7 @@ content-type: application/json
 ==============================
 Test server side SQL with parameters
 ==============================
-POST http://localhost:5001/run HTTP/1.1
+POST http://localhost:5001/sql HTTP/1.1
 content-type: application/json
 
 {
@@ -356,7 +392,7 @@ content-type: application/json
 ==============================
 Test IN clause for MySQL DB
 ==============================
-POST http://localhost:5001/run HTTP/1.1
+POST http://localhost:5001/sql HTTP/1.1
 content-type: application/json
 
 {
@@ -388,7 +424,7 @@ content-type: application/json
 ==============================
 Test IN clause for MS SQL server DB
 ==============================
-POST http://localhost:5001/run HTTP/1.1
+POST http://localhost:5001/sql HTTP/1.1
 content-type: application/json
 
 {

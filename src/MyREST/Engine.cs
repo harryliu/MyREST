@@ -104,6 +104,11 @@ namespace MyREST
             try
             {
                 _appState.markNewRequest();
+                //check endpoint enabled or disabled
+                if (endpointContext.enabled == false)
+                {
+                    throw new MyRestException($"{endpointContext.name} endpoint is disabled");
+                }
 
                 //firewall check
                 string firewallMsg;
@@ -168,10 +173,11 @@ namespace MyREST
             DbConfig dbConfig = getDbConfig(dbName);
             string connectionString = dbConfig.connectionString;
             string dbType = dbConfig.dbType;
+            string traceId = sqlRequestWrapper.request.traceId;
 
             using (IDbConnection conn = DbFactory.newConnection(dbType, connectionString))
             {
-                _logger.LogInformation($"Begin to run SQL in db {dbName}, SQL: {sqlContext.getPlainSql()}");
+                _logger.LogInformation($"Begin to run SQL in db {dbName}, traceId: {traceId},  SQL: {sqlContext.getPlainSql()}");
                 if (sqlContext.isSelect)
                 {
                     if (sqlContext.isScalar == false)
@@ -199,10 +205,20 @@ namespace MyREST
                 }
                 else
                 {
-                    throw new SqlExecuteException($"{endpointContext.name} only allow select statement");
+                    throw new MyRestException($"{endpointContext.name} only allow select statement");
+                }
+
+                //post-check the recordset whether over the rowCountLimit
+                if (endpointContext.rowCountLimit > 0)
+                {
+                    if (result.response.rowCount > 0 && result.response.rowCount > endpointContext.rowCountLimit)
+                    {
+                        result.response.rows = null;
+                        throw new MyRestException($"The result rowCount {result.response.rowCount} is over the rowCountLimit {endpointContext.rowCountLimit}. result rows will be empty");
+                    }
                 }
             }
-            _logger.LogInformation($"End to run SQL in db {dbName}, SQL: {sqlContext.getPlainSql()}");
+            _logger.LogInformation($"End to run SQL in db {dbName}, traceId: {traceId}");
             result.response.returnCode = 0;
             result.response.errorMessage = "";
         }

@@ -26,7 +26,7 @@ a universal database RESTful service
 - 内置防火墙安全插件(白名单或黑名单)
 - 支持 Basic Auth安全插件
 - 支持 JWT Auth安全插件
-- 提供健康检查和状态检查接口
+- 提供健康检查和状态检查和绿色通道查询接口
 - (todo) 支持 miniProfiler 
 - (todo) 支持优雅停机
 
@@ -35,7 +35,7 @@ a universal database RESTful service
 ## 执行 SQL 示例
 Post 请求: 
 ```
-POST http://localhost:5001/run HTTP/1.1
+POST http://localhost:5001/sql HTTP/1.1
 content-type: application/json
 
 {

@@ -14,6 +14,7 @@ namespace MyREST
     {
         private readonly IConfiguration _configuration;
         private readonly ILogger<Controller> _logger;
+        private GlobalConfig _globalConfig;
         private Engine _engine;
         private AppState _appState;
         private List<DbConfig> _dbConfigs;
@@ -26,6 +27,7 @@ namespace MyREST
         {
             _logger = logger;
             _configuration = configuration;
+            _globalConfig = globalConfig;
             _engine = engine;
             _appState = appState;
             _dbConfigs = dbConfigs;
@@ -39,11 +41,13 @@ namespace MyREST
             EndpointContext endpointContext = new EndpointContext()
             {
                 name = "sql",
+                enabled = true,
                 needBasicAuthCheck = true,
                 needJwtAuthCheck = true,
                 needFirewallCheck = true,
                 onlyAllowSelect = false,
-                onlyServerSideSql = false
+                onlyServerSideSql = false,
+                rowCountLimit = -1
             };
 
             SqlResultWrapper result = _engine.process(this.HttpContext, sqlRequestWrapper, endpointContext);
@@ -51,18 +55,20 @@ namespace MyREST
             return result;
         }
 
-        [HttpPost("/greenChannelSql")]
-        public SqlResultWrapper runGreenChannelSql([FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] SqlRequestWrapper sqlRequestWrapper)
+        [HttpPost("/greenChannelSelect")]
+        public SqlResultWrapper runGreenChannelSelect([FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] SqlRequestWrapper sqlRequestWrapper)
         {
             _logger.LogInformation("Run endpoint request ==> " + sqlRequestWrapper.ToString());
             EndpointContext endpointContext = new EndpointContext()
             {
-                name = "greenChannelSql",
+                name = "greenChannelSelect",
+                enabled = _globalConfig.system.enableGreenChannelSelect,
                 needBasicAuthCheck = false,
                 needJwtAuthCheck = false,
                 needFirewallCheck = true,
                 onlyAllowSelect = true,
-                onlyServerSideSql = true
+                onlyServerSideSql = true,
+                rowCountLimit = 1
             };
 
             SqlResultWrapper result = _engine.process(this.HttpContext, sqlRequestWrapper, endpointContext);
@@ -71,6 +77,13 @@ namespace MyREST
         }
 
         [HttpGet("/")]
+        public string index()
+        {
+            string result = "MyREST is a universal database RESTful service";
+            _logger.LogInformation("index endpoint response ==> " + result.ToString());
+            return result;
+        }
+
         [HttpGet("/health")]
         public string healthCheck()
         {

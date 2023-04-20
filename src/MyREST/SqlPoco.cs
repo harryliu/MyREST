@@ -7,11 +7,13 @@ namespace MyREST
     public class EndpointContext
     {
         public string name { get; set; }
+        public bool enabled { get; set; } = true;
         public bool needFirewallCheck { get; set; } = true;
         public bool needBasicAuthCheck { get; set; } = true;
         public bool needJwtAuthCheck { get; set; } = true;
         public bool onlyAllowSelect { get; set; } = false;
         public bool onlyServerSideSql { get; set; } = false;
+        public int rowCountLimit { get; set; } = -1;
     }
 
     [XmlRoot(ElementName = "parameter")]
