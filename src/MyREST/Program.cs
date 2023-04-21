@@ -92,8 +92,8 @@ namespace MyREST
 
             try
             {
-                //read myrest.toml file
-                string tomlFile = "myrest.toml";
+                //read MyREST.toml file
+                string tomlFile = "MyREST.toml";
 
                 //read system configuration in toml file
                 globalConfig = Toml.ReadFile<GlobalConfig>(tomlFile);

@@ -22,12 +22,13 @@ github 主页中下载编译包
 
 2. 按需调整 logging 相关配置 
 
-## 调整 myrest.toml  配置 
+## 调整 MyREST.toml  配置 
 1. system section 配置 
 ```toml
 [system]
 enableSwagger=true # allow enable Swagger UI
-enableClientSql=true  # allow client to submit SQL statement. It only works in debug mode. 
+enableClientSql=true  # allow client to submit SQL statement. 
+enableGreenChannelSelect=true #allow sql query without security check 
 hotReloadSqlFile=true # hot reload server side SQL file 
 writebackRequest=true # writeback the whole request rather than only traceId
 writebackInBase64=false # writeback SQL in plain or base64 format

@@ -9,7 +9,7 @@ ipBlackList=["127.0.0.2","192.168.0.156"]
 ```
 
 ## Basic Auth 验证
-除了防火墙安全保护机制, MyRest 还提供Basic Auth 和JWT Auth两种身份鉴证机制, Basic Auth 和JWT Auth两种机制不能同时启用. 
+除了防火墙安全保护机制, MyREST 还提供Basic Auth 和JWT Auth两种身份鉴证机制, Basic Auth 和JWT Auth两种机制不能同时启用. 
 对于安全性要求不太高的场景, 可以使用 Basic Auth 机制, 客户端使用非常方便. 
 ```toml
 [basicAuth]
@@ -19,12 +19,12 @@ password="password123"
 ```
 
 ## JWT Auth 验证
-对于安全性要求较高的场景, 可以使用 JWT Auth 机制, 这时您还需额外部署一个Auth server用来签发JWT token, MyRest 服务器作为资源服务器. MyRest 要求JWT token必须按 RSA 非对称算法进行签名. 
+对于安全性要求较高的场景, 可以使用 JWT Auth 机制, 这时您还需额外部署一个Auth server用来签发JWT token, MyREST 服务器作为资源服务器. MyREST 要求JWT token必须按 RSA 非对称算法进行签名. 
 
 ```
 [jwtAuth]
 enableJwtAuth=true # enable JWT Auth
-audience="myrest client"
+audience="MyREST client"
 validateAudience=true
 issuer="some auth server"
 validateIssuer=true
@@ -49,7 +49,7 @@ kQIDAQAB
 -----END PUBLIC KEY-----
 ```
 
-myrest.toml文件中的 publicKey:
+MyREST.toml文件中的 publicKey:
 ```
 publicKey="MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuDnJaGFITMmnFrYrW1ZMK9YXE+9mSoJRPDLGu33VepOaA3+NUWAaASW8xzL+pWWIFLgvLwcMYMIv8YvSRNazlMrpsdtLs7SYEBx5Y1m3RC0p468vtUVyWmnFRoGpG0VRl9n5eNSz4iJm2zb+z6QI5DRd+KVVHLpwwyKWXTHwmgy2mvvT0ohBjKnW8/LX/r0H00qJd5fJVRwKWpGUX4/UhUPwO/lNwKbukV+JHKOQ6ytbgHLCgTISxYtT3dszBVMYeoQ9YlEqVcaUeZKQIynGgwBLEgVUhntvJgSU2DwbC6yPUBl0xXamtZiz93DE5bWrTCgaSqPGRRDOtyEMemHtkQIDAQAB"
 ```
