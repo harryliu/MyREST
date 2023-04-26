@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.Extensions.DependencyInjection;
 using MyREST.Plugin;
 using Nett;
 using NLog;
@@ -150,20 +151,12 @@ namespace MyREST
                     dbConfigList, xmlFileContainer, appState, firewallPlugin, basicAuthPlugin, jwtAuthPlugin);
                 services.AddSingleton<Engine>(engine);
 
-                //register IHostApplicationLifetime callbacks
-                //var appLifetime = provider.GetRequiredService<IHostApplicationLifetime>();
-                //appLifetime.ApplicationStopping.Register(() =>
-                //{
-                //    if (appState.getRunningRequests() > 0)
-                //    {
-                //        logger.Warn($"There are {appState.getRunningRequests()} running requests. ");
-                //    }
-                //    appLifetime.StopApplication(); //Stop accepting new requests, gracefully shutdown application
-                //});
-                //appLifetime.ApplicationStopped.Register(() =>
-                //{
-                //    appLifetime.StopApplication(); //Stop accepting new requests, gracefully shutdown application
-                //});
+                //register MyRestHostLifetime to ensure running requrest handled
+                var lifetimeLogger = provider.GetRequiredService<ILogger<MyRestHostLifetime>>();
+                services.AddSingleton<IHostLifetime>(sp => new MyRestHostLifetime(
+                    sp.GetRequiredService<IHostApplicationLifetime>(),
+                    TimeSpan.FromSeconds(5),
+                    appState, lifetimeLogger));
             }
             catch (Exception ex)
             {

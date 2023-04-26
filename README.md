@@ -27,8 +27,9 @@ a universal database RESTful service
 - 支持 Basic Auth安全插件
 - 支持 JWT Auth安全插件
 - 提供健康检查和状态检查和绿色通道查询接口
+- 支持优雅停机
 - (todo) 支持 miniProfiler 
-- (todo) 支持优雅停机
+
 
 
 

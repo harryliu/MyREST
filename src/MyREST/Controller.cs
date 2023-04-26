@@ -37,7 +37,7 @@ namespace MyREST
         [HttpPost("/sql")]
         public SqlResultWrapper runSql([FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] SqlRequestWrapper sqlRequestWrapper)
         {
-            _logger.LogInformation("Run endpoint request ==> " + sqlRequestWrapper.ToString());
+            _logger.LogInformation("sql endpoint request ==> " + sqlRequestWrapper.ToString());
             EndpointContext endpointContext = new EndpointContext()
             {
                 name = "sql",
@@ -51,14 +51,14 @@ namespace MyREST
             };
 
             SqlResultWrapper result = _engine.process(this.HttpContext, sqlRequestWrapper, endpointContext);
-            _logger.LogInformation("Run endpoint response ==> " + result.ToString());
+            _logger.LogInformation("sql endpoint response ==> " + result.ToString());
             return result;
         }
 
         [HttpPost("/greenChannelSelect")]
         public SqlResultWrapper runGreenChannelSelect([FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] SqlRequestWrapper sqlRequestWrapper)
         {
-            _logger.LogInformation("Run endpoint request ==> " + sqlRequestWrapper.ToString());
+            _logger.LogInformation("greenChannelSelect endpoint request ==> " + sqlRequestWrapper.ToString());
             EndpointContext endpointContext = new EndpointContext()
             {
                 name = "greenChannelSelect",
@@ -72,7 +72,7 @@ namespace MyREST
             };
 
             SqlResultWrapper result = _engine.process(this.HttpContext, sqlRequestWrapper, endpointContext);
-            _logger.LogInformation("Run endpoint response ==> " + result.ToString());
+            _logger.LogInformation("greenChannelSelect endpoint response ==> " + result.ToString());
             return result;
         }
 
