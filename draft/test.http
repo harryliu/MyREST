@@ -404,7 +404,7 @@ Authorization: Basic dXNlcjEyMzpwYXNzd29yZDEyMw==
       "isScalar": false,      
       "sqlFile": "",
       "sqlId": "",
-      "sql": "select actor_id , first_name FirstName, last_name LastName, last_update LastUpdate  from actor where actor_id=@id1 or actor_id in @ids or actor_id in @newIds or actor_id=@id3" ,  
+      "sql": "select actor_id , first_name FirstName, last_name LastName, last_update LastUpdate  from actor where actor_id=@id1 or actor_id in @ids or actor_id in @newIds or actor_id=@id13" ,  
       "parameters":[
          {
           "name": "@ids",
@@ -428,16 +428,13 @@ Authorization: Basic dXNlcjEyMzpwYXNzd29yZDEyMw==
           "format": ",",
           "separator":","
         },       {
-          "name": "@id3",
+          "name": "@id13",
           "value": "6",
           "dataType": "Decimal",
           "direction": "Input",
           "format": ",",
           "separator":","
-        }
-
-
-        
+        }        
       ]
     },
     "traceId": "1111"
@@ -451,6 +448,7 @@ Test IN clause for MS SQL server DB
 ==============================
 POST http://localhost:5001/sql HTTP/1.1
 content-type: application/json
+Authorization: Basic dXNlcjEyMzpwYXNzd29yZDEyMw==
 
 {
   "request": {
@@ -460,16 +458,32 @@ content-type: application/json
       "isScalar": false,
       "sqlFile": "",
       "sqlId": "",
-      "sql": "select * from oee.dbo.OEE_Hour_Dimension where Hour_Id in @hourid ",  
+      "sql": "select * from oee.dbo.OEE_Hour_Dimension where Hour_Id=@hour1 or Hour_Id in @hourids or Hour_Id in @newhourids",  
       "parameters":[       
         {
-          "name": "@hourid",
-          "value": "2021-12-16 00,2021-12-16 10",
+          "name": "@hourids",
+          "value": "2021-12-16 00,2021-12-16 01",
           "dataType": "String Array",
           "direction": "Input",
           "format": "",
           "separator":","
-        }
+        },
+        {
+          "name": "@newhourids",
+          "value": "2021-12-16 02,2021-12-16 03",
+          "dataType": "String Array",
+          "direction": "Input",
+          "format": "",
+          "separator":","
+        },
+        {
+          "name": "@hour1",
+          "value": "2021-12-16 04",
+          "dataType": "String",
+          "direction": "Input",
+          "format": "",
+          "separator":""
+        }                 
       ]
     },
     "traceId": "1111"

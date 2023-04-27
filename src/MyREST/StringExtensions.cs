@@ -18,5 +18,18 @@ namespace MyREST
             string result = Regex.Replace(input, pattern, replacement);
             return result;
         }
+
+        public static int occurrenceCount(string str, string subStr)
+        {
+            int count = 0;
+            int index = str.IndexOf(subStr);
+
+            while (index != -1)
+            {
+                count++;
+                index = str.IndexOf(subStr, index + 1);
+            }
+            return count;
+        }
     }
 }

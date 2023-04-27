@@ -206,6 +206,7 @@ namespace MyREST
         }
 
         private static void convertDapperDataType(string oldType, string oldValue, string format, string separator,
+            string paramName, string sql,
             out DbType? newType, out object newValue, out bool valueIsArray)
         {
             newType = null;
@@ -349,12 +350,14 @@ namespace MyREST
                 }
                 else if (dataType == "String Array".ToLower() || dataType == "String List".ToLower())
                 {
+                    assertOnly1Occurrence(sql, paramName);
                     newType = DbType.String;
                     newValue = oldValue.Split(separator).ToList<string>();
                     valueIsArray = true;
                 }
                 else if (dataType == "Decimal Array".ToLower() || dataType == "Decimal List".ToLower())
                 {
+                    assertOnly1Occurrence(sql, paramName);
                     newType = DbType.Decimal;
                     string[] strArray = oldValue.Split(separator);
                     var newValueList = new List<decimal>();
@@ -367,6 +370,7 @@ namespace MyREST
                 }
                 else if (dataType == "Int Array".ToLower() || dataType == "Int List".ToLower() || dataType == "Int32 Array".ToLower() || dataType == "Int32 List".ToLower())
                 {
+                    assertOnly1Occurrence(sql, paramName);
                     newType = DbType.Int32;
                     string[] strArray = oldValue.Split(separator);
                     var newValueList = new List<int>();
@@ -379,6 +383,7 @@ namespace MyREST
                 }
                 else if (dataType == "DateTime Array".ToLower() || dataType == "DateTime List".ToLower())
                 {
+                    assertOnly1Occurrence(sql, paramName);
                     newType = DbType.DateTime;
                     string[] strArray = oldValue.Split(separator);
                     var newValueList = new List<DateTime>();
@@ -392,6 +397,15 @@ namespace MyREST
                 else
                 {
                     throw new MyRestException(exceptionMessage);
+                }
+            }
+
+            static void assertOnly1Occurrence(string sql, string paramName)
+            {
+                int occurrenceCount = StringExtensions.occurrenceCount(sql, paramName);
+                if (occurrenceCount != 1)
+                {
+                    throw new MyRestException($"{paramName} occurred {occurrenceCount} times in sql, but expected only 1 time.");
                 }
             }
         }
@@ -416,7 +430,8 @@ namespace MyREST
                 object? newValue = null;
                 ParameterDirection? dapperDirection = getDapperDirection(param.direction);
                 bool valueIsArray;
-                convertDapperDataType(param.dataType, param.value, param.format, param.separator, out dapperDataType, out newValue, out valueIsArray);
+                convertDapperDataType(param.dataType, param.value, param.format, param.separator, param.name, sqlContext.getPlainSql(),
+                    out dapperDataType, out newValue, out valueIsArray);
                 if (valueIsArray == true)
                 {
                     haveArrayParam = true;
@@ -451,7 +466,6 @@ namespace MyREST
             }
         }
 
-        //var propertyName = removeSpecialChars(item.name); //to remove @ or : symbol
         private static (string, List<DapperParameterItem>) rewriteInClauseSqlAndParams(string sql, List<DapperParameterItem> parameterList)
         {
             //to support In clause for mssql, select * from table1 where id in @ids
@@ -466,14 +480,12 @@ namespace MyREST
                 {
                     if (param.value is IList)
                     {
-                        //item.name, @id__10001, @id__10002
-                        //from v in (IList) item.value select item.name+"__"+
                         List<string> derivedNames = new List<string>();
 
                         for (int i = 0; i < ((IList)param.value).Count; i++)
                         {
                             var value = ((IList)param.value)[i];
-                            string derivedName = param.name + "__" + (10000 + i).ToString();
+                            string derivedName = param.name + "__" + (10000 + i).ToString() + "__";
                             derivedNames.Add(derivedName);
 
                             DapperParameterItem derivedParam = new DapperParameterItem();
@@ -486,7 +498,7 @@ namespace MyREST
 
                         string inClause = "(" + String.Join(", ", derivedNames) + ")";
 
-                        //rewrite sql
+                        //rewrite sql, @ids will change to   (@ids__10001__, @ids__10002__)
                         newSql = newSql.Replace(param.name, inClause, StringComparison.InvariantCultureIgnoreCase);
                         //newSql = StringExtensions.replaceWholeWord(newSql, param.name, inClause);
 
