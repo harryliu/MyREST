@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using System.Collections;
 using System.Data;
 using System.Dynamic;
 using System.Globalization;
@@ -349,7 +350,7 @@ namespace MyREST
                 else if (dataType == "String Array".ToLower() || dataType == "String List".ToLower())
                 {
                     newType = DbType.String;
-                    newValue = oldValue.Split(separator);
+                    newValue = oldValue.Split(separator).ToList<string>();
                     valueIsArray = true;
                 }
                 else if (dataType == "Decimal Array".ToLower() || dataType == "Decimal List".ToLower())
@@ -406,9 +407,9 @@ namespace MyREST
 
         public static object buildDapperParameters(SqlContext sqlContext)
         {
-            List<DapperParameterItem> dapperParameterList = new List<DapperParameterItem>();
-            DynamicParameters dapperParameters = new DynamicParameters();
-            bool returnAnonymousObj = false;
+            List<DapperParameterItem> parameterList = new List<DapperParameterItem>();
+            DynamicParameters dynamicParametersObj = new DynamicParameters();
+            bool haveArrayParam = false;
             foreach (var param in sqlContext.parameters)
             {
                 DbType? dapperDataType = null;
@@ -418,10 +419,10 @@ namespace MyREST
                 convertDapperDataType(param.dataType, param.value, param.format, param.separator, out dapperDataType, out newValue, out valueIsArray);
                 if (valueIsArray == true)
                 {
-                    returnAnonymousObj = true;
+                    haveArrayParam = true;
                 }
-                dapperParameters.Add(param.name, newValue, dapperDataType, dapperDirection);
-                dapperParameterList.Add(new DapperParameterItem()
+                dynamicParametersObj.Add(param.name, newValue, dapperDataType, dapperDirection);
+                parameterList.Add(new DapperParameterItem()
                 {
                     name = param.name,
                     value = newValue,
@@ -429,10 +430,11 @@ namespace MyREST
                     direction = dapperDirection
                 });
             }
-
-            if (returnAnonymousObj == true)
+            /*
+            //return Anonymous object rather than dapper parameter list to support SQL server IN @ids clause
+            if (rewriteSql == true)
             {
-                //for supporting In clause, select * from table1 where id in @ids
+                //to support In clause for mssql, select * from table1 where id in @ids
                 //we should create Anonymous object as Dapper Parameters holder
                 dynamic expObj = new ExpandoObject();
                 foreach (var item in dapperParameterList)
@@ -442,9 +444,64 @@ namespace MyREST
                 }
                 return expObj;
             }
+            */
+            //return Anonymous object rather than dapper parameter list to support SQL server IN @ids clause
+            if (haveArrayParam == true)
+            {
+                //to support In clause for mssql, select * from table1 where id in @ids
+                //we should create Anonymous object as Dapper Parameters holder
+                string sql = sqlContext.getPlainSql();
+                List<DapperParameterItem> derivedParams = new List<DapperParameterItem>();
+                for (int j = parameterList.Count - 1; j >= 0; j--)
+                {
+                    var param = parameterList[j];
+                    //foreach (var param in dapperParameterList)
+                    {
+                        if (param.value is IList)
+                        {
+                            //item.name, @id__10001, @id__10002
+                            //from v in (IList) item.value select item.name+"__"+
+                            List<string> derivedNames = new List<string>();
+
+                            for (int i = 0; i < ((IList)param.value).Count; i++)
+                            {
+                                var value = ((IList)param.value)[i];
+                                string derivedName = param.name + "__" + (10000 + i).ToString();
+                                derivedNames.Add(derivedName);
+
+                                DapperParameterItem derivedParam = new DapperParameterItem();
+                                derivedParam.name = derivedName;
+                                derivedParam.direction = param.direction;
+                                derivedParam.dataType = param.dataType;
+                                derivedParam.value = value;
+                                derivedParams.Add(derivedParam);
+                            }
+
+                            string inClause = "(" + String.Join(", ", derivedNames) + ")";
+
+                            //rewrite sql
+                            sql = sql.Replace(param.name, inClause, StringComparison.Ordinal);
+
+                            //remove the list-type parameter
+                            parameterList.RemoveAt(j);
+                        }
+                    }
+                }
+                sqlContext.sql = sql;
+
+                //add the derived parameters
+                parameterList.AddRange(derivedParams);
+                DynamicParameters dynamicParametersObj2 = new DynamicParameters();
+                foreach (var param in parameterList)
+                {
+                    dynamicParametersObj2.Add(param.name, param.value, param.dataType, param.direction);
+                }
+
+                return dynamicParametersObj2;
+            }
             else
             {
-                return dapperParameters;
+                return dynamicParametersObj;
             }
         }
     }

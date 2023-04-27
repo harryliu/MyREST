@@ -254,7 +254,7 @@ namespace MyREST
                 throw new MyRestException($"{endpointContext.name} endpoint does not allow clientSql ");
             }
 
-            //build dapper parameters
+            //build dapper parameters and rewrite SQL if need
             dapperParameters = XmlFileParser.buildDapperParameters(sqlContext);
         }
     }

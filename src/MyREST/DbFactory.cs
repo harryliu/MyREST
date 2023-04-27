@@ -33,6 +33,41 @@ namespace MyREST
             }
         }
 
+        /// <summary>
+        /// https://bobby-tables.com/adodotnet
+        /// </summary>
+        /// <param name="dbType"></param>
+        /// <returns></returns>
+        public static List<string> getParameterPrefix(string dbType)
+        {
+            List<string> lst = new List<string>();
+            dbType = dbType.Trim().ToLower();
+            if (dbType == "mysql")
+            {
+                lst.Add("@");
+            }
+            else if (dbType == "mssql")
+            {
+                lst.Add("@");
+            }
+            else if (dbType == "postgresql")
+            {
+                lst.Add("@");
+                lst.Add(":");
+            }
+            else if (dbType == "oracle")
+            {
+                lst.Add(":");
+            }
+            else
+            {
+                lst.Add("@");
+                lst.Add("$");
+                lst.Add(":");
+            }
+            return lst;
+        }
+
         public static string getTestQuerySql(string dbType)
         {
             dbType = dbType.Trim().ToLower();
