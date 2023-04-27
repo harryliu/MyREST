@@ -167,7 +167,7 @@ namespace MyREST
         {
             SqlContext sqlContext;
             object dapperParameters;
-            prepareDapperArguments(sqlRequestWrapper, endpointContext, result, out sqlContext, out dapperParameters);
+            prepareDapperArguments(sqlRequestWrapper, endpointContext, out sqlContext, out dapperParameters);
 
             string dbName = sqlContext.db;
             DbConfig dbConfig = getDbConfig(dbName);
@@ -224,7 +224,7 @@ namespace MyREST
         }
 
         private void prepareDapperArguments(SqlRequestWrapper sqlRequestWrapper, EndpointContext endpointContext,
-            SqlResultWrapper result, out SqlContext sqlContext, out object dapperParameters)
+             out SqlContext sqlContext, out object dapperParameters)
         {
             SqlRequest request = sqlRequestWrapper.request;
             sqlContext = request.sqlContext;

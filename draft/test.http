@@ -404,7 +404,7 @@ Authorization: Basic dXNlcjEyMzpwYXNzd29yZDEyMw==
       "isScalar": false,      
       "sqlFile": "",
       "sqlId": "",
-      "sql": "select actor_id , first_name FirstName, last_name LastName, last_update LastUpdate  from actor where actor_id in @ids",  
+      "sql": "select actor_id , first_name FirstName, last_name LastName, last_update LastUpdate  from actor where actor_id=@id1 or actor_id in @ids or actor_id in @newIds or actor_id=@id3" ,  
       "parameters":[
          {
           "name": "@ids",
@@ -413,7 +413,31 @@ Authorization: Basic dXNlcjEyMzpwYXNzd29yZDEyMw==
           "direction": "Input",
           "format": ",",
           "separator":","
+        },       {
+          "name": "@newIds",
+          "value": "3,4",
+          "dataType": "Decimal Array",
+          "direction": "Input",
+          "format": ",",
+          "separator":","
+        },       {
+          "name": "@id1",
+          "value": "5",
+          "dataType": "Decimal",
+          "direction": "Input",
+          "format": ",",
+          "separator":","
+        },       {
+          "name": "@id3",
+          "value": "6",
+          "dataType": "Decimal",
+          "direction": "Input",
+          "format": ",",
+          "separator":","
         }
+
+
+        
       ]
     },
     "traceId": "1111"

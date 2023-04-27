@@ -27,6 +27,7 @@ namespace MyREST
             _appState = appState;
             _logger = logger;
             _applicationLifetime.ApplicationStopping.Register(OnShutdown);
+            _applicationLifetime.ApplicationStopped.Register(AfterShutdown);
         }
 
         private void OnShutdown()
@@ -36,6 +37,11 @@ namespace MyREST
                 _logger.LogWarning($"SIGTERM signal received, but there are {_appState.getRunningRequests()} running requests. Sleep one moment to ensure them handled. ");
                 System.Threading.Thread.Sleep(1000);
             }
+        }
+
+        private void AfterShutdown()
+        {
+            _logger.LogWarning($"There are {_appState.getRunningRequests()} running requests. Application stopped. ");
         }
 
         public Task StopAsync(CancellationToken cancellationToken)
