@@ -4,7 +4,7 @@ namespace MyREST
 {
     public static class StringExtensions
     {
-        public static string ToSnakeCase(this string input)
+        public static string toSnakeCase(this string input)
         {
             if (string.IsNullOrEmpty(input)) { return input; }
 
@@ -30,6 +30,15 @@ namespace MyREST
                 index = str.IndexOf(subStr, index + 1);
             }
             return count;
+        }
+
+        public static string removeSpecialChars(string paramName)
+        {
+            // Regular expression to match special characters
+            Regex regex = new Regex("[@!#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]");
+
+            // Replace special characters with an empty string
+            return regex.Replace(paramName, "");
         }
     }
 }

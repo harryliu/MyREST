@@ -155,7 +155,7 @@ namespace MyREST
                 var lifetimeLogger = provider.GetRequiredService<ILogger<MyRestHostLifetime>>();
                 services.AddSingleton<IHostLifetime>(sp => new MyRestHostLifetime(
                     sp.GetRequiredService<IHostApplicationLifetime>(),
-                    TimeSpan.FromSeconds(5),
+                    TimeSpan.FromSeconds(0.1),
                     appState, lifetimeLogger));
             }
             catch (Exception ex)

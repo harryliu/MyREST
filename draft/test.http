@@ -27,7 +27,7 @@ content-type: application/json
 ==============================
 Swagger UI url 
 ==============================
-http://localhost:5001/swagger/index.html 
+https://localhost:5002/swagger/index.html 
 
 
 ==============================

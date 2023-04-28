@@ -41,7 +41,15 @@ namespace MyREST
 
         private void AfterShutdown()
         {
-            _logger.LogWarning($"There are {_appState.getRunningRequests()} running requests. Application stopped. ");
+            string message = $"There are {_appState.getRunningRequests()} running requests. Application stopped. ";
+            if (_appState.getRunningRequests() > 0)
+            {
+                _logger.LogWarning(message);
+            }
+            else
+            {
+                _logger.LogInformation(message);
+            }
         }
 
         public Task StopAsync(CancellationToken cancellationToken)

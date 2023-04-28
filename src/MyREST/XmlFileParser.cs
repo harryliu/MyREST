@@ -350,14 +350,14 @@ namespace MyREST
                 }
                 else if (dataType == "String Array".ToLower() || dataType == "String List".ToLower())
                 {
-                    assertOnly1Occurrence(sql, paramName);
+                    assertOneOccurrence(sql, paramName);
                     newType = DbType.String;
                     newValue = oldValue.Split(separator).ToList<string>();
                     valueIsArray = true;
                 }
                 else if (dataType == "Decimal Array".ToLower() || dataType == "Decimal List".ToLower())
                 {
-                    assertOnly1Occurrence(sql, paramName);
+                    assertOneOccurrence(sql, paramName);
                     newType = DbType.Decimal;
                     string[] strArray = oldValue.Split(separator);
                     var newValueList = new List<decimal>();
@@ -370,7 +370,7 @@ namespace MyREST
                 }
                 else if (dataType == "Int Array".ToLower() || dataType == "Int List".ToLower() || dataType == "Int32 Array".ToLower() || dataType == "Int32 List".ToLower())
                 {
-                    assertOnly1Occurrence(sql, paramName);
+                    assertOneOccurrence(sql, paramName);
                     newType = DbType.Int32;
                     string[] strArray = oldValue.Split(separator);
                     var newValueList = new List<int>();
@@ -383,7 +383,7 @@ namespace MyREST
                 }
                 else if (dataType == "DateTime Array".ToLower() || dataType == "DateTime List".ToLower())
                 {
-                    assertOnly1Occurrence(sql, paramName);
+                    assertOneOccurrence(sql, paramName);
                     newType = DbType.DateTime;
                     string[] strArray = oldValue.Split(separator);
                     var newValueList = new List<DateTime>();
@@ -400,23 +400,14 @@ namespace MyREST
                 }
             }
 
-            static void assertOnly1Occurrence(string sql, string paramName)
+            static void assertOneOccurrence(string sql, string paramName)
             {
                 int occurrenceCount = StringExtensions.occurrenceCount(sql, paramName);
                 if (occurrenceCount != 1)
                 {
-                    throw new MyRestException($"{paramName} occurred {occurrenceCount} times in sql, but expected only 1 time.");
+                    throw new MyRestException($"List type parameter {paramName} has {occurrenceCount} occurrences in sql, but expected only 1 occurrence.");
                 }
             }
-        }
-
-        public static string removeSpecialChars(string paramName)
-        {
-            // Regular expression to match special characters
-            Regex regex = new Regex("[@!#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]");
-
-            // Replace special characters with an empty string
-            return regex.Replace(paramName, "");
         }
 
         public static DynamicParameters buildDapperParameters(SqlContext sqlContext)
@@ -466,17 +457,20 @@ namespace MyREST
             }
         }
 
+        /// <summary>
+        /// rewrite SQL and parameters object to support SQL IN  @variable clause, works for MySQL/Sql server and etc
+        /// </summary>
+        /// <param name="sql"></param>
+        /// <param name="parameterList"></param>
+        /// <returns></returns>
         private static (string, List<DapperParameterItem>) rewriteInClauseSqlAndParams(string sql, List<DapperParameterItem> parameterList)
         {
-            //to support In clause for mssql, select * from table1 where id in @ids
-            //we should create Anonymous object as Dapper Parameters holder
             string newSql = sql;
 
             List<DapperParameterItem> derivedParams = new List<DapperParameterItem>();
             for (int j = parameterList.Count - 1; j >= 0; j--)
             {
                 var param = parameterList[j];
-                //foreach (var param in dapperParameterList)
                 {
                     if (param.value is IList)
                     {
@@ -513,6 +507,24 @@ namespace MyREST
             List<DapperParameterItem> newParamterList = new List<DapperParameterItem>();
             newParamterList.AddRange(parameterList);
             return (newSql, newParamterList);
+        }
+
+        /// <summary>
+        /// Dapper built-in feature to support SQL IN clause, only works for SQL Server
+        /// </summary>
+        /// <param name="dapperParameterList"></param>
+        /// <returns></returns>
+        private dynamic createAnonymousParamObject(List<DapperParameterItem> dapperParameterList)
+        {
+            //for supporting In clause, select * from table1 where id in @ids
+            //we should create Anonymous object as Dapper Parameters holder
+            dynamic expObj = new ExpandoObject();
+            foreach (var item in dapperParameterList)
+            {
+                var propertyName = StringExtensions.removeSpecialChars(item.name); //to remove @ or : symbol
+                ((IDictionary<string, object>)expObj)[propertyName] = item.value;
+            }
+            return expObj;
         }
     }
 }
